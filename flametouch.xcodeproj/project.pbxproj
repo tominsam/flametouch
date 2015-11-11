@@ -1,0 +1,377 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		001C23C6147E8B377E9C3D52 /* Pods_flametouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8596BC24435ACFF7EA4CC81 /* Pods_flametouch.framework */; };
+		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
+		72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E29B621BCB47A300D28289 /* StateViewController.swift */; };
+		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
+		72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ViewController.swift */; };
+		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
+		72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		72E29B621BCB47A300D28289 /* StateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateViewController.swift; sourceTree = "<group>"; };
+		72EC68D71BC9E50600AC2692 /* flametouch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flametouch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		72EC68DC1BC9E50600AC2692 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		72EC68E11BC9E50600AC2692 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		72EC68E41BC9E50600AC2692 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		72EC68E61BC9E50600AC2692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A012F09B7D55386454DF1146 /* Pods-flametouch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flametouch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-flametouch/Pods-flametouch.debug.xcconfig"; sourceTree = "<group>"; };
+		E8596BC24435ACFF7EA4CC81 /* Pods_flametouch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_flametouch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB946DB76682A87518293167 /* Pods-flametouch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flametouch.release.xcconfig"; path = "Pods/Target Support Files/Pods-flametouch/Pods-flametouch.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		72EC68D41BC9E50600AC2692 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				001C23C6147E8B377E9C3D52 /* Pods_flametouch.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		725921AC1BF2DF7C0094EFC8 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				72EC68DC1BC9E50600AC2692 /* ViewController.swift */,
+				72E29B621BCB47A300D28289 /* StateViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		72EC68CE1BC9E50600AC2692 = {
+			isa = PBXGroup;
+			children = (
+				72EC68D91BC9E50600AC2692 /* flametouch */,
+				72EC68D81BC9E50600AC2692 /* Products */,
+				D51EF0E3134A5DDB5AEF9580 /* Pods */,
+				E7B9FF38232F0B693ABA57FC /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		72EC68D81BC9E50600AC2692 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72EC68D71BC9E50600AC2692 /* flametouch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		72EC68D91BC9E50600AC2692 /* flametouch */ = {
+			isa = PBXGroup;
+			children = (
+				725921AC1BF2DF7C0094EFC8 /* View Controllers */,
+				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
+				7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */,
+				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
+				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
+				72EC68E61BC9E50600AC2692 /* Info.plist */,
+			);
+			path = flametouch;
+			sourceTree = "<group>";
+		};
+		D51EF0E3134A5DDB5AEF9580 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A012F09B7D55386454DF1146 /* Pods-flametouch.debug.xcconfig */,
+				FB946DB76682A87518293167 /* Pods-flametouch.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		E7B9FF38232F0B693ABA57FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E8596BC24435ACFF7EA4CC81 /* Pods_flametouch.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		72EC68D61BC9E50600AC2692 /* flametouch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 72EC68E91BC9E50600AC2692 /* Build configuration list for PBXNativeTarget "flametouch" */;
+			buildPhases = (
+				11C62CC9F80525FD6B7A94BE /* Check Pods Manifest.lock */,
+				72EC68D31BC9E50600AC2692 /* Sources */,
+				72EC68D41BC9E50600AC2692 /* Frameworks */,
+				72EC68D51BC9E50600AC2692 /* Resources */,
+				986E22D3FC1341A93F7C389E /* Embed Pods Frameworks */,
+				61302657D3854623E601E0EE /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = flametouch;
+			productName = flametouch;
+			productReference = 72EC68D71BC9E50600AC2692 /* flametouch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		72EC68CF1BC9E50600AC2692 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = tominsam;
+				TargetAttributes = {
+					72EC68D61BC9E50600AC2692 = {
+						CreatedOnToolsVersion = 7.0.1;
+						DevelopmentTeam = 76AFK3W7M9;
+					};
+				};
+			};
+			buildConfigurationList = 72EC68D21BC9E50600AC2692 /* Build configuration list for PBXProject "flametouch" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 72EC68CE1BC9E50600AC2692;
+			productRefGroup = 72EC68D81BC9E50600AC2692 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				72EC68D61BC9E50600AC2692 /* flametouch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		72EC68D51BC9E50600AC2692 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */,
+				72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		11C62CC9F80525FD6B7A94BE /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		61302657D3854623E601E0EE /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-flametouch/Pods-flametouch-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		986E22D3FC1341A93F7C389E /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-flametouch/Pods-flametouch-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		72EC68D31BC9E50600AC2692 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */,
+				72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */,
+				72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */,
+				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				72EC68E41BC9E50600AC2692 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		72EC68E71BC9E50600AC2692 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		72EC68E81BC9E50600AC2692 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		72EC68EA1BC9E50600AC2692 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A012F09B7D55386454DF1146 /* Pods-flametouch.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = flametouch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		72EC68EB1BC9E50600AC2692 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FB946DB76682A87518293167 /* Pods-flametouch.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = flametouch/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		72EC68D21BC9E50600AC2692 /* Build configuration list for PBXProject "flametouch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72EC68E71BC9E50600AC2692 /* Debug */,
+				72EC68E81BC9E50600AC2692 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		72EC68E91BC9E50600AC2692 /* Build configuration list for PBXNativeTarget "flametouch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72EC68EA1BC9E50600AC2692 /* Debug */,
+				72EC68EB1BC9E50600AC2692 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 72EC68CF1BC9E50600AC2692 /* Project object */;
+}

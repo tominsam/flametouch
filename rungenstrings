@@ -1,0 +1,2 @@
+find . -name '*.swift' -print0 |\
+    xargs -0 genstrings -o en.lproj
