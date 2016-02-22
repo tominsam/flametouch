@@ -19,7 +19,7 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         self.view = UIView(frame: CGRectNull)
 
         table.dataSource = self
-		table.delegate = self
+        table.delegate = self
 
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
@@ -46,22 +46,30 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         // Dispose of any resources that can be recreated.
     }
 
-
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        NSLog("got \(browser().services.count) services")
         return browser().services.count;
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        NSLog("got \(indexPath)")
-        let service = browser().services[indexPath.row]
-        let cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "cell")
-        cell.textLabel!.text = service.name
-        cell.detailTextLabel!.text = service.type
-        return cell
+        var cell = tableView.dequeueReusableCellWithIdentifier("service")
+        if cell == nil {
+            cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "service")
+        }
 
+        let service = browser().services[indexPath.row]
+        cell!.textLabel!.text = service.name
+        cell!.detailTextLabel!.text = service.type
+        return cell!
     }
 
-
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        let service = browser().services[indexPath.row]
+        let serviceController = ServiceViewController(service: service)
+        navigationController?.pushViewController(serviceController, animated: true)
+        
+    }
+    
+    
 }
 

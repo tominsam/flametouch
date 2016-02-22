@@ -10,7 +10,6 @@ import UIKit
 
 public class StateViewController: UIViewController {
 
-
     public enum StatefulViewControllerState: String {
         case Content = "content"
         case Loading = "loading"

@@ -25,8 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.backgroundColor = UIColor.whiteColor()
         self.window!.tintColor = UIColor.redColor()
 
-        UINavigationBar.appearance().barTintColor = UIColor.redColor()
         UINavigationBar.appearance().barStyle = UIBarStyle.Black
+        UINavigationBar.appearance().translucent = true
+        UINavigationBar.appearance().barTintColor = UIColor.redColor()
+        UINavigationBar.appearance().tintColor = UIColor.whiteColor()
 
         let viewController = ViewController()
         viewController.title = NSLocalizedString("Flame", comment: "App name")

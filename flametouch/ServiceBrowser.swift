@@ -8,8 +8,10 @@
 
 import UIKit
 
-class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
+class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegate {
+    /// meta-service browser, discovers more services
     let browser = NSNetServiceBrowser()
+    /// lookup of service type to browser for this service type.
     var browsers = [NSNetService: NSNetServiceBrowser]()
     dynamic var services = Array<NSNetService>()
 
@@ -18,14 +20,17 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
         browser.delegate = self
     }
 
+    /// start meta-browser and all service browsers
     func resume() {
         NSLog("Resume")
         browser.searchForServicesOfType("_services._dns-sd._udp.", inDomain: "")
         for (service, b) in browsers {
             b.searchForServicesOfType(service.name, inDomain: service.domain)
         }
+        broadcast()
     }
 
+    /// stop the metabrowser and all service browsers
     func pause() {
         NSLog("Pause")
         browser.stop()
@@ -34,10 +39,12 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
         }
         // remove them, because the meta-browser is going to re-create everything.
         browsers.removeAll()
+        services.removeAll()
     }
 
     func netServiceBrowser(browser: NSNetServiceBrowser, didFindService service: NSNetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
+            // meta-browser found something new. Create a new service browser for it.
             NSLog("Found type \"\(service.name)\" \"\(service.domain)\"")
             if let found = browsers[service] {
                 NSLog("stopping existing browser (shouldn't really happen)")
@@ -51,9 +58,12 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
             browsers[service] = newBrowser
 
         } else {
+            // single-service browser found a new broadcast
             NSLog("Found service " + service.type)
             services.append(service)
-            NSNotificationCenter.defaultCenter().postNotificationName("ServicesChanged", object: nil)
+            service.delegate = self
+            service.resolveWithTimeout(10)
+            broadcast()
         }
     }
 
@@ -70,7 +80,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
             if (services.contains(service)) {
         	    NSLog("removed service " + service.type)
 	        	services.removeAtIndex(services.indexOf(service)!)
-                NSNotificationCenter.defaultCenter().postNotificationName("ServicesChanged", object: nil)
+                broadcast()
         	} else {
                 NSLog("can't remove service \(service.type)")
             }
@@ -81,9 +91,25 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate  {
         NSLog("Did not search: \(errorDict)")
     }
 
+    func netServiceDidResolveAddress(service: NSNetService) {
+        NSLog("resolved %@", service)
+        broadcast()
+	}
 
+    func netService(service: NSNetService, didUpdateTXTRecordData data: NSData) {
+        NSLog("New data for %@", service)
+        broadcast()
+    }
 
     func netServiceBrowser(browser: NSNetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {}
     func netServiceBrowser(browser: NSNetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {}
+
+    func broadcast() {
+        // alphabetize
+        services.sortInPlace({ (a, b) -> Bool in
+            return a.name.lowercaseString.compare(b.name.lowercaseString) == NSComparisonResult.OrderedAscending
+        })
+        NSNotificationCenter.defaultCenter().postNotificationName("ServicesChanged", object: nil)
+    }
 
 }
