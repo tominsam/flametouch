@@ -22,14 +22,11 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         self.title = service.name
         self.core.append([NSLocalizedString("Name", comment: "Label for the name of the service"), service.name])
         self.core.append([NSLocalizedString("Type", comment: "Label for the type of the service"), service.type + service.domain])
-        for address in service.addresses! {
-            if let hostname = getIFAddress(address) {
-	            self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
-            }
+        for hostname in service.addresses!.flatMap({getIFAddress($0)}) {
+            self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
         }
 
         for (key, value) in NSNetService.dictionaryFromTXTRecordData(service.TXTRecordData()!) {
-            NSLog("got %@ %@", key, value)
             self.txtData.append([key, NSString(data: value, encoding: NSUTF8StringEncoding) as! String])
         }
     }
@@ -37,7 +34,6 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     required init?(coder aDecoder: NSCoder) {
         self.service = NSNetService() // dummy object
         super.init(coder: aDecoder)
-
     }
 
     override func loadView() {
@@ -61,16 +57,6 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         // Dispose of any resources that can be recreated.
     }
 
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-    // Get the new view controller using segue.destinationViewController.
-    // Pass the selected object to the new view controller.
-    }
-    */
 
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if txtData.isEmpty {

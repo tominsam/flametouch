@@ -10,6 +10,7 @@
 		001C23C6147E8B377E9C3D52 /* Pods_flametouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8596BC24435ACFF7EA4CC81 /* Pods_flametouch.framework */; };
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
+		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
 		72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* ServiceViewController.swift */; };
 		72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E29B621BCB47A300D28289 /* StateViewController.swift */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
+		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
 		72D24BB61C76BC110005FC8B /* ServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceViewController.swift; path = ../ServiceViewController.swift; sourceTree = "<group>"; };
 		72E29B621BCB47A300D28289 /* StateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateViewController.swift; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* flametouch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flametouch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				72EC68DC1BC9E50600AC2692 /* ViewController.swift */,
+				72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */,
 				72E29B621BCB47A300D28289 /* StateViewController.swift */,
 				72D24BB61C76BC110005FC8B /* ServiceViewController.swift */,
 			);
@@ -228,6 +231,7 @@
 			files = (
 				7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */,
 				72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */,
+				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
 				72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */,
 				72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
