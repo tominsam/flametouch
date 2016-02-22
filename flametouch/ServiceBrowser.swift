@@ -12,7 +12,8 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
     /// meta-service browser, discovers more services
     let browser = NSNetServiceBrowser()
 
-    let flameService = NSNetService(domain: "", type: "_flametouch._tcp", name: UIDevice.currentDevice().name, port: 0)
+    /// broadcast a service from the local device
+    let flameService = NSNetService(domain: "", type: "_flametouch._tcp", name: UIDevice.currentDevice().name, port: 1812)
 
     /// lookup of service type to browser for this service type.
 	var browsers = [NSNetService: NSNetServiceBrowser]()
@@ -23,23 +24,25 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
     /// list of sets of addresses assigned to a single machine
     var grouping = [Set<String>]()
 
+    /// service display groups
     var groups = [String: Array<NSNetService>]()
 
     override init() {
         super.init()
         browser.delegate = self
+        flameService.delegate = self
     }
 
     /// start meta-browser and all service browsers
     func resume() {
         NSLog("Resume")
+
+        flameService.publish()
+
         browser.searchForServicesOfType("_services._dns-sd._udp.", inDomain: "")
         for (service, b) in browsers {
             b.searchForServicesOfType(service.name, inDomain: service.domain)
         }
-
-        flameService.delegate = self
-        flameService.publish()
 
         broadcast()
     }

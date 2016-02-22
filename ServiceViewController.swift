@@ -25,6 +25,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         for hostname in service.addresses!.flatMap({getIFAddress($0)}) {
             self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
         }
+        self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
 
         for (key, value) in NSNetService.dictionaryFromTXTRecordData(service.TXTRecordData()!) {
             self.txtData.append([key, NSString(data: value, encoding: NSUTF8StringEncoding) as! String])

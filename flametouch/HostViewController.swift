@@ -17,7 +17,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     required init(ip : String) {
         self.ip = ip
         super.init(nibName: nil, bundle: nil)
-        self.title = ip
+        self.title = group().first?.name
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -36,12 +36,6 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         table.autoPinEdgesToSuperviewEdges()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        NSLog("loaded")
     }
 
     func servicesChanged() {
