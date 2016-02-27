@@ -11,7 +11,7 @@ import PureLayout
 
 private var myContext = 0
 
-class ViewController: StateViewController, UITableViewDataSource, UITableViewDelegate {
+class ViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView()
 
@@ -25,12 +25,15 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         table.autoPinEdgesToSuperviewEdges()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
-    }
+
+        registerForPreviewingWithDelegate(self, sourceView: self.table)
+	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         NSLog("loaded")
+
     }
 
     func servicesChanged() {
@@ -70,7 +73,20 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         navigationController?.pushViewController(vc, animated: true)
         
     }
-    
-    
+
+    func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if let indexPath = table.indexPathForRowAtPoint(location) {
+            let ip = browser().groups.keys.sort()[indexPath.row]
+            let vc = HostViewController(ip: ip)
+            return vc
+        }
+        return nil
+    }
+
+    func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController vc: UIViewController) {
+        navigationController?.pushViewController(vc, animated: false)
+    }
+
+
 }
 

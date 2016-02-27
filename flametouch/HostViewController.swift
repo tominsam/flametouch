@@ -9,7 +9,7 @@
 import UIKit
 import PureLayout
 
-class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate {
+class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView()
     let ip : String
@@ -36,6 +36,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         table.autoPinEdgesToSuperviewEdges()
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
+        registerForPreviewingWithDelegate(self, sourceView: self.table)
     }
 
     func servicesChanged() {
@@ -79,6 +80,18 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         
     }
     
-    
+    func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if let indexPath = table.indexPathForRowAtPoint(location) {
+            let service = group()[indexPath.row]
+            let serviceController = ServiceViewController(service: service)
+            return serviceController
+        }
+        return nil
+    }
+
+    func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController vc: UIViewController) {
+        navigationController?.pushViewController(vc, animated: false)
+    }
+
 }
 
