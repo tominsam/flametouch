@@ -13,7 +13,7 @@ private var myContext = 0
 
 class ViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
-    let table = UITableView()
+    let table = UITableView(frame: CGRectZero, style: .Grouped)
 
     override func loadView() {
         self.view = UIView(frame: CGRectNull)
@@ -23,6 +23,8 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
 
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
+        table.estimatedRowHeight = 100
+        table.registerNib(UINib(nibName: "HostCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "HostCell")
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
 
@@ -54,15 +56,12 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("service")
-        if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "service")
-        }
+        let cell = tableView.dequeueReusableCellWithIdentifier("HostCell") as! HostCell?
 
         let ip = browser().groups.keys.sort()[indexPath.row]
         let services = browser().groups[ip]
-        cell!.textLabel!.text = services?.first?.name
-        cell!.detailTextLabel!.text = ip
+        cell!.title!.text = services?.first?.name
+        cell!.subTitle!.text = ip
         return cell!
     }
 

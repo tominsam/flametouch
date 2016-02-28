@@ -132,7 +132,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
     func broadcast() {
         // alphabetize
         services.sortInPlace({ (a, b) -> Bool in
-            return a.name.lowercaseString.compare(b.name.lowercaseString) == NSComparisonResult.OrderedAscending
+            return a.type.lowercaseString.compare(b.type.lowercaseString) == NSComparisonResult.OrderedAscending
         })
 
         grouping.removeAll()

@@ -11,7 +11,7 @@ import PureLayout
 
 class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
-    let table = UITableView()
+    let table = UITableView(frame: CGRectZero, style: .Grouped)
     let ip : String
 
     required init(ip : String) {
@@ -31,6 +31,8 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
 
         table.dataSource = self
         table.delegate = self
+        table.estimatedRowHeight = 100
+        table.registerNib(UINib(nibName: "HostCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "HostCell")
 
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
@@ -61,14 +63,11 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("service")
-        if cell == nil {
-            cell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "service")
-        }
+        let cell = tableView.dequeueReusableCellWithIdentifier("HostCell") as! HostCell?
 
         let service = group()[indexPath.row]
-        cell!.textLabel!.text = service.name
-        cell!.detailTextLabel!.text = service.type
+        cell!.title!.text = service.name
+        cell!.subTitle!.text = service.type
         return cell!
     }
 
