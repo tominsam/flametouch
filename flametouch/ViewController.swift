@@ -52,31 +52,28 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return browser().groups.count;
+        return browser().serviceGroups.count;
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("HostCell") as! HostCell?
 
-        let ip = browser().groups.keys.sort()[indexPath.row]
-        let services = browser().groups[ip]
-        cell!.title!.text = services?.first?.name
-        cell!.subTitle!.text = ip
+        let serviceGroup = getRow(indexPath)
+        cell!.title!.text = serviceGroup.title
+        cell!.subTitle!.text = serviceGroup.subTitle
         return cell!
     }
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        let ip = browser().groups.keys.sort()[indexPath.row]
-        let vc = HostViewController(ip: ip)
+        let vc = HostViewController(serviceGroup: getRow(indexPath))
         navigationController?.pushViewController(vc, animated: true)
         
     }
 
     func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let indexPath = table.indexPathForRowAtPoint(location) {
-            let ip = browser().groups.keys.sort()[indexPath.row]
-            let vc = HostViewController(ip: ip)
+            let vc = HostViewController(serviceGroup: getRow(indexPath))
             return vc
         }
         return nil
@@ -84,6 +81,10 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
 
     func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController vc: UIViewController) {
         navigationController?.pushViewController(vc, animated: false)
+    }
+
+    func getRow(indexPath: NSIndexPath) -> ServiceGroup {
+        return browser().serviceGroups[indexPath.row]
     }
 
 

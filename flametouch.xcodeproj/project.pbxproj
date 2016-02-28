@@ -10,6 +10,7 @@
 		001C23C6147E8B377E9C3D52 /* Pods_flametouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E8596BC24435ACFF7EA4CC81 /* Pods_flametouch.framework */; };
 		7217671D1C824E1E0089EC41 /* HostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7217671C1C824E1E0089EC41 /* HostCell.xib */; };
 		7217671F1C824FE30089EC41 /* HostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7217671E1C824FE30089EC41 /* HostCell.swift */; };
+		721767211C828C950089EC41 /* ServiceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767201C828C950089EC41 /* ServiceGroup.swift */; };
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
@@ -24,6 +25,7 @@
 /* Begin PBXFileReference section */
 		7217671C1C824E1E0089EC41 /* HostCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HostCell.xib; sourceTree = "<group>"; };
 		7217671E1C824FE30089EC41 /* HostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostCell.swift; sourceTree = "<group>"; };
+		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				725921AC1BF2DF7C0094EFC8 /* View Controllers */,
 				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
 				7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */,
+				721767201C828C950089EC41 /* ServiceGroup.swift */,
 				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
 				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
@@ -239,6 +242,7 @@
 				7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */,
 				72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */,
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
+				721767211C828C950089EC41 /* ServiceGroup.swift in Sources */,
 				72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */,
 				72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,

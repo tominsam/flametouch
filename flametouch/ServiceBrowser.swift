@@ -25,7 +25,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
     var grouping = [Set<String>]()
 
     /// service display groups
-    var groups = [String: Array<NSNetService>]()
+    var serviceGroups = [ServiceGroup]()
 
     override init() {
         super.init()
@@ -146,7 +146,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
             }
         }
 
-        groups.removeAll()
+        var groups = [String: ServiceGroup]()
         for service in services {
             let addresses = service.addresses!.flatMap({getIFAddress($0)})
             if addresses.isEmpty {
@@ -156,17 +156,21 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
             if let hasGroup = group {
                 // shortest address - picks ipv4 first
                 let ip = hasGroup.sort({$0.characters.count > $1.characters.count}).first!
-                if var serviceList = groups[ip] {
-                    serviceList.append(service)
-                    groups[ip] = serviceList
+                if let serviceGroup = groups[ip] {
+                    serviceGroup.addService(service)
+                    for address in hasGroup {
+                        serviceGroup.addAddress(address)
+                    }
                 } else {
-                    groups[ip] = [service]
+                    groups[ip] = ServiceGroup(service: service, address: ip)
                 }
             } else {
              	assert(false, "Can't happen")
             }
         }
-        NSLog("groups is %@", groups)
+        serviceGroups = groups.values.sort({ (a, b) -> Bool in
+            a.title.lowercaseString.compare(b.title.lowercaseString) == NSComparisonResult.OrderedAscending
+        })
 
 
         NSNotificationCenter.defaultCenter().postNotificationName("ServicesChanged", object: nil)

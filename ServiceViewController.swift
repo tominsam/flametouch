@@ -19,7 +19,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     required init(service : NSNetService) {
         self.service = service
         super.init(nibName: nil, bundle: nil)
-        self.title = service.name
+        self.title = service.type
         self.core.append([NSLocalizedString("Name", comment: "Label for the name of the service"), service.name])
         self.core.append([NSLocalizedString("Type", comment: "Label for the type of the service"), service.type + service.domain])
         for hostname in service.addresses!.flatMap({getIFAddress($0)}) {

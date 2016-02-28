@@ -12,16 +12,17 @@ import PureLayout
 class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView(frame: CGRectZero, style: .Grouped)
-    let ip : String
+    let serviceGroup : ServiceGroup
 
-    required init(ip : String) {
-        self.ip = ip
+    required init(serviceGroup : ServiceGroup) {
+        self.serviceGroup = serviceGroup
         super.init(nibName: nil, bundle: nil)
-        self.title = group().first?.name
+        self.title = serviceGroup.title
+        NSLog("serviceGroup is %@", serviceGroup)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.ip = ""
+        self.serviceGroup = ServiceGroup(service: NSNetService(), address: "")
         super.init(coder: aDecoder)
     }
 
@@ -45,27 +46,23 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         table.reloadData()
     }
 
-    func browser() -> ServiceBrowser {
-        return AppDelegate.instance().browser
-    }
-
-    func group() -> Array<NSNetService> {
-        return browser().groups[self.ip] ?? []
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return group().count;
+        return serviceGroup.services.count
+    }
+
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return serviceGroup.address
     }
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("HostCell") as! HostCell?
 
-        let service = group()[indexPath.row]
+        let service = serviceGroup.services[indexPath.row]
         cell!.title!.text = service.name
         cell!.subTitle!.text = service.type
         return cell!
@@ -73,7 +70,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
 
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        let service = group()[indexPath.row]
+        let service = serviceGroup.services[indexPath.row]
         let serviceController = ServiceViewController(service: service)
         navigationController?.pushViewController(serviceController, animated: true)
         
@@ -81,7 +78,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     
     func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let indexPath = table.indexPathForRowAtPoint(location) {
-            let service = group()[indexPath.row]
+            let service = serviceGroup.services[indexPath.row]
             let serviceController = ServiceViewController(service: service)
             return serviceController
         }
