@@ -11,7 +11,11 @@
 		7217671D1C824E1E0089EC41 /* HostCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7217671C1C824E1E0089EC41 /* HostCell.xib */; };
 		7217671F1C824FE30089EC41 /* HostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7217671E1C824FE30089EC41 /* HostCell.swift */; };
 		721767211C828C950089EC41 /* ServiceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767201C828C950089EC41 /* ServiceGroup.swift */; };
+		721767231C8296680089EC41 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767221C8296680089EC41 /* AboutViewController.swift */; };
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
+		72A73F2D1C82AF3D00E6B21E /* about.html in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F2C1C82AF3D00E6B21E /* about.html */; };
+		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
+		72A73F3A1C82B5B700E6B21E /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
 		72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* ServiceViewController.swift */; };
@@ -26,10 +30,14 @@
 		7217671C1C824E1E0089EC41 /* HostCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HostCell.xib; sourceTree = "<group>"; };
 		7217671E1C824FE30089EC41 /* HostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostCell.swift; sourceTree = "<group>"; };
 		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
+		721767221C8296680089EC41 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		72A73F2C1C82AF3D00E6B21E /* about.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = about.html; sourceTree = "<group>"; };
+		72A73F321C82B1E400E6B21E /* about.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = about.css; sourceTree = "<group>"; };
+		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
-		72D24BB61C76BC110005FC8B /* ServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceViewController.swift; path = ../ServiceViewController.swift; sourceTree = "<group>"; };
+		72D24BB61C76BC110005FC8B /* ServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceViewController.swift; sourceTree = "<group>"; };
 		72E29B621BCB47A300D28289 /* StateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateViewController.swift; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* flametouch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flametouch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,8 +69,37 @@
 				72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */,
 				72E29B621BCB47A300D28289 /* StateViewController.swift */,
 				72D24BB61C76BC110005FC8B /* ServiceViewController.swift */,
+				721767221C8296680089EC41 /* AboutViewController.swift */,
 			);
 			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		72A73F341C82B23C00E6B21E /* about */ = {
+			isa = PBXGroup;
+			children = (
+				72A73F391C82B5B700E6B21E /* Icon_160.png */,
+				72A73F2C1C82AF3D00E6B21E /* about.html */,
+				72A73F321C82B1E400E6B21E /* about.css */,
+			);
+			name = about;
+			sourceTree = "<group>";
+		};
+		72A73F371C82B25600E6B21E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */,
+				721767201C828C950089EC41 /* ServiceGroup.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		72A73F381C82B26A00E6B21E /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				7217671C1C824E1E0089EC41 /* HostCell.xib */,
+				7217671E1C824FE30089EC41 /* HostCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		72EC68CE1BC9E50600AC2692 = {
@@ -86,16 +123,15 @@
 		72EC68D91BC9E50600AC2692 /* flametouch */ = {
 			isa = PBXGroup;
 			children = (
+				72A73F381C82B26A00E6B21E /* Cells */,
+				72A73F371C82B25600E6B21E /* Services */,
 				725921AC1BF2DF7C0094EFC8 /* View Controllers */,
+				72A73F341C82B23C00E6B21E /* about */,
 				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
-				7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */,
-				721767201C828C950089EC41 /* ServiceGroup.swift */,
 				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
 				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
 				72EC68E61BC9E50600AC2692 /* Info.plist */,
-				7217671C1C824E1E0089EC41 /* HostCell.xib */,
-				7217671E1C824FE30089EC41 /* HostCell.swift */,
 			);
 			path = flametouch;
 			sourceTree = "<group>";
@@ -178,6 +214,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72A73F331C82B1E400E6B21E /* about.css in Resources */,
+				72A73F2D1C82AF3D00E6B21E /* about.html in Resources */,
+				72A73F3A1C82B5B700E6B21E /* Icon_160.png in Resources */,
 				7217671D1C824E1E0089EC41 /* HostCell.xib in Resources */,
 				72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */,
 				72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */,
@@ -247,6 +286,7 @@
 				72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
+				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
 				7217671F1C824FE30089EC41 /* HostCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -352,6 +392,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				INFOPLIST_FILE = flametouch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -366,6 +410,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 				INFOPLIST_FILE = flametouch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

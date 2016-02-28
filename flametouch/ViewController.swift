@@ -26,8 +26,9 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         table.estimatedRowHeight = 100
         table.registerNib(UINib(nibName: "HostCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "HostCell")
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .Plain, target: self, action: "aboutPressed")
 
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
         registerForPreviewingWithDelegate(self, sourceView: self.table)
 	}
 
@@ -36,6 +37,11 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         // Do any additional setup after loading the view, typically from a nib.
         NSLog("loaded")
 
+    }
+
+    func aboutPressed() {
+//        navigationController?.presentViewController(AboutViewController(), animated: true, completion: nil)
+        navigationController?.pushViewController(AboutViewController(), animated: true)
     }
 
     func servicesChanged() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" initialViewController="01J-lp-oVM">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,20 +16,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="Flame" translatesAutoresizingMaskIntoConstraints="NO" id="y1C-9h-K0Y">
-                                <rect key="frame" x="240" y="240" width="120" height="120"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="tintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="Yzk-ap-Wvf"/>
-                                </constraints>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="LaunchIcon" translatesAutoresizingMaskIntoConstraints="NO" id="O8w-Je-aXF">
+                                <rect key="frame" x="220" y="220" width="160" height="160"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="y1C-9h-K0Y" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="220" id="dw3-Mj-C7a"/>
-                            <constraint firstItem="y1C-9h-K0Y" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="jWC-nk-tK9"/>
-                            <constraint firstItem="y1C-9h-K0Y" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="wUa-HJ-ByW"/>
+                            <constraint firstItem="O8w-Je-aXF" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="2u3-HK-NNh"/>
+                            <constraint firstItem="O8w-Je-aXF" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="NIe-P9-Zv9"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -39,6 +34,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Flame" width="468" height="468"/>
+        <image name="LaunchIcon" width="160" height="160"/>
     </resources>
 </document>

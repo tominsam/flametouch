@@ -54,9 +54,9 @@ class ServiceGroup: NSObject {
     var subTitle : String {
         get {
             if services.count > 1 {
-                return "\(services.count) services (\(address))"
+                return "\(address) (\(services.count) services)"
             } else {
-                return "One service (\(address))"
+                return "\(address) (One service)"
             }
         }
     }
