@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ServiceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let service : NSNetService
     let table = UITableView(frame: CGRectZero, style: .Grouped)

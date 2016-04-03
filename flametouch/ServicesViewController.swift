@@ -9,9 +9,7 @@
 import UIKit
 import PureLayout
 
-private var myContext = 0
-
-class ViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
+class ServicesViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView(frame: CGRectZero, style: .Grouped)
 
@@ -26,9 +24,9 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         table.estimatedRowHeight = 100
         table.registerNib(UINib(nibName: "HostCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "HostCell")
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .Plain, target: self, action: "aboutPressed")
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .Plain, target: self, action: #selector(aboutPressed))
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(servicesChanged), name: "ServicesChanged", object: nil)
         registerForPreviewingWithDelegate(self, sourceView: self.table)
 	}
 
@@ -67,6 +65,7 @@ class ViewController: StateViewController, UITableViewDataSource, UITableViewDel
         let serviceGroup = getRow(indexPath)
         cell!.title!.text = serviceGroup.title
         cell!.subTitle!.text = serviceGroup.subTitle
+
         return cell!
     }
 

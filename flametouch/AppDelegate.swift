@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().barTintColor = UIColor.redColor()
         UINavigationBar.appearance().tintColor = UIColor.whiteColor()
 
-        let viewController = ViewController()
+        let viewController = ServicesViewController()
         viewController.title = NSLocalizedString("Flame", comment: "App name")
 
         let navigationController = UINavigationController(rootViewController: viewController)

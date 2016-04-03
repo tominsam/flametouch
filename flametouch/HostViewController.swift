@@ -38,7 +38,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "servicesChanged", name: "ServicesChanged", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(servicesChanged), name: "ServicesChanged", object: nil)
         registerForPreviewingWithDelegate(self, sourceView: self.table)
     }
 
@@ -71,7 +71,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         let service = serviceGroup.services[indexPath.row]
-        let serviceController = ServiceViewController(service: service)
+        let serviceController = DetailViewController(service: service)
         navigationController?.pushViewController(serviceController, animated: true)
         
     }
@@ -79,7 +79,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let indexPath = table.indexPathForRowAtPoint(location) {
             let service = serviceGroup.services[indexPath.row]
-            let serviceController = ServiceViewController(service: service)
+            let serviceController = DetailViewController(service: service)
             return serviceController
         }
         return nil

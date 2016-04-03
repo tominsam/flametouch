@@ -18,10 +18,10 @@
 		72A73F3A1C82B5B700E6B21E /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
-		72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* ServiceViewController.swift */; };
+		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
 		72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E29B621BCB47A300D28289 /* StateViewController.swift */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
-		72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ViewController.swift */; };
+		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
 		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
 		72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -37,11 +37,11 @@
 		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
-		72D24BB61C76BC110005FC8B /* ServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceViewController.swift; sourceTree = "<group>"; };
+		72D24BB61C76BC110005FC8B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		72E29B621BCB47A300D28289 /* StateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateViewController.swift; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* flametouch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = flametouch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		72EC68DC1BC9E50600AC2692 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
 		72EC68E11BC9E50600AC2692 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72EC68E41BC9E50600AC2692 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		72EC68E61BC9E50600AC2692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -65,10 +65,10 @@
 		725921AC1BF2DF7C0094EFC8 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				72EC68DC1BC9E50600AC2692 /* ViewController.swift */,
+				72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */,
 				72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */,
 				72E29B621BCB47A300D28289 /* StateViewController.swift */,
-				72D24BB61C76BC110005FC8B /* ServiceViewController.swift */,
+				72D24BB61C76BC110005FC8B /* DetailViewController.swift */,
 				721767221C8296680089EC41 /* AboutViewController.swift */,
 			);
 			name = "View Controllers";
@@ -282,8 +282,8 @@
 				72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */,
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
 				721767211C828C950089EC41 /* ServiceGroup.swift in Sources */,
-				72EC68DD1BC9E50600AC2692 /* ViewController.swift in Sources */,
-				72D24BB71C76BC110005FC8B /* ServiceViewController.swift in Sources */,
+				72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */,
+				72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
@@ -401,6 +401,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -419,6 +420,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
