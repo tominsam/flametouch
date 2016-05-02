@@ -42,7 +42,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
         table.dataSource = self
         table.delegate = self
-        table.allowsSelection = false
+        table.allowsSelection = true
 
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
@@ -98,17 +98,51 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         switch (indexPath.section) {
         case 0:
             cell!.textLabel!.text = core[indexPath.row][0]
-            cell!.detailTextLabel!.text = core[indexPath.row][1]
+            let value = core[indexPath.row][1]
+            cell!.detailTextLabel!.text = value
+            if (value.hasPrefix("_http._tcp.")) {
+                cell!.detailTextLabel!.textColor = self.view.window?.tintColor
+            } else {
+                cell!.detailTextLabel!.textColor = UIColor.grayColor()
+            }
             break
         case 1:
+            let value = txtData[indexPath.row][1]
             cell!.textLabel!.text = txtData[indexPath.row][0]
-            //cell!.detailTextLabel!.textColor = self.view.window?.tintColor
-            cell!.detailTextLabel!.text = txtData[indexPath.row][1]
+            cell!.detailTextLabel!.text = value
+            if (value.hasPrefix("http://") || value.hasPrefix("https://")) {
+                cell!.detailTextLabel!.textColor = self.view.window?.tintColor
+            } else {
+                cell!.detailTextLabel!.textColor = UIColor.grayColor()
+            }
             break
         default:
             break
         }
         return cell!
+    }
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        switch (indexPath.section) {
+        case 0:
+            if (core[indexPath.row][1].hasPrefix("_http._tcp.")) {
+                let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
+                NSLog("stringurl is \(stringUrl)")
+                if let url = NSURL(string: stringUrl) {
+                    UIApplication.sharedApplication().openURL(url)
+                }
+            }
+            break
+        case 1:
+            if let url = NSURL(string: txtData[indexPath.row][1]) {
+                UIApplication.sharedApplication().openURL(url)
+            }
+            break
+        default:
+            break
+        }
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+
     }
 
 }
