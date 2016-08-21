@@ -10,30 +10,30 @@ import UIKit
 
 class ServiceGroup: NSObject {
 
-    var services = [NSNetService]()
+    var services = [NetService]()
     var addresses = [String]()
 
-    init(service : NSNetService, address : String) {
+    init(service : NetService, address : String) {
         super.init()
         services.append(service)
         addresses.append(address)
     }
 
-    func addService(service : NSNetService) {
+    func addService(_ service : NetService) {
         services.append(service)
 
-        services.sortInPlace({ (a, b) -> Bool in
-            return a.type.lowercaseString.compare(b.type.lowercaseString) == NSComparisonResult.OrderedAscending
+        services.sort(by: { (a, b) -> Bool in
+            return a.type.lowercased().compare(b.type.lowercased()) == ComparisonResult.orderedAscending
         })
     }
 
-    func addAddress(address : String) {
+    func addAddress(_ address : String) {
         if addresses.contains(address) {
             NSLog("already got %@ in %@", address, addresses)
             return
         }
         addresses.append(address)
-        addresses.sortInPlace({ (a : String, b : String) -> Bool in
+        addresses.sort(by: { (a : String, b : String) -> Bool in
             return a.characters.count < b.characters.count
         })
         NSLog("addresses is \(addresses)")

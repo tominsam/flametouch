@@ -9,24 +9,24 @@
 import UIKit
 
 // Get the local ip addresses used by this node
-func getIFAddress(data : NSData) -> String? {
+func getIFAddress(_ data : Data) -> String? {
 
     //let hostname = [CChar](count: Int(INET6_ADDRSTRLEN), repeatedValue: 0)
-    let hostname = UnsafeMutablePointer<Int8>.alloc(Int(INET6_ADDRSTRLEN))
+    let hostname = UnsafeMutablePointer<Int8>.allocate(capacity: Int(INET6_ADDRSTRLEN))
 
 	var _ = getnameinfo(
-        UnsafePointer(data.bytes), socklen_t(data.length),
+        (data as NSData).bytes.bindMemory(to: sockaddr.self, capacity: data.count), socklen_t(data.count),
         hostname, socklen_t(INET6_ADDRSTRLEN),
         nil, 0,
         NI_NUMERICHOST)
 
-    let string = String.fromCString(hostname)!
+    let string = String(cString: hostname)
 
     // link local addresses don't cound
     if string.hasPrefix("fe80:") || string.hasPrefix("127.") {
         return nil
     }
 
-    hostname.destroy()
+    hostname.deinitialize()
     return string
 }

@@ -11,7 +11,7 @@ import PureLayout
 
 class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
-    let table = UITableView(frame: CGRectZero, style: .Grouped)
+    let table = UITableView(frame: CGRect.zero, style: .grouped)
     let serviceGroup : ServiceGroup
 
     required init(serviceGroup : ServiceGroup) {
@@ -22,24 +22,24 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.serviceGroup = ServiceGroup(service: NSNetService(), address: "")
+        self.serviceGroup = ServiceGroup(service: NetService(), address: "")
         super.init(coder: aDecoder)
     }
 
 
     override func loadView() {
-        self.view = UIView(frame: CGRectNull)
+        self.view = UIView(frame: CGRect.null)
 
         table.dataSource = self
         table.delegate = self
         table.estimatedRowHeight = 100
-        table.registerNib(UINib(nibName: "HostCell", bundle: NSBundle.mainBundle()), forCellReuseIdentifier: "HostCell")
+        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
 
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(servicesChanged), name: "ServicesChanged", object: nil)
-        registerForPreviewingWithDelegate(self, sourceView: self.table)
+        NotificationCenter.default.addObserver(self, selector: #selector(servicesChanged), name: NSNotification.Name(rawValue: "ServicesChanged"), object: nil)
+        registerForPreviewing(with: self, sourceView: self.table)
     }
 
     func servicesChanged() {
@@ -51,41 +51,41 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         // Dispose of any resources that can be recreated.
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return serviceGroup.services.count
     }
 
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return serviceGroup.address
     }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("HostCell") as! HostCell?
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "HostCell") as! HostCell?
 
-        let service = serviceGroup.services[indexPath.row]
+        let service = serviceGroup.services[(indexPath as NSIndexPath).row]
         cell!.title!.text = service.name
         cell!.subTitle!.text = service.type
         return cell!
     }
 
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
-        let service = serviceGroup.services[indexPath.row]
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let service = serviceGroup.services[(indexPath as NSIndexPath).row]
         let serviceController = DetailViewController(service: service)
         navigationController?.pushViewController(serviceController, animated: true)
         
     }
     
-    func previewingContext(previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = table.indexPathForRowAtPoint(location) {
-            let service = serviceGroup.services[indexPath.row]
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if let indexPath = table.indexPathForRow(at: location) {
+            let service = serviceGroup.services[(indexPath as NSIndexPath).row]
             let serviceController = DetailViewController(service: service)
             return serviceController
         }
         return nil
     }
 
-    func previewingContext(previewingContext: UIViewControllerPreviewing, commitViewController vc: UIViewController) {
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit vc: UIViewController) {
         navigationController?.pushViewController(vc, animated: false)
     }
 

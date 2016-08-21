@@ -12,11 +12,11 @@ class AboutViewController: UIViewController {
 
     override func loadView() {
         self.title = "About"
-        self.view = UIView(frame: CGRectNull)
+        self.view = UIView(frame: CGRect.null)
         let webView = UIWebView()
         self.view.addSubview(webView)
         webView.autoPinEdgesToSuperviewEdges()
-        let localfilePath = NSBundle.mainBundle().URLForResource("about", withExtension: "html")
-        webView.loadRequest(NSURLRequest(URL: localfilePath!))
+        let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
+        webView.loadRequest(URLRequest(url: localfilePath!))
     }
 }

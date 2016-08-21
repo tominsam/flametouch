@@ -8,18 +8,18 @@
 
 import UIKit
 
-class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegate {
+class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     /// meta-service browser, discovers more services
-    let browser = NSNetServiceBrowser()
+    let browser = NetServiceBrowser()
 
     /// broadcast a service from the local device
-    let flameService = NSNetService(domain: "", type: "_flametouch._tcp", name: UIDevice.currentDevice().name, port: 1812)
+    let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
 
     /// lookup of service type to browser for this service type.
-	var browsers = [NSNetService: NSNetServiceBrowser]()
+	var browsers = [NetService: NetServiceBrowser]()
 
     /// definitive list of all services
-    var services = [NSNetService]()
+    var services = [NetService]()
 
     /// list of sets of addresses assigned to a single machine
     var grouping = [Set<String>]()
@@ -39,9 +39,9 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
 
         flameService.publish()
 
-        browser.searchForServicesOfType("_services._dns-sd._udp.", inDomain: "")
+        browser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
         for (service, b) in browsers {
-            b.searchForServicesOfType(service.name, inDomain: service.domain)
+            b.searchForServices(ofType: service.name, inDomain: service.domain)
         }
 
         broadcast()
@@ -60,7 +60,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
         services.removeAll()
     }
 
-    func netServiceBrowser(browser: NSNetServiceBrowser, didFindService service: NSNetService, moreComing: Bool) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
             // meta-browser found something new. Create a new service browser for it.
             NSLog("Found type \"\(service.name)\" \"\(service.domain)\"")
@@ -68,11 +68,11 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
                 NSLog("stopping existing browser (shouldn't really happen)")
                 found.stop();
             }
-            let newBrowser = NSNetServiceBrowser()
+            let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self;
 
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-            newBrowser.searchForServicesOfType(name, inDomain: "")
+            newBrowser.searchForServices(ofType: name, inDomain: "")
             browsers[service] = newBrowser
 
         } else {
@@ -80,16 +80,16 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
             NSLog("Found service " + service.type)
             services.append(service)
             service.delegate = self
-            service.resolveWithTimeout(10)
+            service.resolve(withTimeout: 10)
             broadcast()
         }
     }
 
-    func netServiceBrowser(browser: NSNetServiceBrowser, didRemoveService service: NSNetService, moreComing: Bool) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
             if let b = browsers[service] {
                 b.stop()
-                browsers.removeValueForKey(service)
+                browsers.removeValue(forKey: service)
                 NSLog("removed type " + service.name)
             } else {
 	            NSLog("can't remove type " + service.name)
@@ -97,7 +97,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
         } else {
             if (services.contains(service)) {
         	    NSLog("removed service " + service.type)
-	        	services.removeAtIndex(services.indexOf(service)!)
+	        	services.remove(at: services.index(of: service)!)
                 broadcast()
         	} else {
                 NSLog("can't remove service \(service.type)")
@@ -105,25 +105,25 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
         }
     }
 
-    func netServiceBrowser(browser: NSNetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
         NSLog("Did not search: \(errorDict)")
     }
 
-    func netServiceDidResolveAddress(service: NSNetService) {
+    func netServiceDidResolveAddress(_ service: NetService) {
         NSLog("resolved %@", service)
         broadcast()
 	}
 
-    func netService(service: NSNetService, didUpdateTXTRecordData data: NSData) {
+    func netService(_ service: NetService, didUpdateTXTRecord data: Data) {
         NSLog("New data for %@", service)
         broadcast()
     }
 
-    func netServiceBrowser(browser: NSNetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
         NSLog("found domain %@", domainString)
     }
 
-    func netServiceBrowser(browser: NSNetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
         NSLog("lost domain %@", domainString)
     }
 
@@ -131,8 +131,8 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
 
     func broadcast() {
         // alphabetize
-        services.sortInPlace({ (a, b) -> Bool in
-            return a.type.lowercaseString.compare(b.type.lowercaseString) == NSComparisonResult.OrderedAscending
+        services.sort(by: { (a, b) -> Bool in
+            return a.type.lowercased().compare(b.type.lowercased()) == ComparisonResult.orderedAscending
         })
 
         grouping.removeAll()
@@ -155,7 +155,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
             let group = groupForAddresses(addresses)
             if let hasGroup = group {
                 // shortest address - picks ipv4 first
-                let ip = hasGroup.sort({$0.characters.count > $1.characters.count}).first!
+                let ip = hasGroup.sorted(by: {$0.characters.count > $1.characters.count}).first!
                 if let serviceGroup = groups[ip] {
                     serviceGroup.addService(service)
                     for address in hasGroup {
@@ -168,15 +168,15 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
              	assert(false, "Can't happen")
             }
         }
-        serviceGroups = groups.values.sort({ (a, b) -> Bool in
-            a.title.lowercaseString.compare(b.title.lowercaseString) == NSComparisonResult.OrderedAscending
+        serviceGroups = groups.values.sorted(by: { (a, b) -> Bool in
+            a.title.lowercased().compare(b.title.lowercased()) == ComparisonResult.orderedAscending
         })
 
 
-        NSNotificationCenter.defaultCenter().postNotificationName("ServicesChanged", object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
     }
 
-    func groupFor(address : String) -> Set<String>? {
+    func groupFor(_ address : String) -> Set<String>? {
 	    for group in grouping {
             if group.contains(address) {
                 return group
@@ -185,7 +185,7 @@ class ServiceBrowser: NSObject, NSNetServiceBrowserDelegate, NSNetServiceDelegat
         return nil
     }
 
-    func groupForAddresses(addresses : [String]) -> Set<String>? {
+    func groupForAddresses(_ addresses : [String]) -> Set<String>? {
         for address in addresses {
             if let group = groupFor(address) {
                 return group

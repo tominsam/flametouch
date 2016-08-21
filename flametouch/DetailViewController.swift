@@ -10,13 +10,13 @@ import UIKit
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    let service : NSNetService
-    let table = UITableView(frame: CGRectZero, style: .Grouped)
+    let service : NetService
+    let table = UITableView(frame: CGRect.zero, style: .grouped)
 
     var core = [[String]]()
     var txtData = [[String]]()
 
-    required init(service : NSNetService) {
+    required init(service : NetService) {
         self.service = service
         super.init(nibName: nil, bundle: nil)
         self.title = service.type
@@ -27,18 +27,18 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
         self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
 
-        for (key, value) in NSNetService.dictionaryFromTXTRecordData(service.TXTRecordData()!) {
-            self.txtData.append([key, NSString(data: value, encoding: NSUTF8StringEncoding) as! String])
+        for (key, value) in NetService.dictionary(fromTXTRecord: service.txtRecordData()!) {
+            self.txtData.append([key, NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String])
         }
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.service = NSNetService() // dummy object
+        self.service = NetService() // dummy object
         super.init(coder: aDecoder)
     }
 
     override func loadView() {
-        self.view = UIView(frame: CGRectNull)
+        self.view = UIView(frame: CGRect.null)
 
         table.dataSource = self
         table.delegate = self
@@ -59,7 +59,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         if txtData.isEmpty {
             return 1
         } else {
@@ -67,7 +67,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch (section) {
         case 0:
             return NSLocalizedString("Core", comment: "Header label for core service settings")
@@ -78,7 +78,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch (section) {
         case 0:
             return core.count
@@ -89,31 +89,31 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier("row")
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell = tableView.dequeueReusableCell(withIdentifier: "row")
         if cell == nil {
-            cell = UITableViewCell(style: .Value1, reuseIdentifier: "row")
+            cell = UITableViewCell(style: .value1, reuseIdentifier: "row")
         }
 
-        switch (indexPath.section) {
+        switch ((indexPath as NSIndexPath).section) {
         case 0:
-            cell!.textLabel!.text = core[indexPath.row][0]
-            let value = core[indexPath.row][1]
+            cell!.textLabel!.text = core[(indexPath as NSIndexPath).row][0]
+            let value = core[(indexPath as NSIndexPath).row][1]
             cell!.detailTextLabel!.text = value
             if (value.hasPrefix("_http._tcp.")) {
                 cell!.detailTextLabel!.textColor = self.view.window?.tintColor
             } else {
-                cell!.detailTextLabel!.textColor = UIColor.grayColor()
+                cell!.detailTextLabel!.textColor = UIColor.gray
             }
             break
         case 1:
-            let value = txtData[indexPath.row][1]
-            cell!.textLabel!.text = txtData[indexPath.row][0]
+            let value = txtData[(indexPath as NSIndexPath).row][1]
+            cell!.textLabel!.text = txtData[(indexPath as NSIndexPath).row][0]
             cell!.detailTextLabel!.text = value
             if (value.hasPrefix("http://") || value.hasPrefix("https://")) {
                 cell!.detailTextLabel!.textColor = self.view.window?.tintColor
             } else {
-                cell!.detailTextLabel!.textColor = UIColor.grayColor()
+                cell!.detailTextLabel!.textColor = UIColor.gray
             }
             break
         default:
@@ -122,26 +122,26 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         return cell!
     }
 
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        switch (indexPath.section) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch ((indexPath as NSIndexPath).section) {
         case 0:
-            if (core[indexPath.row][1].hasPrefix("_http._tcp.")) {
+            if (core[(indexPath as NSIndexPath).row][1].hasPrefix("_http._tcp.")) {
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 NSLog("stringurl is \(stringUrl)")
-                if let url = NSURL(string: stringUrl) {
-                    UIApplication.sharedApplication().openURL(url)
+                if let url = URL(string: stringUrl) {
+                    UIApplication.shared.openURL(url)
                 }
             }
             break
         case 1:
-            if let url = NSURL(string: txtData[indexPath.row][1]) {
-                UIApplication.sharedApplication().openURL(url)
+            if let url = URL(string: txtData[(indexPath as NSIndexPath).row][1]) {
+                UIApplication.shared.openURL(url)
             }
             break
         default:
             break
         }
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
 
     }
 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class StateViewController: UIViewController {
+open class StateViewController: UIViewController {
 
     public enum StatefulViewControllerState: String {
         case Content = "content"
@@ -18,11 +18,11 @@ public class StateViewController: UIViewController {
     }
 
 
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
     }
 
-    override public func didReceiveMemoryWarning() {
+    override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
