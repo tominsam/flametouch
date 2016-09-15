@@ -26,7 +26,11 @@ class ServicesViewController: StateViewController, UITableViewDataSource, UITabl
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .plain, target: self, action: #selector(aboutPressed))
 
-        NotificationCenter.default.addObserver(self, selector: #selector(servicesChanged), name: NSNotification.Name(rawValue: "ServicesChanged"), object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(servicesChanged),
+            name: NSNotification.Name(rawValue: "ServicesChanged"),
+            object: nil)
         registerForPreviewing(with: self, sourceView: self.table)
 	}
 

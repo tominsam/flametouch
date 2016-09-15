@@ -12,20 +12,26 @@ import PureLayout
 class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
-    let serviceGroup : ServiceGroup
+    var serviceGroup : ServiceGroup
 
     required init(serviceGroup : ServiceGroup) {
         self.serviceGroup = serviceGroup
         super.init(nibName: nil, bundle: nil)
         self.title = serviceGroup.title
-        NSLog("serviceGroup is %@", serviceGroup)
+        //NSLog("serviceGroup is %@", serviceGroup)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(servicesChanged),
+            name: NSNotification.Name(rawValue: "ServicesChanged"),
+            object: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
         self.serviceGroup = ServiceGroup(service: NetService(), address: "")
         super.init(coder: aDecoder)
+        precondition(false) // don't want this happening
     }
-
 
     override func loadView() {
         self.view = UIView(frame: CGRect.null)
@@ -38,11 +44,21 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
         self.view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(servicesChanged), name: NSNotification.Name(rawValue: "ServicesChanged"), object: nil)
         registerForPreviewing(with: self, sourceView: self.table)
     }
 
+    func browser() -> ServiceBrowser {
+        return AppDelegate.instance().browser
+    }
+
     func servicesChanged() {
+        if let group = browser().serviceGroupFor(serviceGroup.address) {
+            serviceGroup = group
+        } else {
+            // this service is gone
+            _ = navigationController?.popViewController(animated: true)
+        }
+        self.title = serviceGroup.title
         table.reloadData()
     }
 

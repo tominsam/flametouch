@@ -37,7 +37,7 @@ class ServiceGroup: NSObject {
 
     var title : String {
         get {
-            return services.first!.name
+            return ServiceName.nameForServiceGroup(self)
         }
     }
 

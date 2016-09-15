@@ -167,19 +167,28 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
             }
         }
         serviceGroups = groups.values.sorted {
-            $0.title.lowercased().compare($1.title.lowercased()) == ComparisonResult.orderedAscending
+            $0.address.lowercased().compare($1.address.lowercased()) == ComparisonResult.orderedAscending
         }
 
 
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
     }
 
-    func groupFor(_ address : String) -> Set<String>? {
+    private func groupFor(_ address : String) -> Set<String>? {
 	    for group in grouping {
             if group.contains(address) {
                 return group
             }
     	}
+        return nil
+    }
+    
+    func serviceGroupFor(_ address : String) -> ServiceGroup? {
+        for group in serviceGroups {
+            if group.addresses.contains(address) {
+                return group
+            }
+        }
         return nil
     }
 
