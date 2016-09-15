@@ -29,14 +29,10 @@ class ServiceGroup: NSObject {
 
     func addAddress(_ address : String) {
         if addresses.contains(address) {
-            NSLog("already got %@ in %@", address, addresses)
             return
         }
         addresses.append(address)
-        addresses.sort(by: { (a : String, b : String) -> Bool in
-            return a.characters.count < b.characters.count
-        })
-        NSLog("addresses is \(addresses)")
+        addresses.sort { $0.characters.count < $1.characters.count }
     }
 
     var title : String {

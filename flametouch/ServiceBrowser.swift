@@ -131,16 +131,15 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     func broadcast() {
         // alphabetize
-        services.sort(by: { (a, b) -> Bool in
-            return a.type.lowercased().compare(b.type.lowercased()) == ComparisonResult.orderedAscending
-        })
+        services.sort {
+            return $0.type.lowercased().compare($1.type.lowercased()) == ComparisonResult.orderedAscending
+        }
 
         grouping.removeAll()
         for service in services {
-            let addresses = service.addresses!.flatMap({getIFAddress($0)})
-            let group = groupForAddresses(addresses)
-            if var hasGroup = group {
-                _ = addresses.map({hasGroup.insert($0)})
+            let addresses = service.addresses!.flatMap { getIFAddress($0) }
+            if var existingGroup = groupForAddresses(addresses) {
+                existingGroup.formUnion(Set(addresses))
             } else {
                 grouping.append(Set(addresses))
             }
@@ -148,29 +147,28 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
         var groups = [String: ServiceGroup]()
         for service in services {
-            let addresses = service.addresses!.flatMap({getIFAddress($0)})
+            let addresses = service.addresses!.flatMap { getIFAddress($0) }
             if addresses.isEmpty {
                 continue
             }
-            let group = groupForAddresses(addresses)
-            if let hasGroup = group {
+            if let group = groupForAddresses(addresses) {
                 // shortest address - picks ipv4 first
-                let ip = hasGroup.sorted(by: {$0.characters.count > $1.characters.count}).first!
+                let ip = group.sorted {$0.characters.count < $1.characters.count}.first!
                 if let serviceGroup = groups[ip] {
                     serviceGroup.addService(service)
-                    for address in hasGroup {
+                    for address in group {
                         serviceGroup.addAddress(address)
                     }
                 } else {
                     groups[ip] = ServiceGroup(service: service, address: ip)
                 }
             } else {
-             	assert(false, "Can't happen")
+             	precondition(false, "Can't happen")
             }
         }
-        serviceGroups = groups.values.sorted(by: { (a, b) -> Bool in
-            a.title.lowercased().compare(b.title.lowercased()) == ComparisonResult.orderedAscending
-        })
+        serviceGroups = groups.values.sorted {
+            $0.title.lowercased().compare($1.title.lowercased()) == ComparisonResult.orderedAscending
+        }
 
 
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)

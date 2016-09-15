@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.rootViewController = navigationController;
         self.window!.makeKeyAndVisible()
         
-        assert(false);
+        //precondition(false)
         
         return true;
     }
