@@ -14,12 +14,12 @@
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
 		72A73F2D1C82AF3D00E6B21E /* about.html in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F2C1C82AF3D00E6B21E /* about.html */; };
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
-		72A73F3A1C82B5B700E6B21E /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
 		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
 		72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */; };
 		72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */; };
+		72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72E29B631BCB47A300D28289 /* StateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E29B621BCB47A300D28289 /* StateViewController.swift */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
 		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
@@ -221,9 +221,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */,
 				72A73F331C82B1E400E6B21E /* about.css in Resources */,
 				72A73F2D1C82AF3D00E6B21E /* about.html in Resources */,
-				72A73F3A1C82B5B700E6B21E /* Icon_160.png in Resources */,
 				7217671D1C824E1E0089EC41 /* HostCell.xib in Resources */,
 				72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */,
 				72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */,
