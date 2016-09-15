@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,9 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     static func instance() -> AppDelegate {
         return (UIApplication.shared.delegate as! AppDelegate)
     }
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: Any]?) -> Bool {
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         NSLog("started!")
+
+        FIRApp.configure()
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.backgroundColor = UIColor.white
@@ -37,6 +40,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window!.rootViewController = navigationController;
         self.window!.makeKeyAndVisible()
+        
+        assert(false);
+        
         return true;
     }
 

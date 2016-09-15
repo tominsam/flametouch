@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>647799077283-ijmnpbukgemh49shqft01tfg957sgnnq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.647799077283-ijmnpbukgemh49shqft01tfg957sgnnq</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC9wvCE4O_IJ1MYwiSYJDYWWkpF6J9N_j0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>647799077283</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.jerakeen.flametouch</string>
+	<key>PROJECT_ID</key>
+	<string>flame-967af</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flame-967af.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:647799077283:ios:e3db2af208b4c80a</string>
+	<key>DATABASE_URL</key>
+	<string>https://flame-967af.firebaseio.com</string>
+</dict>
+</plist>
