@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ServicesViewController.swift
 //  flametouch
 //
 //  Created by tominsam on 10/10/15.
@@ -11,34 +11,40 @@ import PureLayout
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
-    let table = UITableView(frame: CGRect.zero, style: .grouped)
-
-    override func loadView() {
-        self.view = UIView(frame: CGRect.null)
-
-        table.dataSource = self
-        table.delegate = self
-
-        self.view.addSubview(table)
-        table.autoPinEdgesToSuperviewEdges()
-        table.estimatedRowHeight = 100
-        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .plain, target: self, action: #selector(aboutPressed))
+    @IBOutlet var table : UITableView?
+    @IBOutlet var networkOverlay : UIView?
+    
+    init() {
+        super.init(nibName: "ServicesViewController", bundle: nil)
 
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(servicesChanged),
             name: NSNotification.Name(rawValue: "ServicesChanged"),
             object: nil)
-        registerForPreviewing(with: self, sourceView: self.table)
-	}
-
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        precondition(false) // don't want this happening
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        NSLog("loaded")
 
+        table!.estimatedRowHeight = 100
+        table!.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
+        
+        registerForPreviewing(with: self, sourceView: self.table!)
+        
+        if WirelessDetect.hasWireless() {
+            NSLog("i have wireless")
+            networkOverlay?.isHidden = true
+        } else {
+            NSLog("no wireless")
+            networkOverlay?.isHidden = false
+        }
+        networkOverlay?.isHidden = true
     }
 
     func aboutPressed() {
@@ -47,7 +53,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func servicesChanged() {
-        table.reloadData()
+        table?.reloadData()
     }
 
     func browser() -> ServiceBrowser {
@@ -81,7 +87,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = table.indexPathForRow(at: location) {
+        if let indexPath = table!.indexPathForRow(at: location) {
             let vc = HostViewController(serviceGroup: getRow(indexPath))
             return vc
         }

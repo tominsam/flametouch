@@ -20,6 +20,9 @@
 		72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */; };
 		72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */; };
 		72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
+		72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E0BF261D8B90A900070829 /* WirelessDetect.swift */; };
+		72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E0BF281D8B90F900070829 /* SystemConfiguration.framework */; };
+		72E0BF2F1D8B92BC00070829 /* ServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
 		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
 		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
@@ -42,6 +45,9 @@
 		72D24BB61C76BC110005FC8B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceName.swift; sourceTree = "<group>"; };
+		72E0BF261D8B90A900070829 /* WirelessDetect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WirelessDetect.swift; sourceTree = "<group>"; };
+		72E0BF281D8B90F900070829 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ServicesViewController.xib; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* Flame Debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Flame Debug.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
@@ -57,6 +63,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */,
 				8AF051AE68A12D36F62E0DE5 /* Pods_Flame.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,6 +111,25 @@
 			name = Cells;
 			sourceTree = "<group>";
 		};
+		72E0BF2A1D8B922A00070829 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
+				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
+				72E0BF261D8B90A900070829 /* WirelessDetect.swift */,
+			);
+			name = Utils;
+			sourceTree = "<group>";
+		};
+		72E0BF2B1D8B924200070829 /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
+				72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */,
+			);
+			name = Interface;
+			sourceTree = "<group>";
+		};
 		72EC68CE1BC9E50600AC2692 = {
 			isa = PBXGroup;
 			children = (
@@ -128,11 +154,10 @@
 				72A73F381C82B26A00E6B21E /* Cells */,
 				72A73F371C82B25600E6B21E /* Services */,
 				725921AC1BF2DF7C0094EFC8 /* View Controllers */,
+				72E0BF2A1D8B922A00070829 /* Utils */,
 				72A73F341C82B23C00E6B21E /* about */,
-				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
-				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
-				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
+				72E0BF2B1D8B924200070829 /* Interface */,
 				72EC68E61BC9E50600AC2692 /* Info.plist */,
 				72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */,
 			);
@@ -151,6 +176,7 @@
 		E7B9FF38232F0B693ABA57FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				72E0BF281D8B90F900070829 /* SystemConfiguration.framework */,
 				C0EAD74298E630210A210B74 /* Pods_Flame.framework */,
 			);
 			name = Frameworks;
@@ -218,6 +244,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72E0BF2F1D8B92BC00070829 /* ServicesViewController.xib in Resources */,
 				72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */,
 				72A73F331C82B1E400E6B21E /* about.css in Resources */,
 				72A73F2D1C82AF3D00E6B21E /* about.html in Resources */,
@@ -287,6 +314,7 @@
 				72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */,
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
 				721767211C828C950089EC41 /* ServiceGroup.swift in Sources */,
+				72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */,
 				72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */,
 				72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
