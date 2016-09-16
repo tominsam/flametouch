@@ -183,10 +183,12 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         return nil
     }
     
-    func serviceGroupFor(_ address : String) -> ServiceGroup? {
-        for group in serviceGroups {
-            if group.addresses.contains(address) {
-                return group
+    func serviceGroupFor(_ addresses : [String]) -> ServiceGroup? {
+        for address in addresses {
+            for group in serviceGroups {
+                if group.addresses.contains(address) {
+                    return group
+                }
             }
         }
         return nil

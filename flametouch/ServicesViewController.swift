@@ -9,7 +9,7 @@
 import UIKit
 import PureLayout
 
-class ServicesViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
+class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
 

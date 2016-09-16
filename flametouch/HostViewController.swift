@@ -9,15 +9,17 @@
 import UIKit
 import PureLayout
 
-class HostViewController: StateViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
+class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
-    var serviceGroup : ServiceGroup
+    var serviceGroup : ServiceGroup?
+    var addresses : [String]
 
     required init(serviceGroup : ServiceGroup) {
         self.serviceGroup = serviceGroup
+        addresses = serviceGroup.addresses
         super.init(nibName: nil, bundle: nil)
-        self.title = serviceGroup.title
+        title = serviceGroup.title
         //NSLog("serviceGroup is %@", serviceGroup)
 
         NotificationCenter.default.addObserver(
@@ -28,23 +30,24 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.serviceGroup = ServiceGroup(service: NetService(), address: "")
+        serviceGroup = ServiceGroup(service: NetService(), address: "")
+        addresses = []
         super.init(coder: aDecoder)
         precondition(false) // don't want this happening
     }
 
     override func loadView() {
-        self.view = UIView(frame: CGRect.null)
+        view = UIView(frame: CGRect.null)
 
         table.dataSource = self
         table.delegate = self
         table.estimatedRowHeight = 100
         table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
 
-        self.view.addSubview(table)
+        view.addSubview(table)
         table.autoPinEdgesToSuperviewEdges()
 
-        registerForPreviewing(with: self, sourceView: self.table)
+        registerForPreviewing(with: self, sourceView: table)
     }
 
     func browser() -> ServiceBrowser {
@@ -52,13 +55,14 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     }
 
     func servicesChanged() {
-        if let group = browser().serviceGroupFor(serviceGroup.address) {
+        if let group = browser().serviceGroupFor(addresses) {
             serviceGroup = group
+            addresses = group.addresses
         } else {
-            // this service is gone
-            _ = navigationController?.popViewController(animated: true)
+            // this service is gone. Keep the addresses in case it comes back.
+            serviceGroup = nil
         }
-        self.title = serviceGroup.title
+        title = serviceGroup?.title
         table.reloadData()
     }
 
@@ -68,17 +72,20 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return serviceGroup.services.count
+        if let group = serviceGroup {
+            return group.services.count
+        }
+        return 0;
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return serviceGroup.address
+        return addresses.isEmpty ? "" : addresses.first
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HostCell") as! HostCell?
 
-        let service = serviceGroup.services[(indexPath as NSIndexPath).row]
+        let service = serviceGroup!.services[(indexPath as NSIndexPath).row]
         cell!.title!.text = service.name
         cell!.subTitle!.text = service.type
         return cell!
@@ -86,7 +93,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let service = serviceGroup.services[(indexPath as NSIndexPath).row]
+        let service = serviceGroup!.services[(indexPath as NSIndexPath).row]
         let serviceController = DetailViewController(service: service)
         navigationController?.pushViewController(serviceController, animated: true)
         
@@ -94,7 +101,7 @@ class HostViewController: StateViewController, UITableViewDataSource, UITableVie
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
         if let indexPath = table.indexPathForRow(at: location) {
-            let service = serviceGroup.services[(indexPath as NSIndexPath).row]
+            let service = serviceGroup!.services[(indexPath as NSIndexPath).row]
             let serviceController = DetailViewController(service: service)
             return serviceController
         }
