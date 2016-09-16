@@ -16,7 +16,7 @@ class ServiceName {
         "_airplay._tcp.",
         "_airport._tcp.",
         "_sleep-proxy._udp.",
-        "_ssh._udp.",
+        "_ssh._tcp.",
     ]
     
     static func nameForServiceGroup(_ group : ServiceGroup) -> String {
