@@ -57,7 +57,9 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
         subtitleView.text = "Connect to a WiFi network to see local services.".widont()
 
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .plain, target: self, action: #selector(aboutPressed))
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Export"), style: .plain, target: self, action: #selector(exportData))
         
         registerForPreviewing(with: self, sourceView: self.table)
         
@@ -74,10 +76,65 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func aboutPressed() {
-//        navigationController?.presentViewController(AboutViewController(), animated: true, completion: nil)
         navigationController?.pushViewController(AboutViewController(), animated: true)
     }
+    
+    func exportData() {
 
+        var groupsJson : [Any] = []
+        for serviceGroup in browser().serviceGroups {
+            var groupJson : [String:Any] = [:]
+            groupJson["name"] = serviceGroup.title
+            var addressesJson : [String] = []
+            for address in serviceGroup.addresses {
+                addressesJson.append(address)
+            }
+            groupJson["addresses"] = addressesJson
+            
+            var servicesJson : [Any] = []
+            for service in serviceGroup.services {
+                var serviceJson : [String: Any] = [:]
+                serviceJson["name"] = service.name
+                serviceJson["port"] = service.port
+                serviceJson["type"] = service.type
+                var addressesJson : [String] = []
+                let addresses = service.addresses!.flatMap { getIFAddress($0) }
+                for address in addresses {
+                    addressesJson.append(address)
+                }
+                serviceJson["addresses"] = addressesJson
+                for (key, value) in NetService.dictionary(fromTXTRecord: service.txtRecordData()!) {
+                    serviceJson[key] = NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String
+                }
+
+                servicesJson.append(serviceJson)
+            }
+            groupJson["services"] = servicesJson
+            
+            groupsJson.append(groupJson)
+        }
+
+        let file = "services_export.json"
+        
+        if let dir = NSSearchPathForDirectoriesInDomains(
+                FileManager.SearchPathDirectory.documentDirectory,
+                FileManager.SearchPathDomainMask.allDomainsMask,
+                true
+            ).first,
+            let path = NSURL(fileURLWithPath: dir).appendingPathComponent(file)
+        {
+            NSLog("path is \(path.path)")
+            let output = OutputStream(toFileAtPath: path.path, append: false)!
+            output.open()
+            JSONSerialization.writeJSONObject(groupsJson, to: output, options: JSONSerialization.WritingOptions.prettyPrinted, error: nil)
+            output.close()
+
+            let controller = UIActivityViewController(activityItems: [path], applicationActivities: nil)
+            present(controller, animated: true, completion: nil)
+        }
+
+    }
+    
     func servicesChanged() {
         table.reloadData()
     }

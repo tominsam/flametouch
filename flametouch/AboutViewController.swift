@@ -11,11 +11,19 @@ import UIKit
 class AboutViewController: UIViewController {
 
     override func loadView() {
-        self.title = "About"
-        self.view = UIView(frame: CGRect.null)
+        title = "About"
+        view = UIView(frame: CGRect.null)
+        view.backgroundColor = UIColor.white
+        perform(#selector(initWebview), with: nil, afterDelay: 0)
+    }
+    
+    func initWebview() {
         let webView = UIWebView()
-        self.view.addSubview(webView)
+        view.addSubview(webView)
         webView.autoPinEdgesToSuperviewEdges()
+        webView.backgroundColor = UIColor.white
+        view.backgroundColor = nil
+        webView.scrollView.contentInset.top = 40
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
         webView.loadRequest(URLRequest(url: localfilePath!))
     }
