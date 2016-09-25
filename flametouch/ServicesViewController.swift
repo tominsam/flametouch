@@ -129,7 +129,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             JSONSerialization.writeJSONObject(groupsJson, to: output, options: JSONSerialization.WritingOptions.prettyPrinted, error: nil)
             output.close()
 
+            // show system share dialog for this file
             let controller = UIActivityViewController(activityItems: [path], applicationActivities: nil)
+            // on iPad, we attach the share sheet to the button that activated it
+            controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
             present(controller, animated: true, completion: nil)
         }
 
