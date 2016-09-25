@@ -3,7 +3,3 @@ Flame is a browser for Bonjour (also known as ZeroConf) network services. It lis
 If an application on your iPhone or iPod touch can handle any of the advertised services, a command to open it right away is provided.
 
 https://movieos.org/code/flame-iphone/
-
-## TODO list
-
-* offer the ability to download a snapshot of displayed data
