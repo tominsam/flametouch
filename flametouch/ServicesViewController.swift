@@ -11,11 +11,60 @@ import PureLayout
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
-    @IBOutlet var table : UITableView?
-    @IBOutlet var networkOverlay : UIView?
+    let table = UITableView(frame: CGRect.zero, style: .grouped)
+    let networkOverlay = UIView(frame: CGRect.zero)
+    let titleView = UILabel()
+    let subtitleView = UILabel()
     
-    init() {
-        super.init(nibName: "ServicesViewController", bundle: nil)
+    let wirelessDetect = WirelessDetect()
+    
+    override func loadView() {
+        self.view = UIView(frame: CGRect.null)
+        self.view.addSubview(table)
+        self.view.addSubview(networkOverlay)
+        
+        table.dataSource = self
+        table.delegate = self
+        
+        table.autoPinEdgesToSuperviewEdges()
+        table.estimatedRowHeight = 100
+        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
+        table.estimatedRowHeight = 100
+        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
+
+        networkOverlay.autoPinEdgesToSuperviewEdges()
+        networkOverlay.backgroundColor = UIColor.white
+        networkOverlay.addSubview(titleView)
+        let guide = networkOverlay.readableContentGuide
+
+        titleView.translatesAutoresizingMaskIntoConstraints = false
+        titleView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 180).isActive = true
+        titleView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
+        titleView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
+
+        titleView.font = UIFont.preferredFont(forTextStyle: .title1)
+        titleView.textAlignment = .center
+        titleView.numberOfLines = 0
+        titleView.text = "No wireless network found".widont()
+
+        networkOverlay.addSubview(subtitleView)
+        subtitleView.translatesAutoresizingMaskIntoConstraints = false
+        subtitleView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 40).isActive = true
+        subtitleView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
+        subtitleView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
+        subtitleView.textAlignment = .center
+        subtitleView.numberOfLines = 0
+        subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
+        subtitleView.text = "Connect to a WiFi network to see local services.".widont()
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "About", style: .plain, target: self, action: #selector(aboutPressed))
+        
+        registerForPreviewing(with: self, sourceView: self.table)
+        
+        networkOverlay.isHidden = wirelessDetect.hasWireless()
+        wirelessDetect.callback = { (wifi:Bool) -> Void in
+            self.networkOverlay.isHidden = wifi
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -24,36 +73,13 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             object: nil)
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        precondition(false) // don't want this happening
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        table!.estimatedRowHeight = 100
-        table!.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
-        
-        registerForPreviewing(with: self, sourceView: self.table!)
-        
-        if WirelessDetect.hasWireless() {
-            NSLog("i have wireless")
-            networkOverlay?.isHidden = true
-        } else {
-            NSLog("no wireless")
-            networkOverlay?.isHidden = false
-        }
-        networkOverlay?.isHidden = true
-    }
-
     func aboutPressed() {
 //        navigationController?.presentViewController(AboutViewController(), animated: true, completion: nil)
         navigationController?.pushViewController(AboutViewController(), animated: true)
     }
 
     func servicesChanged() {
-        table?.reloadData()
+        table.reloadData()
     }
 
     func browser() -> ServiceBrowser {
@@ -87,7 +113,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = table!.indexPathForRow(at: location) {
+        if let indexPath = table.indexPathForRow(at: location) {
             let vc = HostViewController(serviceGroup: getRow(indexPath))
             return vc
         }

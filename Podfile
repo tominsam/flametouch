@@ -5,5 +5,6 @@ target 'Flame' do
     pod 'PureLayout', '3.0.1'
     pod 'Firebase'
     pod 'Firebase/Crash'
+    pod 'ReachabilitySwift', '~> 3'
 end
 

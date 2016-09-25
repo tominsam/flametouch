@@ -16,13 +16,13 @@
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
+		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
 		72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */; };
 		72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */; };
 		72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E0BF261D8B90A900070829 /* WirelessDetect.swift */; };
 		72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E0BF281D8B90F900070829 /* SystemConfiguration.framework */; };
-		72E0BF2F1D8B92BC00070829 /* ServicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
 		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
 		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
@@ -42,12 +42,12 @@
 		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
+		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		72D24BB61C76BC110005FC8B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceName.swift; sourceTree = "<group>"; };
 		72E0BF261D8B90A900070829 /* WirelessDetect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WirelessDetect.swift; sourceTree = "<group>"; };
 		72E0BF281D8B90F900070829 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ServicesViewController.xib; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* Flame Debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Flame Debug.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
@@ -117,6 +117,7 @@
 				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
 				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72E0BF261D8B90A900070829 /* WirelessDetect.swift */,
+				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -125,7 +126,6 @@
 			isa = PBXGroup;
 			children = (
 				72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */,
-				72E0BF2E1D8B92BC00070829 /* ServicesViewController.xib */,
 			);
 			name = Interface;
 			sourceTree = "<group>";
@@ -244,7 +244,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				72E0BF2F1D8B92BC00070829 /* ServicesViewController.xib in Resources */,
 				72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */,
 				72A73F331C82B1E400E6B21E /* about.css in Resources */,
 				72A73F2D1C82AF3D00E6B21E /* about.html in Resources */,
@@ -310,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */,
 				7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */,
 				72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */,
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
@@ -362,6 +362,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -372,8 +373,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Debug;
@@ -382,6 +384,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 58100A518F50CB90F9F316EA /* Pods-Flame.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
@@ -444,6 +447,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 99DE9258DF7E6CC02D032712 /* Pods-Flame.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
