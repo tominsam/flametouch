@@ -47,21 +47,21 @@ class WirelessDetect {
         
         guard let unwrappedCFArrayInterfaces = CNCopySupportedInterfaces() else {
             print("this must be a simulator, no interfaces found")
-            return false
+            return true
         }
         guard let swiftInterfaces = (unwrappedCFArrayInterfaces as NSArray) as? [NSString] else {
             print("System error: did not come back as array of Strings")
-            return false
+            return true
         }
         for interface in swiftInterfaces {
             print("Looking up SSID info for \(interface)") // en0
             guard let unwrappedCFDictionaryForInterface = CNCopyCurrentNetworkInfo(interface) else {
                 print("System error: \(interface) has no information")
-                return false
+                return true
             }
             guard let SSIDDict = (unwrappedCFDictionaryForInterface as NSDictionary) as? [String: AnyObject] else {
                 print("System error: interface information is not a string-keyed dictionary")
-                return false
+                return true
             }
             for d in SSIDDict.keys {
                 print("\(d): \(SSIDDict[d]!)")

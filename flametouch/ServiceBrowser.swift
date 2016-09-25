@@ -160,7 +160,11 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
                         serviceGroup.addAddress(address)
                     }
                 } else {
-                    groups[ip] = ServiceGroup(service: service, address: ip)
+                    let serviceGroup = ServiceGroup(service: service, address: ip)
+                    for address in group {
+                        serviceGroup.addAddress(address)
+                    }
+                    groups[ip] = serviceGroup
                 }
             } else {
              	precondition(false, "Can't happen")
