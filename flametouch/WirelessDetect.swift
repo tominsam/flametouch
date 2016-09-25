@@ -67,15 +67,6 @@ class WirelessDetect {
                 print("\(d): \(SSIDDict[d]!)")
             }
         }
-/*
-        let callbackFunction : (SCNetworkReachability, SCNetworkReachabilityFlags, UnsafeMutableRawPointer?) -> Void {
-            NSLog("Network changed")
-        }
-        let cfptr = CFunctionPointer<(SCNetworkReachability!, SCNetworkReachabilityFlags, UnsafeMutableRawPointer) -> Void>(cop)
-
-        let reachability = SCNetworkReachabilityCreateWithName(kCFAllocatorDefault, "www.apple.com")
-        SCNetworkReachabilitySetCallback(reachability!, callbackFunction, nil)
-*/
         return true
     }
 }

@@ -95,10 +95,10 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             cell = UITableViewCell(style: .value1, reuseIdentifier: "row")
         }
 
-        switch ((indexPath as NSIndexPath).section) {
+        switch (indexPath.section) {
         case 0:
-            cell!.textLabel!.text = core[(indexPath as NSIndexPath).row][0]
-            let value = core[(indexPath as NSIndexPath).row][1]
+            cell!.textLabel!.text = core[indexPath.row][0]
+            let value = core[indexPath.row][1]
             cell!.detailTextLabel!.text = value
             if (value.hasPrefix("_http._tcp.")) {
                 cell!.detailTextLabel!.textColor = self.view.window?.tintColor
@@ -107,8 +107,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             }
             break
         case 1:
-            let value = txtData[(indexPath as NSIndexPath).row][1]
-            cell!.textLabel!.text = txtData[(indexPath as NSIndexPath).row][0]
+            let value = txtData[indexPath.row][1]
+            cell!.textLabel!.text = txtData[indexPath.row][0]
             cell!.detailTextLabel!.text = value
             if (value.hasPrefix("http://") || value.hasPrefix("https://")) {
                 cell!.detailTextLabel!.textColor = self.view.window?.tintColor
@@ -123,9 +123,10 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch ((indexPath as NSIndexPath).section) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        switch (indexPath.section) {
         case 0:
-            if (core[(indexPath as NSIndexPath).row][1].hasPrefix("_http._tcp.")) {
+            if (core[indexPath.row][1].hasPrefix("_http._tcp.")) {
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 NSLog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
@@ -134,15 +135,29 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             }
             break
         case 1:
-            if let url = URL(string: txtData[(indexPath as NSIndexPath).row][1]) {
+            if let url = URL(string: txtData[indexPath.row][1]) {
                 UIApplication.shared.openURL(url)
             }
             break
         default:
             break
         }
-        tableView.deselectRow(at: indexPath, animated: true)
+    }
 
+    func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+        return action == #selector(UIResponderStandardEditActions.copy)
+    }
+    
+    func tableView(_ tableView: UITableView, performAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) {
+        if (indexPath.section == 0) {
+            UIPasteboard.general.string = core[indexPath.row][1]
+        } else {
+            UIPasteboard.general.string = txtData[indexPath.row][1]
+        }
     }
 
 }

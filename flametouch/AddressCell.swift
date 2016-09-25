@@ -20,4 +20,5 @@ class AddressCell : UITableViewCell {
         // don't ever want this to be called.
         precondition(false)
     }
+    
 }

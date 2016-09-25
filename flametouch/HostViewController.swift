@@ -114,11 +114,29 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if (indexPath.section == 0) {
-            // TODO
+            
         } else {
-            let service = serviceGroup!.services[(indexPath as NSIndexPath).row]
+            let service = serviceGroup!.services[indexPath.row]
             let serviceController = DetailViewController(service: service)
             navigationController?.pushViewController(serviceController, animated: true)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
+        return action == #selector(UIResponderStandardEditActions.copy)
+    }
+    
+    func tableView(_ tableView: UITableView, performAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) {
+        if (indexPath.section == 0) {
+            UIPasteboard.general.string = addresses[indexPath.row]
+        } else {
+            if let hasGroup = serviceGroup {
+                UIPasteboard.general.string = hasGroup.services[indexPath.row].name
+            }
         }
     }
     
@@ -127,7 +145,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             if (indexPath.section == 0) {
                 return nil
             } else {
-                let service = serviceGroup!.services[(indexPath as NSIndexPath).row]
+                let service = serviceGroup!.services[indexPath.row]
                 let serviceController = DetailViewController(service: service)
                 return serviceController
             }
