@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import SafariServices
 
-class AboutViewController: UIViewController {
+class AboutViewController: UIViewController, UIWebViewDelegate {
 
     override func loadView() {
         title = "About"
         view = UIView(frame: CGRect.null)
         view.backgroundColor = UIColor.white
         perform(#selector(initWebview), with: nil, afterDelay: 0)
+        automaticallyAdjustsScrollViewInsets = false
     }
     
     func initWebview() {
@@ -24,7 +26,17 @@ class AboutViewController: UIViewController {
         webView.backgroundColor = UIColor.white
         view.backgroundColor = nil
         webView.scrollView.contentInset.top = 40
+        webView.delegate = self
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
         webView.loadRequest(URLRequest(url: localfilePath!))
+    }
+    
+    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        if navigationType == .linkClicked {
+            let controller = SFSafariViewController(url: request.url!)
+            navigationController?.pushViewController(controller, animated: true)
+            return false
+        }
+        return true
     }
 }
