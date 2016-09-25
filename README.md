@@ -4,8 +4,6 @@ If an application on your iPhone or iPod touch can handle any of the advertised 
 
 https://movieos.org/code/flame-iphone/
 
-
 ## TODO list
 
-* detect lack of wifi, show useful error message
 * offer the ability to download a snapshot of displayed data

@@ -38,6 +38,7 @@
 		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
 		721767221C8296680089EC41 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		723F91211D974EFD002B4069 /* AddressCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
+		723F91231D975D90002B4069 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		72A73F2C1C82AF3D00E6B21E /* about.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = about.html; sourceTree = "<group>"; };
 		72A73F321C82B1E400E6B21E /* about.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = about.css; sourceTree = "<group>"; };
@@ -163,6 +164,7 @@
 				72E0BF2B1D8B924200070829 /* Interface */,
 				72EC68E61BC9E50600AC2692 /* Info.plist */,
 				72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */,
+				723F91231D975D90002B4069 /* README.md */,
 			);
 			path = flametouch;
 			sourceTree = "<group>";
