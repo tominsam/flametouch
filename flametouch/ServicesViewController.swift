@@ -103,8 +103,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
                     addressesJson.append(address)
                 }
                 serviceJson["addresses"] = addressesJson
-                for (key, value) in NetService.dictionary(fromTXTRecord: service.txtRecordData()!) {
-                    serviceJson[key] = NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String
+                if txtRecord = service.txtRecordData() {
+                    for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
+                        serviceJson[key] = NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String
+                    }
                 }
 
                 servicesJson.append(serviceJson)

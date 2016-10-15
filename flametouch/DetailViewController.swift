@@ -27,8 +27,10 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
         self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
 
-        for (key, value) in NetService.dictionary(fromTXTRecord: service.txtRecordData()!) {
-            self.txtData.append([key, NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String])
+        if var txtRecord = service.txtRecordData() {
+            for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
+                self.txtData.append([key, NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String])
+            }
         }
     }
 
