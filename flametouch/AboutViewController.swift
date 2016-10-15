@@ -22,9 +22,17 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
     func initWebview() {
         let webView = UIWebView()
         view.addSubview(webView)
-        webView.autoPinEdgesToSuperviewEdges()
-        webView.backgroundColor = UIColor.white
-        view.backgroundColor = nil
+        view.backgroundColor = UIColor.white
+        view.isOpaque = true
+
+        // limit webview width so lines aren't too long
+        let guide = view.readableContentGuide
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
+        webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
+        webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
+        webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor).isActive = true
+
         webView.scrollView.contentInset.top = 40
         webView.delegate = self
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
