@@ -8,10 +8,13 @@
 
 import UIKit
 import SafariServices
+import Firebase
 
 class AboutViewController: UIViewController, UIWebViewDelegate {
 
     override func loadView() {
+        FIRAnalytics.logEvent(withName: "view_about", parameters: nil)
+
         title = "About"
         view = UIView(frame: CGRect.null)
         view.backgroundColor = UIColor.white

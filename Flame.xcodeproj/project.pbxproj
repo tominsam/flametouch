@@ -203,6 +203,8 @@
 				72EC68D51BC9E50600AC2692 /* Resources */,
 				4CA2682F9C11CFFB04004C61 /* [CP] Embed Pods Frameworks */,
 				4BF77C957AA2EE3D509D30A0 /* [CP] Copy Pods Resources */,
+				72CD665A1DB30DE2002B21A0 /* Upload symbols */,
+				72CD66591DB30DD6002B21A0 /* Bump build number */,
 			);
 			buildRules = (
 			);
@@ -309,6 +311,34 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Flame/Pods-Flame-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		72CD66591DB30DD6002B21A0 /* Bump build number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bump build number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/bin/sh -ex";
+			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n";
+		};
+		72CD665A1DB30DE2002B21A0 /* Upload symbols */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload symbols";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/bin/sh -ex";
+			shellScript = "# Replace this with the GOOGLE_APP_ID from your GoogleService-Info.plist file\nGOOGLE_APP_ID=1:647799077283:ios:e3db2af208b4c80a\n\"${PODS_ROOT}\"/FirebaseCrash/upload-sym \"${PROJECT_DIR}/service_account.json\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

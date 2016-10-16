@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -36,6 +37,10 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     override func loadView() {
+        FIRAnalytics.logEvent(withName: "view_host", parameters: [
+            "service_count": String(serviceGroup?.services.count ?? 0) as NSString
+        ])
+
         view = UIView(frame: CGRect.null)
 
         table.dataSource = self

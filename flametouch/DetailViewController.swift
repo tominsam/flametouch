@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -40,6 +41,10 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     override func loadView() {
+        FIRAnalytics.logEvent(withName: "view_detail", parameters: [
+            "record_count": String(txtData.count) as NSString
+        ])
+
         self.view = UIView(frame: CGRect.null)
 
         table.dataSource = self

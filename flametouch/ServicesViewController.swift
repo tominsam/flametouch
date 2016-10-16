@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -18,6 +19,8 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     let wirelessDetect = WirelessDetect()
     
     override func loadView() {
+        FIRAnalytics.logEvent(withName: "view_services", parameters: nil)
+        
         self.view = UIView(frame: CGRect.null)
         self.view.addSubview(table)
         self.view.addSubview(networkOverlay)
@@ -81,7 +84,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     func exportData() {
 
         var groupsJson : [Any] = []
+        var host_count = 0
+        var service_count = 0
         for serviceGroup in browser().serviceGroups {
+            host_count += 1
             var groupJson : [String:Any] = [:]
             groupJson["name"] = serviceGroup.title
             var addressesJson : [String] = []
@@ -92,6 +98,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             
             var servicesJson : [Any] = []
             for service in serviceGroup.services {
+                service_count += 1
                 var serviceJson : [String: Any] = [:]
                 serviceJson["name"] = service.name
                 serviceJson["port"] = service.port
@@ -115,6 +122,12 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             groupsJson.append(groupJson)
         }
 
+        FIRAnalytics.logEvent(withName: "export", parameters: [
+            "host_count": String(host_count) as NSString,
+            "service_count": String(service_count) as NSString,
+        ])
+
+        
         let file = "services_export.json"
         
         if let dir = NSSearchPathForDirectoriesInDomains(
