@@ -23,15 +23,10 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
         let webView = UIWebView()
         view.addSubview(webView)
         view.backgroundColor = UIColor.white
-        view.isOpaque = true
+        webView.backgroundColor = UIColor.white
 
         // limit webview width so lines aren't too long
-        let guide = view.readableContentGuide
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        webView.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
-        webView.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
-        webView.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
-        webView.bottomAnchor.constraint(equalTo: guide.bottomAnchor).isActive = true
+        webView.pinEdgesTo(guide: view.readableContentGuide)
 
         webView.scrollView.contentInset.top = 40
         webView.delegate = self

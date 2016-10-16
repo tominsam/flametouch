@@ -24,6 +24,7 @@
 		72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E0BF261D8B90A900070829 /* WirelessDetect.swift */; };
 		72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72E0BF281D8B90F900070829 /* SystemConfiguration.framework */; };
+		72E16E911DB3023B00EE1179 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E16E901DB3023B00EE1179 /* ViewExtensions.swift */; };
 		72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */; };
 		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
 		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
@@ -51,6 +52,7 @@
 		72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceName.swift; sourceTree = "<group>"; };
 		72E0BF261D8B90A900070829 /* WirelessDetect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WirelessDetect.swift; sourceTree = "<group>"; };
 		72E0BF281D8B90F900070829 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		72E16E901DB3023B00EE1179 /* ViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		72EC68D71BC9E50600AC2692 /* Flame Debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Flame Debug.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
@@ -131,6 +133,7 @@
 				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72E0BF261D8B90A900070829 /* WirelessDetect.swift */,
 				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
+				72E16E901DB3023B00EE1179 /* ViewExtensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 				72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */,
 				72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */,
 				72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */,
+				72E16E911DB3023B00EE1179 /* ViewExtensions.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,

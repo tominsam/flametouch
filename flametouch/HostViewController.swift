@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PureLayout
 
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -46,7 +45,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         table.register(AddressCell.self, forCellReuseIdentifier: "AddressCell")
 
         view.addSubview(table)
-        table.autoPinEdgesToSuperviewEdges()
+        table.pinEdgesTo(view: view)
 
         registerForPreviewing(with: self, sourceView: table)
     }

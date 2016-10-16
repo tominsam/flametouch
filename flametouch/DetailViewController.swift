@@ -47,7 +47,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         table.allowsSelection = true
 
         self.view.addSubview(table)
-        table.autoPinEdgesToSuperviewEdges()
+        table.pinEdgesTo(view: view)
     }
 
     override func viewDidLoad() {

@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import PureLayout
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -26,13 +25,13 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         table.dataSource = self
         table.delegate = self
         
-        table.autoPinEdgesToSuperviewEdges()
+        table.pinEdgesTo(view: view)
         table.estimatedRowHeight = 100
         table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
         table.estimatedRowHeight = 100
         table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
 
-        networkOverlay.autoPinEdgesToSuperviewEdges()
+        networkOverlay.pinEdgesTo(view: view)
         networkOverlay.backgroundColor = UIColor.white
         networkOverlay.addSubview(titleView)
         let guide = networkOverlay.readableContentGuide
