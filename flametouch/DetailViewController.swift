@@ -135,7 +135,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         case 0:
             if (core[indexPath.row][1].hasPrefix("_http._tcp.")) {
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
-                NSLog("stringurl is \(stringUrl)")
+                ELog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
                     UIApplication.shared.openURL(url)
                 }

@@ -18,6 +18,7 @@
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
+		72CD665C1DB32096002B21A0 /* ELog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CD665B1DB32096002B21A0 /* ELog.swift */; };
 		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
 		72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */; };
 		72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */; };
@@ -47,6 +48,7 @@
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
 		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		72CD665B1DB32096002B21A0 /* ELog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ELog.swift; sourceTree = "<group>"; };
 		72D24BB61C76BC110005FC8B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceName.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				72E0BF261D8B90A900070829 /* WirelessDetect.swift */,
 				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
 				72E16E901DB3023B00EE1179 /* ViewExtensions.swift */,
+				72CD665B1DB32096002B21A0 /* ELog.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -357,6 +360,7 @@
 				72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */,
 				72E16E911DB3023B00EE1179 /* ViewExtensions.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
+				72CD665C1DB32096002B21A0 /* ELog.swift in Sources */,
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
 				7217671F1C824FE30089EC41 /* HostCell.swift in Sources */,

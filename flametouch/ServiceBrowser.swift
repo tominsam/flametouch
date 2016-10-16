@@ -35,7 +35,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     /// start meta-browser and all service browsers
     func resume() {
-        NSLog("Resume")
+        ELog("Resume")
 
         flameService.publish()
 
@@ -49,7 +49,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     /// stop the metabrowser and all service browsers
     func pause() {
-        NSLog("Pause")
+        ELog("Pause")
         browser.stop()
         for (_, b) in browsers {
             b.stop()
@@ -63,9 +63,9 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
             // meta-browser found something new. Create a new service browser for it.
-            NSLog("Found type \"\(service.name)\" \"\(service.domain)\"")
+            ELog("Found type \"\(service.name)\" \"\(service.domain)\"")
             if let found = browsers[service] {
-                NSLog("stopping existing browser (shouldn't really happen)")
+                ELog("stopping existing browser (shouldn't really happen)")
                 found.stop();
             }
             let newBrowser = NetServiceBrowser()
@@ -77,7 +77,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
         } else {
             // single-service browser found a new broadcast
-            NSLog("Found service " + service.type)
+            ELog("Found service " + service.type)
             services.append(service)
             service.delegate = self
             service.resolve(withTimeout: 10)
@@ -90,41 +90,41 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
             if let b = browsers[service] {
                 b.stop()
                 browsers.removeValue(forKey: service)
-                NSLog("removed type " + service.name)
+                ELog("removed type " + service.name)
             } else {
-	            NSLog("can't remove type " + service.name)
+	            ELog("can't remove type " + service.name)
             }
         } else {
             if (services.contains(service)) {
-        	    NSLog("removed service " + service.type)
+        	    ELog("removed service " + service.type)
 	        	services.remove(at: services.index(of: service)!)
                 broadcast()
         	} else {
-                NSLog("can't remove service \(service.type)")
+                ELog("can't remove service \(service.type)")
             }
         }
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
-        NSLog("Did not search: \(errorDict)")
+        ELog("Did not search: \(errorDict)")
     }
 
     func netServiceDidResolveAddress(_ service: NetService) {
-        NSLog("resolved %@", service)
+        ELog("resolved \(service)")
         broadcast()
 	}
 
     func netService(_ service: NetService, didUpdateTXTRecord data: Data) {
-        NSLog("New data for %@", service)
+        ELog("New data for \(service)")
         broadcast()
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
-        NSLog("found domain %@", domainString)
+        ELog("found domain \(domainString)")
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
-        NSLog("lost domain %@", domainString)
+        ELog("lost domain \(domainString)")
     }
 
 

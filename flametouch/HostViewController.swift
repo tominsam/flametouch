@@ -20,7 +20,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         addresses = serviceGroup.addresses
         super.init(nibName: nil, bundle: nil)
         title = serviceGroup.title
-        //NSLog("serviceGroup is %@", serviceGroup)
+        //ELog("serviceGroup is %@", serviceGroup)
 
         NotificationCenter.default.addObserver(
             self,
@@ -63,7 +63,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if let group = browser().serviceGroupFor(addresses) {
             serviceGroup = group
             addresses = group.addresses
-            NSLog("Adresses are \(addresses)")
+            ELog("Adresses are \(addresses)")
         } else {
             // this service is gone. Keep the addresses in case it comes back.
             serviceGroup = nil
