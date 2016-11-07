@@ -65,9 +65,12 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         
         registerForPreviewing(with: self, sourceView: self.table)
         
-        networkOverlay.isHidden = wirelessDetect.hasWireless()
+        networkOverlay.isHidden = true // wirelessDetect.hasWireless()
         wirelessDetect.callback = { (wifi:Bool) -> Void in
-            self.networkOverlay.isHidden = wifi
+            let nowifi = !wifi
+            let noservices = self.browser().serviceGroups.isEmpty
+            let showOverlay = nowifi && noservices
+            self.networkOverlay.isHidden = !showOverlay
         }
 
         NotificationCenter.default.addObserver(
@@ -154,6 +157,9 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func servicesChanged() {
         table.reloadData()
+        if !browser().serviceGroups.isEmpty {
+            self.networkOverlay.isHidden = true
+        }
     }
 
     func browser() -> ServiceBrowser {

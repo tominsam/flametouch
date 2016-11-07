@@ -224,7 +224,7 @@
 		72EC68CF1BC9E50600AC2692 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = tominsam;
 				TargetAttributes = {
 					72EC68D61BC9E50600AC2692 = {
@@ -428,6 +428,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 532848580BD250FA96637E91 /* Pods-Flame.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
@@ -490,6 +491,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 983DE0689DE78DE560E0FC68 /* Pods-Flame.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
