@@ -20,7 +20,6 @@
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72CD665C1DB32096002B21A0 /* ELog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CD665B1DB32096002B21A0 /* ELog.swift */; };
 		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
-		72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */; };
 		72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */; };
 		72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F391C82B5B700E6B21E /* Icon_160.png */; };
 		72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E0BF261D8B90A900070829 /* WirelessDetect.swift */; };
@@ -42,6 +41,7 @@
 		723F91211D974EFD002B4069 /* AddressCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressCell.swift; sourceTree = "<group>"; };
 		723F91231D975D90002B4069 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
+		7286077F1F5A4B1A00B436F8 /* fastlane */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fastlane; sourceTree = "<group>"; };
 		72A73F2C1C82AF3D00E6B21E /* about.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = about.html; sourceTree = "<group>"; };
 		72A73F321C82B1E400E6B21E /* about.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = about.css; sourceTree = "<group>"; };
 		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
@@ -153,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				72EC68D91BC9E50600AC2692 /* flametouch */,
+				7286077F1F5A4B1A00B436F8 /* fastlane */,
 				72EC68D81BC9E50600AC2692 /* Products */,
 				E7B9FF38232F0B693ABA57FC /* Frameworks */,
 				7285676BF0839EE2E7431D4C /* Pods */,
@@ -207,7 +208,6 @@
 				4CA2682F9C11CFFB04004C61 /* [CP] Embed Pods Frameworks */,
 				4BF77C957AA2EE3D509D30A0 /* [CP] Copy Pods Resources */,
 				7286077E1F5A3DCA00B436F8 /* Fabric */,
-				72CD66591DB30DD6002B21A0 /* Bump build number */,
 			);
 			buildRules = (
 			);
@@ -231,6 +231,7 @@
 						CreatedOnToolsVersion = 7.0.1;
 						DevelopmentTeam = 76AFK3W7M9;
 						LastSwiftMigration = 0900;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -263,7 +264,6 @@
 				7217671D1C824E1E0089EC41 /* HostCell.xib in Resources */,
 				72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */,
 				72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */,
-				72D318C31D8B301E002E9FA6 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,20 +335,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\" c378fcb8538c8a0bb9aa7b1fc355017166ebb726 e415b3f6ea8da29d26b4391011ec260488c80479d4ce32f5eaefe30ea1c4bde8";
 		};
-		72CD66591DB30DD6002B21A0 /* Bump build number */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bump build number";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/sh -ex";
-			shellScript = "buildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\")\nbuildNumber=$(($buildNumber + 1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${PROJECT_DIR}/${INFOPLIST_FILE}\"\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -415,6 +401,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 60;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -433,6 +420,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -442,6 +430,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -454,6 +444,8 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME) Debug";
+				PROVISIONING_PROFILE = "0ac41f21-84d3-4220-8154-629787e9216f";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development org.jerakeen.flametouch";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -486,6 +478,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 60;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -502,6 +495,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
@@ -511,6 +505,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -521,6 +517,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "0ac41f21-84d3-4220-8154-629787e9216f";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development org.jerakeen.flametouch";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
