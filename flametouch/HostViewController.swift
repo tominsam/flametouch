@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import Crashlytics
 
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -37,8 +37,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     override func loadView() {
-        FIRAnalytics.logEvent(withName: "view_host", parameters: [
-            "service_count": String(serviceGroup?.services.count ?? 0) as NSString
+        Answers.logContentView(withName: "host", contentType: "screen", contentId: nil, customAttributes: [
+            "services": serviceGroup?.services.count ?? 0
         ])
 
         view = UIView(frame: CGRect.null)
@@ -59,7 +59,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return AppDelegate.instance().browser
     }
 
-    func servicesChanged() {
+    @objc func servicesChanged() {
         if let group = browser().serviceGroupFor(addresses) {
             serviceGroup = group
             addresses = group.addresses

@@ -7,7 +7,8 @@
 //
 
 import UIKit
-import Firebase
+import SafariServices
+import Crashlytics
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -30,7 +31,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
         if let txtRecord = service.txtRecordData() {
             for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                self.txtData.append([key, NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String])
+                self.txtData.append([key, String(bytes: value, encoding: .utf8)!])
             }
         }
     }
@@ -41,8 +42,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     override func loadView() {
-        FIRAnalytics.logEvent(withName: "view_detail", parameters: [
-            "record_count": String(txtData.count) as NSString
+        Answers.logContentView(withName: "detail", contentType: "screen", contentId: nil, customAttributes: [
+            "records": txtData.count
         ])
 
         self.view = UIView(frame: CGRect.null)
@@ -137,13 +138,17 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 ELog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
-                    UIApplication.shared.openURL(url)
+                    let vc = SFSafariViewController.init(url: url)
+                    vc.preferredBarTintColor = view.window?.tintColor
+                    self.present(vc, animated: true, completion: nil)
                 }
             }
             break
         case 1:
             if let url = URL(string: txtData[indexPath.row][1]) {
-                UIApplication.shared.openURL(url)
+                let vc = SFSafariViewController.init(url: url)
+                vc.preferredBarTintColor = view.window?.tintColor
+                self.present(vc, animated: true, completion: nil)
             }
             break
         default:

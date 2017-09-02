@@ -8,12 +8,12 @@
 
 import UIKit
 import SafariServices
-import Firebase
+import Crashlytics
 
 class AboutViewController: UIViewController, UIWebViewDelegate {
 
     override func loadView() {
-        FIRAnalytics.logEvent(withName: "view_about", parameters: nil)
+        Answers.logContentView(withName: "about", contentType: "screen", contentId: nil, customAttributes: nil)
 
         title = "About"
         view = UIView(frame: CGRect.null)
@@ -22,7 +22,7 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
         automaticallyAdjustsScrollViewInsets = false
     }
     
-    func initWebview() {
+    @objc func initWebview() {
         let webView = UIWebView()
         view.addSubview(webView)
         view.backgroundColor = UIColor.white
@@ -42,7 +42,7 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
             //let controller = SFSafariViewController(url: request.url!)
             //navigationController?.pushViewController(controller, animated: true)
             
-            UIApplication.shared.openURL(request.url!)
+            UIApplication.shared.open(request.url!, options: [:], completionHandler: nil)
             return false
         }
         return true

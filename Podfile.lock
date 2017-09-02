@@ -1,50 +1,19 @@
 PODS:
-  - Firebase (3.7.1):
-    - Firebase/Core (= 3.7.1)
-  - Firebase/Core (3.7.1):
-    - FirebaseAnalytics (= 3.4.4)
-    - FirebaseCore (= 3.4.3)
-  - Firebase/Crash (3.7.1):
-    - Firebase/Core
-    - FirebaseCrash (= 1.0.7)
-  - FirebaseAnalytics (3.4.4):
-    - FirebaseCore (~> 3.4)
-    - FirebaseInstanceID (~> 1.0)
-    - GoogleInterchangeUtilities (~> 1.2)
-    - GoogleSymbolUtilities (~> 1.1)
-  - FirebaseCore (3.4.3):
-    - GoogleInterchangeUtilities (~> 1.2)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseCrash (1.0.7):
-    - FirebaseAnalytics (~> 3.2)
-    - FirebaseInstanceID (~> 1.0)
-    - GoogleInterchangeUtilities (~> 1.2)
-    - GoogleSymbolUtilities (~> 1.1)
-    - GoogleUtilities (~> 1.2)
-  - FirebaseInstanceID (1.0.8)
-  - GoogleInterchangeUtilities (1.2.2):
-    - GoogleSymbolUtilities (~> 1.1)
-  - GoogleSymbolUtilities (1.1.2)
-  - GoogleUtilities (1.3.2):
-    - GoogleSymbolUtilities (~> 1.1)
+  - Crashlytics (3.8.5):
+    - Fabric (~> 1.6.3)
+  - Fabric (1.6.12)
   - ReachabilitySwift (3)
 
 DEPENDENCIES:
-  - Firebase
-  - Firebase/Crash
+  - Crashlytics
+  - Fabric
   - ReachabilitySwift (~> 3)
 
 SPEC CHECKSUMS:
-  Firebase: be473484f0d515e72ffd04acf22f981773c23e58
-  FirebaseAnalytics: 0533a00b681e08fd0b2cd0444b7ddf0ef9fd7a1a
-  FirebaseCore: 5a885548bbc5f0c410b04f8e9ac9d73ff1221907
-  FirebaseCrash: 2efeb3715b76ac843b841529ce413efb67e5fd4d
-  FirebaseInstanceID: ba1e640935235e5fac39dfa816fe7660e72e1a8a
-  GoogleInterchangeUtilities: d5bc4d88d5b661ab72f9d70c58d02ca8c27ad1f7
-  GoogleSymbolUtilities: 631ee17048aa5e9ab133470d768ea997a5ef9b96
-  GoogleUtilities: 8bbc733218aad26306f9d4a253823986110e3358
+  Crashlytics: dfbae35ef22ca189240d230ad501feea4ee85d2d
+  Fabric: f050464eac45a2ce5a8e6e6a07e977c0df32fe28
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
 
-PODFILE CHECKSUM: 6b789cf24ab7c261e4ed5554d41d4a2adf1693ec
+PODFILE CHECKSUM: a92dfddeef2e71ddbcf45663b53e0d4a5762038f
 
-COCOAPODS: 1.1.0.rc.3
+COCOAPODS: 1.3.1

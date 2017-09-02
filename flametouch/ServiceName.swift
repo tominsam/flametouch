@@ -49,7 +49,7 @@ class ServiceName {
         var map = [String:String]()
         if let txtRecord = service.txtRecordData() {
             for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                map[key] = (NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String)
+                map[key] = String(bytes: value, encoding: .utf8)
             }
         }
         return map

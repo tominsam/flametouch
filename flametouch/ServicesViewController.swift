@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Firebase
+import Crashlytics
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -19,7 +19,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     let wirelessDetect = WirelessDetect()
     
     override func loadView() {
-        FIRAnalytics.logEvent(withName: "view_services", parameters: nil)
+        Answers.logContentView(withName: "services", contentType: "screen", contentId: nil, customAttributes: nil)
         
         self.view = UIView(frame: CGRect.null)
         self.view.addSubview(table)
@@ -80,10 +80,12 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             object: nil)
     }
     
+    @objc
     func aboutPressed() {
         navigationController?.pushViewController(AboutViewController(), animated: true)
     }
     
+    @objc
     func exportData() {
 
         var groupsJson : [Any] = []
@@ -114,7 +116,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
                 serviceJson["addresses"] = addressesJson
                 if let txtRecord = service.txtRecordData() {
                     for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                        serviceJson[key] = NSString(data: value, encoding: String.Encoding.utf8.rawValue) as! String
+                        serviceJson[key] = String(bytes: value, encoding: .utf8)
                     }
                 }
 
@@ -125,12 +127,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             groupsJson.append(groupJson)
         }
 
-        FIRAnalytics.logEvent(withName: "export", parameters: [
-            "host_count": String(host_count) as NSString,
-            "service_count": String(service_count) as NSString,
-        ])
+        Answers.logCustomEvent(withName: "export", customAttributes: [
+            "services": service_count,
+            "hosts": host_count])
 
-        
         let file = "services_export.json"
         
         if let dir = NSSearchPathForDirectoriesInDomains(
@@ -155,7 +155,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
     }
     
-    func servicesChanged() {
+    @objc func servicesChanged() {
         table.reloadData()
         if !browser().serviceGroups.isEmpty {
             self.networkOverlay.isHidden = true

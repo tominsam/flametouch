@@ -7,9 +7,25 @@
 //
 
 import Foundation
+import Crashlytics
 
 func ELog(_ message : String) {
 #if DEBUG
     NSLog(message)
 #endif
+    CLSLogv(message, getVaList([]))
+}
+
+func ELog(_ message : String, _ args : CVarArg...) {
+#if DEBUG
+    NSLog(message, args)
+#endif
+    CLSLogv(message, getVaList(args))
+}
+
+func ELogEvent(_ event: String, _ args: [String : Any]?) {
+#if DEBUG
+    NSLog(event + " %@", args ?? "nil")
+#endif
+    Answers.logCustomEvent(withName: event, customAttributes: args)
 }
