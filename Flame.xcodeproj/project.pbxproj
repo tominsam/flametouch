@@ -17,6 +17,10 @@
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
+		72BCE2761F6B231A00491CCC /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72BCE2721F6B226D00491CCC /* Fabric.framework */; };
+		72BCE2771F6B231D00491CCC /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72BCE2711F6B226D00491CCC /* Crashlytics.framework */; };
+		72BCE2781F6B232000491CCC /* Answers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72BCE2731F6B226D00491CCC /* Answers.framework */; };
+		72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BCE27C1F6B24E900491CCC /* Reachability.swift */; };
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72CD665C1DB32096002B21A0 /* ELog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72CD665B1DB32096002B21A0 /* ELog.swift */; };
 		72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72D24BB61C76BC110005FC8B /* DetailViewController.swift */; };
@@ -29,11 +33,9 @@
 		72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EC68DC1BC9E50600AC2692 /* ServicesViewController.swift */; };
 		72EC68E21BC9E50600AC2692 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E11BC9E50600AC2692 /* Assets.xcassets */; };
 		72EC68E51BC9E50600AC2692 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72EC68E31BC9E50600AC2692 /* LaunchScreen.storyboard */; };
-		CDEC8008FBE34B6C118D979B /* Pods_Flame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA6C5AAE43CBD8C814F1C8CE /* Pods_Flame.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		532848580BD250FA96637E91 /* Pods-Flame.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flame.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Flame/Pods-Flame.debug.xcconfig"; sourceTree = "<group>"; };
 		7217671C1C824E1E0089EC41 /* HostCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HostCell.xib; sourceTree = "<group>"; };
 		7217671E1C824FE30089EC41 /* HostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostCell.swift; sourceTree = "<group>"; };
 		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
@@ -47,10 +49,13 @@
 		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
+		72BCE2711F6B226D00491CCC /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Crashlytics.framework; path = Carthage/Build/iOS/Crashlytics.framework; sourceTree = "<group>"; };
+		72BCE2721F6B226D00491CCC /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Fabric.framework; path = Carthage/Build/iOS/Fabric.framework; sourceTree = "<group>"; };
+		72BCE2731F6B226D00491CCC /* Answers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Answers.framework; path = Carthage/Build/iOS/Answers.framework; sourceTree = "<group>"; };
+		72BCE27C1F6B24E900491CCC /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		72CD665B1DB32096002B21A0 /* ELog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ELog.swift; sourceTree = "<group>"; };
 		72D24BB61C76BC110005FC8B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceName.swift; sourceTree = "<group>"; };
 		72E0BF261D8B90A900070829 /* WirelessDetect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WirelessDetect.swift; sourceTree = "<group>"; };
 		72E0BF281D8B90F900070829 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -61,8 +66,6 @@
 		72EC68E11BC9E50600AC2692 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72EC68E41BC9E50600AC2692 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		72EC68E61BC9E50600AC2692 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		983DE0689DE78DE560E0FC68 /* Pods-Flame.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Flame.release.xcconfig"; path = "Pods/Target Support Files/Pods-Flame/Pods-Flame.release.xcconfig"; sourceTree = "<group>"; };
-		AA6C5AAE43CBD8C814F1C8CE /* Pods_Flame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Flame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,8 +73,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72BCE2781F6B232000491CCC /* Answers.framework in Frameworks */,
 				72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */,
-				CDEC8008FBE34B6C118D979B /* Pods_Flame.framework in Frameworks */,
+				72BCE2771F6B231D00491CCC /* Crashlytics.framework in Frameworks */,
+				72BCE2761F6B231A00491CCC /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,15 +92,6 @@
 				721767221C8296680089EC41 /* AboutViewController.swift */,
 			);
 			name = "View Controllers";
-			sourceTree = "<group>";
-		};
-		7285676BF0839EE2E7431D4C /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				983DE0689DE78DE560E0FC68 /* Pods-Flame.release.xcconfig */,
-				532848580BD250FA96637E91 /* Pods-Flame.debug.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		72A73F341C82B23C00E6B21E /* about */ = {
@@ -137,6 +133,7 @@
 				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
 				72E16E901DB3023B00EE1179 /* ViewExtensions.swift */,
 				72CD665B1DB32096002B21A0 /* ELog.swift */,
+				72BCE27C1F6B24E900491CCC /* Reachability.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -156,7 +153,6 @@
 				7286077F1F5A4B1A00B436F8 /* fastlane */,
 				72EC68D81BC9E50600AC2692 /* Products */,
 				E7B9FF38232F0B693ABA57FC /* Frameworks */,
-				7285676BF0839EE2E7431D4C /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -175,11 +171,10 @@
 				72A73F371C82B25600E6B21E /* Services */,
 				725921AC1BF2DF7C0094EFC8 /* View Controllers */,
 				72E0BF2A1D8B922A00070829 /* Utils */,
+				72E0BF2B1D8B924200070829 /* Interface */,
 				72A73F341C82B23C00E6B21E /* about */,
 				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
-				72E0BF2B1D8B924200070829 /* Interface */,
 				72EC68E61BC9E50600AC2692 /* Info.plist */,
-				72D318C21D8B301E002E9FA6 /* GoogleService-Info.plist */,
 				723F91231D975D90002B4069 /* README.md */,
 			);
 			path = flametouch;
@@ -189,7 +184,9 @@
 			isa = PBXGroup;
 			children = (
 				72E0BF281D8B90F900070829 /* SystemConfiguration.framework */,
-				AA6C5AAE43CBD8C814F1C8CE /* Pods_Flame.framework */,
+				72BCE2731F6B226D00491CCC /* Answers.framework */,
+				72BCE2711F6B226D00491CCC /* Crashlytics.framework */,
+				72BCE2721F6B226D00491CCC /* Fabric.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -201,12 +198,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 72EC68E91BC9E50600AC2692 /* Build configuration list for PBXNativeTarget "Flame" */;
 			buildPhases = (
-				0B75B5E0825E1A1A2860F3E8 /* [CP] Check Pods Manifest.lock */,
 				72EC68D31BC9E50600AC2692 /* Sources */,
 				72EC68D41BC9E50600AC2692 /* Frameworks */,
 				72EC68D51BC9E50600AC2692 /* Resources */,
-				4CA2682F9C11CFFB04004C61 /* [CP] Embed Pods Frameworks */,
-				4BF77C957AA2EE3D509D30A0 /* [CP] Copy Pods Resources */,
 				7286077E1F5A3DCA00B436F8 /* Fabric */,
 			);
 			buildRules = (
@@ -270,57 +264,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0B75B5E0825E1A1A2860F3E8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Flame-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4BF77C957AA2EE3D509D30A0 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Flame/Pods-Flame-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4CA2682F9C11CFFB04004C61 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-Flame/Pods-Flame-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/ReachabilitySwift.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReachabilitySwift.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Flame/Pods-Flame-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7286077E1F5A3DCA00B436F8 /* Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -333,7 +276,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\" c378fcb8538c8a0bb9aa7b1fc355017166ebb726 e415b3f6ea8da29d26b4391011ec260488c80479d4ce32f5eaefe30ea1c4bde8";
+			shellScript = "\"${PROJECT_DIR}/Carthage/Build/iOS/Fabric.framework/run\" c378fcb8538c8a0bb9aa7b1fc355017166ebb726 e415b3f6ea8da29d26b4391011ec260488c80479d4ce32f5eaefe30ea1c4bde8";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -356,6 +299,7 @@
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
 				7217671F1C824FE30089EC41 /* HostCell.swift in Sources */,
+				72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */,
 				723F91221D974EFD002B4069 /* AddressCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -426,7 +370,6 @@
 		};
 		72D318C51D8B3234002E9FA6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 532848580BD250FA96637E91 /* Pods-Flame.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -436,6 +379,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = flametouch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -501,7 +445,6 @@
 		};
 		72EC68EB1BC9E50600AC2692 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 983DE0689DE78DE560E0FC68 /* Pods-Flame.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -511,6 +454,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SDKROOT)$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				INFOPLIST_FILE = flametouch/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

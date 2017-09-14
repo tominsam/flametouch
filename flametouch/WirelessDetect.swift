@@ -9,7 +9,6 @@
 import Foundation
 import SystemConfiguration
 import SystemConfiguration.CaptiveNetwork
-import ReachabilitySwift
 
 class WirelessDetect {
     

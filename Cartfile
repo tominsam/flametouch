@@ -1,0 +1,7 @@
+# carthage update --platform iOS --use-ssh
+
+binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Fabric.json"
+binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Crashlytics.json"
+binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Answers.json"
+
+#github "ashleymills/Reachability.swift" "develop"
