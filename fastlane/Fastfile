@@ -17,6 +17,12 @@ xcversion(version: "9")
 # info which you can add here later
 lane :beta do
 
+    appicon(
+        appicon_image_file: 'Image Resources/AppIcon.png',
+        appicon_devices: [:ipad, :iphone, :ios_marketing],
+        appicon_path: 'flametouch/Assets.xcassets',
+    )
+
     # https://docs.fastlane.tools/getting-started/ios/beta-deployment/#best-practices
     # rebuilds profile if the number of devices has changed
     register_devices(devices_file: "fastlane/devices.txt")
@@ -32,13 +38,15 @@ lane :beta do
     )
 
     increment_build_number
-
 end
 
-# run after beta
 lane :testflight do
     match(type: "appstore")
+    gym
     testflight
+end
+
+lane :dsyms do
     download_dsyms
     upload_symbols_to_crashlytics
 end

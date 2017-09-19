@@ -6,10 +6,21 @@ https://movieos.org/code/flame-iphone/
 
 ## Development notes
 
-Chek out the project and run `carthage update` to install dependencies, etc.
+Check out the project and run `carthage update` to install dependencies, etc.
 
-Pull signing keys, etc, using `fastlane match development --readonly`
+Bootstrap fastlane:
 
-Build and push to Crashlytics Beta (also increments build number) with `fastlanw beta`
+    brew cask reinstall fastlane
+    sudo gem install bundler
+    bundle install
+
+Pull signing keys, etc, using 
+
+    fastlane match development --readonly
+
+Build and push to Crashlytics Beta (also increments build number) with 
+
+    fastlane beta
+
 
 

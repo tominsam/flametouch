@@ -39,6 +39,11 @@ fastlane beta
 fastlane testflight
 ```
 
+### dsyms
+```
+fastlane dsyms
+```
+
 
 ----
 

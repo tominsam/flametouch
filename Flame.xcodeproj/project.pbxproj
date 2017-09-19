@@ -385,7 +385,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -D DEBUG";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME) Debug";
 				PROVISIONING_PROFILE = "0ac41f21-84d3-4220-8154-629787e9216f";
