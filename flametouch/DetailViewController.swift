@@ -48,6 +48,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
         self.view = UIView(frame: CGRect.null)
 
+        navigationController?.navigationBar.prefersLargeTitles = true
+
         table.dataSource = self
         table.delegate = self
         table.allowsSelection = true

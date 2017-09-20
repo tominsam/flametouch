@@ -43,6 +43,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         view = UIView(frame: CGRect.null)
 
+        navigationController?.navigationBar.prefersLargeTitles = true
+
         table.dataSource = self
         table.delegate = self
         table.estimatedRowHeight = 100

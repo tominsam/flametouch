@@ -59,7 +59,8 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
         subtitleView.text = "Connect to a WiFi network to see local services.".widont()
 
-        
+        navigationController?.navigationBar.prefersLargeTitles = true
+
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Export"), style: .plain, target: self, action: #selector(exportData))
         

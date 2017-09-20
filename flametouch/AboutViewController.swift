@@ -19,7 +19,6 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
         view = UIView(frame: CGRect.null)
         view.backgroundColor = UIColor.white
         perform(#selector(initWebview), with: nil, afterDelay: 0)
-        automaticallyAdjustsScrollViewInsets = false
     }
     
     @objc func initWebview() {
@@ -27,6 +26,7 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
         view.addSubview(webView)
         view.backgroundColor = UIColor.white
         webView.backgroundColor = UIColor.white
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
 
         // limit webview width so lines aren't too long
         webView.pinEdgesTo(guide: view.readableContentGuide)
