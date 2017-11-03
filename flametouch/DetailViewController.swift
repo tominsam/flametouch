@@ -141,7 +141,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
                 ELog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
                     let vc = SFSafariViewController.init(url: url)
-                    vc.preferredBarTintColor = view.window?.tintColor
+                    //vc.preferredBarTintColor = view.window?.tintColor
                     self.present(vc, animated: true, completion: nil)
                 }
             }
@@ -149,7 +149,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         case 1:
             if let url = URL(string: txtData[indexPath.row][1]) {
                 let vc = SFSafariViewController.init(url: url)
-                vc.preferredBarTintColor = view.window?.tintColor
+                //vc.preferredBarTintColor = view.window?.tintColor
                 self.present(vc, animated: true, completion: nil)
             }
             break
