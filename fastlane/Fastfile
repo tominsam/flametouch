@@ -36,8 +36,6 @@ lane :beta do
         groups: ["Testers"],
         notifications: true,
     )
-
-    increment_build_number
 end
 
 lane :testflight do
@@ -51,4 +49,7 @@ lane :dsyms do
     upload_symbols_to_crashlytics
 end
 
+lane :increment_build_number do
+    increment_build_number
+end
 
