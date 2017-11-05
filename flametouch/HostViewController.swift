@@ -65,7 +65,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if let group = browser().serviceGroupFor(addresses) {
             serviceGroup = group
             addresses = group.addresses
-            ELog("Adresses are \(addresses)")
+            ELog("Addresses are \(addresses)")
         } else {
             // this service is gone. Keep the addresses in case it comes back.
             serviceGroup = nil
@@ -86,7 +86,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let group = serviceGroup {
             if (section == 0) {
-                return addresses.count
+                return addresses.count + 1
             } else {
                 return group.services.count
             }
@@ -105,8 +105,11 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (indexPath.section == 0) {
             let cell = tableView.dequeueReusableCell(withIdentifier: "AddressCell") as! AddressCell?
-            let address = addresses[indexPath.row]
-            cell!.textLabel!.text = address
+            if (indexPath.row == 0) {
+                cell!.textLabel!.text = serviceGroup!.services[0].hostName
+            } else {
+                cell!.textLabel!.text = addresses[indexPath.row - 1]
+            }
             return cell!
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "HostCell") as! HostCell?
@@ -138,7 +141,11 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func tableView(_ tableView: UITableView, performAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) {
         if (indexPath.section == 0) {
-            UIPasteboard.general.string = addresses[indexPath.row]
+            if (indexPath.row == 0) {
+                UIPasteboard.general.string = serviceGroup!.services[0].hostName
+            } else {
+                UIPasteboard.general.string = addresses[indexPath.row - 1]
+            }
         } else {
             if let hasGroup = serviceGroup {
                 UIPasteboard.general.string = hasGroup.services[indexPath.row].name
