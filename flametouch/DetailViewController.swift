@@ -24,7 +24,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         self.title = service.type
         self.core.append([NSLocalizedString("Name", comment: "Label for the name of the service"), service.name])
         self.core.append([NSLocalizedString("Type", comment: "Label for the type of the service"), service.type + service.domain])
-        for hostname in service.addresses!.flatMap({getIFAddress($0)}) {
+        for hostname in service.addresses!.compactMap({getIFAddress($0)}) {
             self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
         }
         self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
@@ -140,9 +140,13 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 ELog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
-                    let vc = SFSafariViewController.init(url: url)
-                    //vc.preferredBarTintColor = view.window?.tintColor
-                    self.present(vc, animated: true, completion: nil)
+                    do {
+                        let vc = SFSafariViewController.init(url: url)
+                        //vc.preferredBarTintColor = view.window?.tintColor
+                        self.present(vc, animated: true, completion: nil)
+                    } catch {
+                        // invalid url?
+                    }
                 }
             }
             break

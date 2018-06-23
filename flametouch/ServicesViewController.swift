@@ -110,7 +110,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
                 serviceJson["port"] = service.port
                 serviceJson["type"] = service.type
                 var addressesJson : [String] = []
-                let addresses = service.addresses!.flatMap { getIFAddress($0) }
+                let addresses = service.addresses!.compactMap { getIFAddress($0) }
                 for address in addresses {
                     addressesJson.append(address)
                 }

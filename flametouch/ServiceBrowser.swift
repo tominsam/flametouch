@@ -137,7 +137,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
         grouping.removeAll()
         for service in services {
-            let addresses = service.addresses!.flatMap { getIFAddress($0) }
+            let addresses = service.addresses!.compactMap { getIFAddress($0) }
             if var existingGroup = groupForAddresses(addresses) {
                 existingGroup.formUnion(Set(addresses))
             } else {
@@ -147,7 +147,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
         var groups = [String: ServiceGroup]()
         for service in services {
-            let addresses = service.addresses!.flatMap { getIFAddress($0) }
+            let addresses = service.addresses!.compactMap { getIFAddress($0) }
             if addresses.isEmpty {
                 continue
             }
