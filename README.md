@@ -10,8 +10,10 @@ Check out the project and run `carthage update` to install dependencies, etc.
 
 Bootstrap fastlane:
 
-    brew cask reinstall fastlane
-    sudo gem install bundler
+    brew install imagemagick
+    sudo gem update --system
+    gem install fastlane -NV -n /usr/local/bin
+    sudo gem install bundler -n /usr/local/bin
     bundle install
 
 Pull signing keys, etc, using 

@@ -153,7 +153,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
             }
             if let group = groupForAddresses(addresses) {
                 // shortest address - picks ipv4 first
-                let ip = group.sorted {$0.characters.count < $1.characters.count}.first!
+                let ip = group.sorted {$0.count  < $1.count}.first!
                 if let serviceGroup = groups[ip] {
                     serviceGroup.addService(service)
                     for address in group {

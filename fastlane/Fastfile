@@ -1,7 +1,7 @@
 # More documentation about how to customize your build
 # can be found here:
 # https://docs.fastlane.tools
-fastlane_version "1.109.0"
+fastlane_version "2.98.0"
 
 # This value helps us track success metrics for Fastfiles
 # we automatically generate. Feel free to remove this line
@@ -10,18 +10,12 @@ generated_fastfile_id "a013db4d-c350-4f4a-a14e-2b7086017297"
 
 default_platform :ios
 
-xcversion(version: "9")
+#xcversion(version: "9")
 
 # Fastfile actions accept additional configuration, but
 # don't worry, fastlane will prompt you for required
 # info which you can add here later
 lane :beta do
-
-    appicon(
-        appicon_image_file: 'Image Resources/AppIcon.png',
-        appicon_devices: [:ipad, :iphone, :ios_marketing],
-        appicon_path: 'flametouch/Assets.xcassets',
-    )
 
     # https://docs.fastlane.tools/getting-started/ios/beta-deployment/#best-practices
     # rebuilds profile if the number of devices has changed
@@ -35,10 +29,11 @@ lane :beta do
     crashlytics(
         groups: ["Testers"],
         notifications: true,
+        api_token: "c378fcb8538c8a0bb9aa7b1fc355017166ebb726"
     )
 end
 
-lane :testflight do
+lane :release do
     match(type: "appstore")
     gym
     testflight
@@ -46,10 +41,19 @@ end
 
 lane :dsyms do
     download_dsyms
-    upload_symbols_to_crashlytics
+    upload_symbols_to_crashlytics(
+        :binary_path => "./Carthage/Build/iOS/Crashlytics.framework/uploadDSYM"
+    )
 end
 
-lane :increment_build_number do
+lane :bump do
     increment_build_number
 end
 
+lane :icon do
+    appicon(
+        appicon_image_file: 'Image Resources/AppIcon.png',
+        appicon_devices: [:ipad, :iphone, :ios_marketing],
+        appicon_path: 'flametouch/Assets.xcassets',
+    )
+end
