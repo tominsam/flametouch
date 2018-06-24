@@ -32,7 +32,7 @@ class ServiceGroup: NSObject {
             return
         }
         addresses.append(address)
-        addresses.sort { $0.characters.count < $1.characters.count }
+        addresses.sort { $0.count < $1.count }
     }
 
     var title : String {

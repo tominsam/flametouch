@@ -155,6 +155,7 @@ DEPENDENCIES
   fastlane
   fastlane-plugin-appicon
   xcode-install
+  xcpretty
 
 BUNDLED WITH
    1.16.2
