@@ -27,6 +27,6 @@ func getIFAddress(_ data : Data) -> String? {
         return nil
     }
 
-    hostname.deinitialize()
+    hostname.deinitialize(count: Int(INET6_ADDRSTRLEN))
     return string
 }

@@ -9,8 +9,9 @@
 import UIKit
 import SafariServices
 import Crashlytics
+import WebKit
 
-class AboutViewController: UIViewController, UIWebViewDelegate {
+class AboutViewController: UIViewController, WKNavigationDelegate {
 
     override func loadView() {
         Answers.logContentView(withName: "about", contentType: "screen", contentId: nil, customAttributes: nil)
@@ -22,29 +23,24 @@ class AboutViewController: UIViewController, UIWebViewDelegate {
     }
     
     @objc func initWebview() {
-        let webView = UIWebView()
+        let webView = WKWebView()
         view.addSubview(webView)
         view.backgroundColor = UIColor.white
         webView.backgroundColor = UIColor.white
         webView.scrollView.contentInsetAdjustmentBehavior = .never
-
-        // limit webview width so lines aren't too long
-        webView.pinEdgesTo(guide: view.readableContentGuide)
-
-        webView.scrollView.contentInset.top = 40
-        webView.delegate = self
+        webView.pinEdgesTo(guide: view.safeAreaLayoutGuide)
+        webView.navigationDelegate = self
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
-        webView.loadRequest(URLRequest(url: localfilePath!))
+        webView.load(URLRequest(url: localfilePath!))
     }
     
-    func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        if navigationType == .linkClicked {
-            //let controller = SFSafariViewController(url: request.url!)
-            //navigationController?.pushViewController(controller, animated: true)
-            
-            UIApplication.shared.open(request.url!, options: [:], completionHandler: nil)
-            return false
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if navigationAction.navigationType == .linkActivated {
+            UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
         }
-        return true
     }
+
 }
