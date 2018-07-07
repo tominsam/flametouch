@@ -8,6 +8,7 @@
 
 import Foundation
 import Crashlytics
+import Firebase
 
 func ELog(_ message : String) {
 #if DEBUG
@@ -27,5 +28,5 @@ func ELogEvent(_ event: String, _ args: [String : Any]?) {
 #if DEBUG
     NSLog(event + " %@", args ?? "nil")
 #endif
-    Answers.logCustomEvent(withName: event, customAttributes: args)
+    Analytics.logEvent(event, parameters: args)
 }

@@ -8,6 +8,7 @@
 
 import UIKit
 import SafariServices
+import Firebase
 import Crashlytics
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -42,9 +43,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     override func loadView() {
-        Answers.logContentView(withName: "detail", contentType: "screen", contentId: nil, customAttributes: [
-            "records": txtData.count
-        ])
+        Analytics.setScreenName("detail", screenClass: nil)
 
         self.view = UIView(frame: CGRect.null)
 

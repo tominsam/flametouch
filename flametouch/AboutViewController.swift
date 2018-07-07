@@ -8,13 +8,13 @@
 
 import UIKit
 import SafariServices
-import Crashlytics
+import Firebase
 import WebKit
 
 class AboutViewController: UIViewController, WKNavigationDelegate {
 
     override func loadView() {
-        Answers.logContentView(withName: "about", contentType: "screen", contentId: nil, customAttributes: nil)
+        Analytics.setScreenName("about", screenClass: nil)
 
         title = "About"
         view = UIView(frame: CGRect.null)

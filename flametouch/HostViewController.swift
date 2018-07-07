@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Crashlytics
+import Firebase
 
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -37,10 +37,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     override func loadView() {
-        Answers.logContentView(withName: "host", contentType: "screen", contentId: nil, customAttributes: [
-            "services": serviceGroup?.services.count ?? 0
-        ])
-
+        Analytics.setScreenName("host", screenClass: nil)
+        
         view = UIView(frame: CGRect.null)
 
         navigationController?.navigationBar.prefersLargeTitles = true

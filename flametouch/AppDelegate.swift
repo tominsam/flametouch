@@ -7,8 +7,7 @@
 //
 
 import UIKit
-import Fabric
-import Crashlytics
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,13 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let browser = ServiceBrowser()
 
     static func instance() -> AppDelegate {
-        return (UIApplication.shared.delegate as! AppDelegate)
+        return UIApplication.shared.delegate as! AppDelegate
     }
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
         ELog("started!")
 
-        Fabric.with([Crashlytics.self, Answers.self])
+        FirebaseApp.configure()
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.window!.backgroundColor = UIColor.white

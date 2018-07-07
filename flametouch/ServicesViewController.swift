@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Crashlytics
+import Firebase
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -19,7 +19,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     let wirelessDetect = WirelessDetect()
     
     override func loadView() {
-        Answers.logContentView(withName: "services", contentType: "screen", contentId: nil, customAttributes: nil)
+        Analytics.setScreenName("services", screenClass: nil)
         
         self.view = UIView(frame: CGRect.null)
         self.view.addSubview(table)
@@ -128,9 +128,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             groupsJson.append(groupJson)
         }
 
-        Answers.logCustomEvent(withName: "export", customAttributes: [
+        Analytics.logEvent("export", parameters: [
             "services": service_count,
-            "hosts": host_count])
+            "hosts": host_count]
+        )
 
         let file = "services_export.json"
         
