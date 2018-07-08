@@ -12,7 +12,7 @@ Bootstrap fastlane:
 
     brew install imagemagick
     sudo gem update --system
-    gem install fastlane -NV -n /usr/local/bin
+    sudo gem install fastlane -NV -n /usr/local/bin
     sudo gem install bundler -n /usr/local/bin
     bundle install
     bundle binstubs --path=/usr/local/bin xcpretty

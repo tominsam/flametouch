@@ -1,28 +1,16 @@
-# More documentation about how to customize your build
-# can be found here:
-# https://docs.fastlane.tools
-fastlane_version "2.98.0"
-
-# This value helps us track success metrics for Fastfiles
-# we automatically generate. Feel free to remove this line
-# once you get things running smoothly!
-generated_fastfile_id "a013db4d-c350-4f4a-a14e-2b7086017297"
+fastlane_version "2.99.0"
 
 default_platform :ios
-
 #xcversion(version: "9")
 
-# Fastfile actions accept additional configuration, but
-# don't worry, fastlane will prompt you for required
-# info which you can add here later
 lane :beta do
 
     # https://docs.fastlane.tools/getting-started/ios/beta-deployment/#best-practices
     # rebuilds profile if the number of devices has changed
     register_devices(devices_file: "fastlane/devices.txt")
-    match(type: "adhoc", force_for_new_devices: true)
+    match(type: "adhoc", force_for_new_devices: true, app_identifier: "org.jerakeen.flame.debug")
 
-    gym
+    gym(configuration: "Debug")
 
     changelog_from_git_commits
 
@@ -31,12 +19,16 @@ lane :beta do
         notifications: true,
         api_token: "c378fcb8538c8a0bb9aa7b1fc355017166ebb726"
     )
+
+    increment_build_number
+
 end
 
 lane :release do
     match(type: "appstore")
     gym
     testflight
+    increment_build_number
 end
 
 lane :dsyms do
