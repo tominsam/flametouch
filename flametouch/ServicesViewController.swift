@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -19,14 +18,13 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     let wirelessDetect = WirelessDetect()
     
     override func loadView() {
-        Analytics.setScreenName("services", screenClass: nil)
-        
         self.view = UIView(frame: CGRect.null)
         self.view.addSubview(table)
         self.view.addSubview(networkOverlay)
         
         table.dataSource = self
         table.delegate = self
+        table.cellLayoutMarginsFollowReadableWidth = true
         
         table.pinEdgesTo(view: view)
         table.estimatedRowHeight = 100
@@ -127,11 +125,6 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             
             groupsJson.append(groupJson)
         }
-
-        Analytics.logEvent("export", parameters: [
-            "services": service_count,
-            "hosts": host_count]
-        )
 
         let file = "services_export.json"
         

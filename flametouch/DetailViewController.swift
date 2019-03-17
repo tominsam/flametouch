@@ -8,8 +8,6 @@
 
 import UIKit
 import SafariServices
-import Firebase
-import Crashlytics
 
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -43,8 +41,6 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     override func loadView() {
-        Analytics.setScreenName("detail", screenClass: nil)
-
         self.view = UIView(frame: CGRect.null)
 
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -52,6 +48,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         table.dataSource = self
         table.delegate = self
         table.allowsSelection = true
+        table.cellLayoutMarginsFollowReadableWidth = true
 
         self.view.addSubview(table)
         table.pinEdgesTo(view: view)
@@ -139,13 +136,9 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 ELog("stringurl is \(stringUrl)")
                 if let url = URL(string: stringUrl) {
-                    do {
-                        let vc = SFSafariViewController.init(url: url)
-                        //vc.preferredBarTintColor = view.window?.tintColor
-                        self.present(vc, animated: true, completion: nil)
-                    } catch {
-                        // invalid url?
-                    }
+                    let vc = SFSafariViewController(url: url)
+                    //vc.preferredBarTintColor = view.window?.tintColor
+                    self.present(vc, animated: true, completion: nil)
                 }
             }
             break

@@ -8,14 +8,11 @@
 
 import UIKit
 import SafariServices
-import Firebase
 import WebKit
 
 class AboutViewController: UIViewController, WKNavigationDelegate {
 
     override func loadView() {
-        Analytics.setScreenName("about", screenClass: nil)
-
         title = "About"
         view = UIView(frame: CGRect.null)
         view.backgroundColor = UIColor.white

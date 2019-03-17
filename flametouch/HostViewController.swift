@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
 
@@ -37,14 +36,13 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     override func loadView() {
-        Analytics.setScreenName("host", screenClass: nil)
-        
         view = UIView(frame: CGRect.null)
 
         navigationController?.navigationBar.prefersLargeTitles = true
 
         table.dataSource = self
         table.delegate = self
+        table.cellLayoutMarginsFollowReadableWidth = true
         table.estimatedRowHeight = 100
         table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
         table.register(AddressCell.self, forCellReuseIdentifier: "AddressCell")
