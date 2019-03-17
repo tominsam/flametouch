@@ -1,5 +1,0 @@
-# carthage update --platform iOS --use-ssh
-
-binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json"
-binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Fabric.json"
-binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Crashlytics.json"

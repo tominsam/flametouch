@@ -1,3 +1,0 @@
-binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json" "5.4.0"
-binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Crashlytics.json" "3.10.2"
-binary "https://raw.githubusercontent.com/Building42/Specs/master/Carthage/Fabric.json" "1.7.7"

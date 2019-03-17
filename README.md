@@ -11,11 +11,15 @@ Check out the project and run `carthage update` to install dependencies, etc.
 Bootstrap fastlane:
 
     brew install imagemagick
-    sudo gem update --system
-    sudo gem install fastlane -NV -n /usr/local/bin
-    sudo gem install bundler -n /usr/local/bin
-    bundle install
-    bundle binstubs --path=/usr/local/bin xcpretty
+
+	brew install rbenv
+	rbenv init
+	rbenv install
+   	gem update --system
+   	gem install bundler
+   	bundle install
+
+   	pod install
 
 Pull signing keys, etc, using 
 
