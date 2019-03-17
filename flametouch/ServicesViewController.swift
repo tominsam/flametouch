@@ -24,13 +24,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         
         table.dataSource = self
         table.delegate = self
-        table.cellLayoutMarginsFollowReadableWidth = true
-        
+        table.setupForAutolayout()
+
         table.pinEdgesTo(view: view)
-        table.estimatedRowHeight = 100
-        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
-        table.estimatedRowHeight = 100
-        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
+        table.registerReusableCell(SimpleCell.self)
 
         networkOverlay.pinEdgesTo(view: view)
         networkOverlay.backgroundColor = UIColor.white
@@ -171,20 +168,17 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "HostCell") as! HostCell?
-
+        let cell:SimpleCell = tableView.dequeueReusableCell(for: indexPath)
         let serviceGroup = getRow(indexPath)
-        cell!.title!.text = serviceGroup.title
-        cell!.subTitle!.text = serviceGroup.subTitle
-
-        return cell!
+        cell.title = serviceGroup.title
+        cell.subtitle = serviceGroup.subTitle
+        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = HostViewController(serviceGroup: getRow(indexPath))
         navigationController?.pushViewController(vc, animated: true)
-        
     }
 
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {

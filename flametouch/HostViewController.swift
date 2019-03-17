@@ -42,10 +42,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         table.dataSource = self
         table.delegate = self
-        table.cellLayoutMarginsFollowReadableWidth = true
-        table.estimatedRowHeight = 100
-        table.register(UINib(nibName: "HostCell", bundle: Bundle.main), forCellReuseIdentifier: "HostCell")
-        table.register(AddressCell.self, forCellReuseIdentifier: "AddressCell")
+        table.setupForAutolayout()
+        table.registerReusableCell(SimpleCell.self)
 
         view.addSubview(table)
         table.pinEdgesTo(view: view)
@@ -100,19 +98,19 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if (indexPath.section == 0) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "AddressCell") as! AddressCell?
+            let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
             if (indexPath.row == 0) {
-                cell!.textLabel!.text = serviceGroup!.services[0].hostName
+                cell.title = serviceGroup!.services[0].hostName
             } else {
-                cell!.textLabel!.text = addresses[indexPath.row - 1]
+                cell.title = addresses[indexPath.row - 1]
             }
-            return cell!
+            return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "HostCell") as! HostCell?
+            let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
             let service = serviceGroup!.services[indexPath.row]
-            cell!.title!.text = service.name
-            cell!.subTitle!.text = service.type
-            return cell!
+            cell.title = service.name
+            cell.subtitle = service.type
+            return cell
         }
     }
 

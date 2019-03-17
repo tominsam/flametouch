@@ -48,7 +48,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         table.dataSource = self
         table.delegate = self
         table.allowsSelection = true
-        table.cellLayoutMarginsFollowReadableWidth = true
+        table.setupForAutolayout()
+        table.registerReusableCell(SimpleCell.self)
 
         self.view.addSubview(table)
         table.pinEdgesTo(view: view)
@@ -96,36 +97,33 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCell(withIdentifier: "row")
-        if cell == nil {
-            cell = UITableViewCell(style: .value1, reuseIdentifier: "row")
-        }
+        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
 
         switch (indexPath.section) {
         case 0:
-            cell!.textLabel!.text = core[indexPath.row][0]
+            cell.title = core[indexPath.row][0]
             let value = core[indexPath.row][1]
-            cell!.detailTextLabel!.text = value
-            if (value.hasPrefix("_http._tcp.")) {
-                cell!.detailTextLabel!.textColor = self.view.window?.tintColor
-            } else {
-                cell!.detailTextLabel!.textColor = UIColor.gray
-            }
+            cell.right = value
+            //            if (value.hasPrefix("_http._tcp.")) {
+            //                cell.detailTextLabel!.textColor = self.view.window?.tintColor
+            //            } else {
+            //                cell.detailTextLabel!.textColor = UIColor.gray
+            //            }
             break
         case 1:
             let value = txtData[indexPath.row][1]
-            cell!.textLabel!.text = txtData[indexPath.row][0]
-            cell!.detailTextLabel!.text = value
-            if (value.hasPrefix("http://") || value.hasPrefix("https://")) {
-                cell!.detailTextLabel!.textColor = self.view.window?.tintColor
-            } else {
-                cell!.detailTextLabel!.textColor = UIColor.gray
-            }
+            cell.title = txtData[indexPath.row][0]
+            cell.right = value
+            //            if (value.hasPrefix("http://") || value.hasPrefix("https://")) {
+            //                cell.detailTextLabel!.textColor = self.view.window?.tintColor
+            //            } else {
+            //                cell.detailTextLabel!.textColor = UIColor.gray
+            //            }
             break
         default:
             break
         }
-        return cell!
+        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -135,7 +133,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             if (core[indexPath.row][1].hasPrefix("_http._tcp.")) {
                 let stringUrl = "http://\(self.service.hostName!):\(self.service.port)/"
                 ELog("stringurl is \(stringUrl)")
-                if let url = URL(string: stringUrl) {
+                if let url = URL(string: stringUrl), url.scheme?.starts(with: "http") == true {
                     let vc = SFSafariViewController(url: url)
                     //vc.preferredBarTintColor = view.window?.tintColor
                     self.present(vc, animated: true, completion: nil)
@@ -143,7 +141,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             }
             break
         case 1:
-            if let url = URL(string: txtData[indexPath.row][1]) {
+            if let url = URL(string: txtData[indexPath.row][1]), url.scheme?.starts(with: "http") == true {
                 let vc = SFSafariViewController.init(url: url)
                 //vc.preferredBarTintColor = view.window?.tintColor
                 self.present(vc, animated: true, completion: nil)
