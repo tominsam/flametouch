@@ -58,10 +58,10 @@ class SimpleCell : UITableViewCell, Reusable {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         contentView.addSubviewWithConstraints(outerStack, [
-            outerStack.leadingAnchor.constraint(equalTo: contentView.readableContentGuide.leadingAnchor),
-            outerStack.trailingAnchor.constraint(equalTo: contentView.readableContentGuide.trailingAnchor),
-            outerStack.topAnchor.constraint(equalTo: contentView.readableContentGuide.topAnchor),
-            outerStack.bottomAnchor.constraint(equalTo: contentView.readableContentGuide.bottomAnchor),
+            outerStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            outerStack.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            outerStack.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            outerStack.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
 
             contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 60)
             ])
