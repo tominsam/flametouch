@@ -19,7 +19,7 @@ extension UINavigationController {
 
         // iOS 13 nav bar theming
         if #available(iOS 13.0, *) {
-            let foreground: UIColor = .dynamic(light: .white, dark: .red)
+            let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
 
             let appearance = UINavigationBarAppearance()
             appearance.backgroundColor = .dynamic(light: .red, dark: .systemBackground)

@@ -14,12 +14,6 @@ lane :beta do
 
     changelog_from_git_commits
 
-    # crashlytics(
-    #     groups: ["Testers"],
-    #     notifications: true,
-    #     api_token: "c378fcb8538c8a0bb9aa7b1fc355017166ebb726"
-    # )
-
     hockey(
         api_token: "0cbda07021a541d7af383b3aac7737d5",
     )
