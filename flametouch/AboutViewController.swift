@@ -18,17 +18,12 @@ class AboutViewController: UIViewController, WKNavigationDelegate {
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")!
         webView.loadFileURL(localfilePath, allowingReadAccessTo: localfilePath)
 
+        // Make view transparent so I can use the system background and avoid FOUC
         webView.isOpaque = false
-        webView.backgroundColor = UIColor.clear
+        webView.backgroundColor = .systemBackground
 
         view.addSubview(webView)
         webView.pinEdgesTo(view: view)
-
-        // Webview flashes white on load and I can't stop it
-        webView.isHidden = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            webView.isHidden = false
-        }
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {

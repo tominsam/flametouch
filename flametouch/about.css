@@ -1,5 +1,5 @@
 body {
-    background: #fff;
+    background: rgba(0, 0, 0, 0);
 }
 a:link {
     color: #dd0000;
@@ -11,9 +11,6 @@ p {
     color: #000;
 }
 @media (prefers-color-scheme: dark) {
-    body {
-        background: rgb(28, 28, 30);
-    }
     a:link {
         color: rgb(255, 59, 48);
     }
