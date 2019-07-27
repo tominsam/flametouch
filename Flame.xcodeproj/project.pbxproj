@@ -10,6 +10,7 @@
 		721767211C828C950089EC41 /* ServiceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767201C828C950089EC41 /* ServiceGroup.swift */; };
 		721767231C8296680089EC41 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767221C8296680089EC41 /* AboutViewController.swift */; };
 		723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 723F91211D974EFD002B4069 /* SimpleCell.swift */; };
+		7254056C22EC0C4C00295143 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */; };
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
 		72A73F2D1C82AF3D00E6B21E /* about.html in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F2C1C82AF3D00E6B21E /* about.html */; };
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
@@ -37,6 +38,7 @@
 		721767221C8296680089EC41 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		723F91211D974EFD002B4069 /* SimpleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
 		723F91231D975D90002B4069 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
+		7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
 		7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceBrowser.swift; sourceTree = "<group>"; };
 		7286077F1F5A4B1A00B436F8 /* fastlane */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fastlane; sourceTree = "<group>"; };
 		72A73F2C1C82AF3D00E6B21E /* about.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = about.html; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				72BCE27C1F6B24E900491CCC /* Reachability.swift */,
 				72C363BC223E0C14007BFA41 /* Configurable.swift */,
 				72C363BE223E0D57007BFA41 /* UITableView.swift */,
+				7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */,
 			);
 			name = Utils;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
 				72C363BF223E0D57007BFA41 /* UITableView.swift in Sources */,
 				721767211C828C950089EC41 /* ServiceGroup.swift in Sources */,
+				7254056C22EC0C4C00295143 /* UINavigationController+Extensions.swift in Sources */,
 				72E0BF271D8B90A900070829 /* WirelessDetect.swift in Sources */,
 				72EC68DD1BC9E50600AC2692 /* ServicesViewController.swift in Sources */,
 				72D24BB71C76BC110005FC8B /* DetailViewController.swift in Sources */,

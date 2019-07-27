@@ -13,18 +13,20 @@ import WebKit
 class AboutViewController: UIViewController, WKNavigationDelegate {
 
     override func viewDidLoad() {
-        title = "About"
         let webView = WKWebView()
         webView.navigationDelegate = self
         let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")!
         webView.loadFileURL(localfilePath, allowingReadAccessTo: localfilePath)
+
+        webView.isOpaque = false
+        webView.backgroundColor = UIColor.clear
 
         view.addSubview(webView)
         webView.pinEdgesTo(view: view)
 
         // Webview flashes white on load and I can't stop it
         webView.isHidden = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             webView.isHidden = false
         }
     }
@@ -36,6 +38,10 @@ class AboutViewController: UIViewController, WKNavigationDelegate {
         } else {
             decisionHandler(.allow)
         }
+    }
+
+    @objc func done() {
+        dismiss(animated: true, completion: nil)
     }
 
 }

@@ -25,37 +25,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window!.backgroundColor = .systemBackground
         self.window!.tintColor = .red
 
-        UINavigationBar.appearance().barStyle = .black
-        UINavigationBar.appearance().isTranslucent = true
-        UINavigationBar.appearance().barTintColor = .red
-        UINavigationBar.appearance().tintColor = .white
 
         let viewController = ServicesViewController()
 
         let navigationController = UINavigationController(rootViewController: viewController)
-
-        // iOS 13 nav bar theming
-        if #available(iOS 13.0, *) {
-            let foreground: UIColor = .dynamic(light: .white, dark: .red)
-
-            let appearance = UINavigationBarAppearance()
-            appearance.backgroundColor = .dynamic(light: .red, dark: .systemGray6)
-            appearance.titleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            appearance.largeTitleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            let buttonAppearance = UIBarButtonItemAppearance()
-            buttonAppearance.normal.titleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            appearance.buttonAppearance = buttonAppearance
-            navigationController.navigationBar.scrollEdgeAppearance = appearance
-            navigationController.navigationBar.standardAppearance = appearance
-            navigationController.navigationBar.compactAppearance = appearance
-            navigationController.navigationBar.tintColor = foreground
-        }
+        navigationController.theme()
 
         self.window!.rootViewController = navigationController;
         self.window!.makeKeyAndVisible()
@@ -90,20 +64,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
-}
-
-fileprivate extension UIColor {
-    static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
-        return UIColor { traitCollection in
-            switch traitCollection.userInterfaceStyle {
-            case .dark:
-                return dark
-            case .light:
-                return light
-            default:
-                return light
-            }
-        }
-
-    }
 }

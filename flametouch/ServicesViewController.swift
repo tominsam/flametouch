@@ -77,7 +77,11 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @objc
     func aboutPressed() {
-        navigationController?.pushViewController(AboutViewController(), animated: true)
+        let about = AboutViewController()
+        about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
+        let vc = UINavigationController(rootViewController: about)
+        vc.theme()
+        present(vc, animated: true, completion: nil)
     }
     
     @objc
