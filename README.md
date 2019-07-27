@@ -19,8 +19,6 @@ Bootstrap fastlane:
     gem install bundler
     bundle install
 
-    pod install
-
 Pull signing keys, etc, using 
 
     fastlane match development --readonly
