@@ -14,12 +14,12 @@ class SimpleCell : UITableViewCell, Reusable {
 
     lazy var titleView = UILabel().configured {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
-        $0.textColor = UIColor.darkText
+        $0.textColor = .label
     }
 
     lazy var subtitleView = UILabel().configured {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
-        $0.textColor = UIColor.darkText.withAlphaComponent(0.6)
+        $0.textColor = .secondaryLabel
     }
 
     lazy var titleStack = UIStackView(arrangedSubviews: [titleView, subtitleView]).configured {
@@ -31,12 +31,12 @@ class SimpleCell : UITableViewCell, Reusable {
     lazy var iconView = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).configured {
         $0.contentMode = .scaleAspectFit
         $0.image = nil
-        $0.tintColor = UIColor.darkText
+        $0.tintColor = .label
     }
 
     lazy var rightView = UILabel().configured {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
-        $0.textColor = UIColor.darkText.withAlphaComponent(0.6)
+        $0.textColor = .secondaryLabel
     }
 
     lazy var outerStack = UIStackView(arrangedSubviews: [iconView, titleStack, rightView]).configured {

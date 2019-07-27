@@ -1,7 +1,33 @@
 body {
+    background: #fff;
+}
+a:link {
+    color: #dd0000;
+}
+p.version {
+    color: #777;
+}
+p {
+    color: #000;
+}
+@media (prefers-color-scheme: dark) {
+    body {
+        background: rgb(28, 28, 30);
+    }
+    a:link {
+        color: rgb(255, 59, 48);
+    }
+    p.version {
+        color: #aaa;
+    }
+    p {
+        color: #fff;
+    }
+}
+
+body {
     font-family: Helvetica, sans-serif;
     line-height: 141%;
-    background: #fff;
     color: #000;
     text-align: center;
     font-size: 16px;
@@ -12,7 +38,7 @@ body {
 }
 
 a:link {
-    text-decoration: none; color:#dd0000;
+    text-decoration: none;
 }
 
 a[hreflang]:after {
@@ -27,12 +53,13 @@ p {
 }
 
 p.version {
-    color: #777;
     font-size: 12px;
 }
 
 span.attribution {
-    text-align:right; display:block; margin-top:0.5em;
+    text-align:right;
+    display:block;
+    margin-top:0.5em;
 }
 
 span.attribution:before {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
+class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
     var serviceGroup : ServiceGroup?
@@ -35,11 +35,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         precondition(false) // don't want this happening
     }
 
-    override func loadView() {
-        view = UIView(frame: CGRect.null)
-
-        navigationController?.navigationBar.prefersLargeTitles = true
-
+    override func viewDidLoad() {
         table.dataSource = self
         table.delegate = self
         table.setupForAutolayout()
@@ -48,7 +44,6 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         view.addSubview(table)
         table.pinEdgesTo(view: view)
 
-        registerForPreviewing(with: self, sourceView: table)
     }
 
     func browser() -> ServiceBrowser {
@@ -147,23 +142,5 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = table.indexPathForRow(at: location) {
-            if (indexPath.section == 0) {
-                return nil
-            } else {
-                let service = serviceGroup!.services[indexPath.row]
-                let serviceController = DetailViewController(service: service)
-                return serviceController
-            }
-
-        }
-        return nil
-    }
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit vc: UIViewController) {
-        navigationController?.pushViewController(vc, animated: false)
-    }
-
 }
 

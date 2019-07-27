@@ -26,19 +26,19 @@ public protocol Reusable {
 }
 
 public extension UITableView {
-    public func registerReusableCell<T>(_ klass: T.Type) where T: Reusable, T: UITableViewCell {
+    func registerReusableCell<T>(_ klass: T.Type) where T: Reusable, T: UITableViewCell {
         register(T.self, forCellReuseIdentifier: T.reuseId)
     }
 
-    public func registerReusableHeaderFooterView<T>(_ klass: T.Type) where T: Reusable, T: UITableViewHeaderFooterView {
+    func registerReusableHeaderFooterView<T>(_ klass: T.Type) where T: Reusable, T: UITableViewHeaderFooterView {
         register(T.self, forHeaderFooterViewReuseIdentifier: T.reuseId)
     }
 
-    public func dequeueReusableCell<T>(for indexPath: IndexPath) -> T where T: Reusable, T: UITableViewCell {
+    func dequeueReusableCell<T>(for indexPath: IndexPath) -> T where T: Reusable, T: UITableViewCell {
         return dequeueReusableCell(withIdentifier: T.reuseId, for: indexPath) as! T
     }
 
-    public func dequeueReusableHeaderFooterView<T>() -> T where T: Reusable, T: UITableViewHeaderFooterView {
+    func dequeueReusableHeaderFooterView<T>() -> T where T: Reusable, T: UITableViewHeaderFooterView {
         return dequeueReusableHeaderFooterView(withIdentifier: T.reuseId) as! T
     }
 }

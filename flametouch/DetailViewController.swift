@@ -40,31 +40,15 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         super.init(coder: aDecoder)
     }
 
-    override func loadView() {
-        self.view = UIView(frame: CGRect.null)
-
-        navigationController?.navigationBar.prefersLargeTitles = true
-
+    override func viewDidLoad() {
         table.dataSource = self
         table.delegate = self
         table.allowsSelection = true
         table.setupForAutolayout()
         table.registerReusableCell(SimpleCell.self)
-
         self.view.addSubview(table)
         table.pinEdgesTo(view: view)
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
 
     func numberOfSections(in tableView: UITableView) -> Int {
         if txtData.isEmpty {

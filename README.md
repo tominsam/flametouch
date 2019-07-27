@@ -12,14 +12,14 @@ Bootstrap fastlane:
 
     brew install imagemagick
 
-	brew install rbenv
-	rbenv init
-	rbenv install
-   	gem update --system
-   	gem install bundler
-   	bundle install
+    brew install rbenv
+    rbenv init
+    rbenv install
+    gem update --system
+    gem install bundler
+    bundle install
 
-   	pod install
+    pod install
 
 Pull signing keys, etc, using 
 

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIViewControllerPreviewingDelegate {
+class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
     let networkOverlay = UIView(frame: CGRect.zero)
@@ -17,10 +17,11 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     let wirelessDetect = WirelessDetect()
     
-    override func loadView() {
-        self.view = UIView(frame: CGRect.null)
-        self.view.addSubview(table)
-        self.view.addSubview(networkOverlay)
+    override func viewDidLoad() {
+        title = NSLocalizedString("Flame", comment: "App name")
+
+        view.addSubview(table)
+        view.addSubview(networkOverlay)
         
         table.dataSource = self
         table.delegate = self
@@ -30,7 +31,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         table.registerReusableCell(SimpleCell.self)
 
         networkOverlay.pinEdgesTo(view: view)
-        networkOverlay.backgroundColor = UIColor.white
+        networkOverlay.backgroundColor = .systemBackground
         networkOverlay.addSubview(titleView)
         let guide = networkOverlay.readableContentGuide
 
@@ -54,12 +55,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
         subtitleView.text = "Connect to a WiFi network to see local services.".widont()
 
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Export"), style: .plain, target: self, action: #selector(exportData))
-        
-        registerForPreviewing(with: self, sourceView: self.table)
         
         networkOverlay.isHidden = true // wirelessDetect.hasWireless()
         wirelessDetect.callback = { (wifi:Bool) -> Void in
@@ -163,6 +162,10 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         // Dispose of any resources that can be recreated.
     }
 
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Hosts"
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return browser().serviceGroups.count;
     }
@@ -179,18 +182,6 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = HostViewController(serviceGroup: getRow(indexPath))
         navigationController?.pushViewController(vc, animated: true)
-    }
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        if let indexPath = table.indexPathForRow(at: location) {
-            let vc = HostViewController(serviceGroup: getRow(indexPath))
-            return vc
-        }
-        return nil
-    }
-
-    func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit vc: UIViewController) {
-        navigationController?.pushViewController(vc, animated: false)
     }
 
     func getRow(_ indexPath: IndexPath) -> ServiceGroup {

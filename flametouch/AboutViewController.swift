@@ -12,25 +12,23 @@ import WebKit
 
 class AboutViewController: UIViewController, WKNavigationDelegate {
 
-    override func loadView() {
+    override func viewDidLoad() {
         title = "About"
-        view = UIView(frame: CGRect.null)
-        view.backgroundColor = UIColor.white
-        perform(#selector(initWebview), with: nil, afterDelay: 0)
-    }
-    
-    @objc func initWebview() {
         let webView = WKWebView()
-        view.addSubview(webView)
-        view.backgroundColor = UIColor.white
-        webView.backgroundColor = UIColor.white
-        webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.pinEdgesTo(guide: view.safeAreaLayoutGuide)
         webView.navigationDelegate = self
-        let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")
-        webView.load(URLRequest(url: localfilePath!))
+        let localfilePath = Bundle.main.url(forResource: "about", withExtension: "html")!
+        webView.loadFileURL(localfilePath, allowingReadAccessTo: localfilePath)
+
+        view.addSubview(webView)
+        webView.pinEdgesTo(view: view)
+
+        // Webview flashes white on load and I can't stop it
+        webView.isHidden = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            webView.isHidden = false
+        }
     }
-    
+
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if navigationAction.navigationType == .linkActivated {
             UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)

@@ -97,7 +97,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         } else {
             if (services.contains(service)) {
         	    ELog("removed service " + service.type)
-	        	services.remove(at: services.index(of: service)!)
+	        	services.remove(at: services.firstIndex(of: service)!)
                 broadcast()
         	} else {
                 ELog("can't remove service \(service.type)")
