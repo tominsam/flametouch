@@ -23,10 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
 
-        let navigationController = UINavigationController(rootViewController: ServicesViewController())
-        navigationController.theme()
-
-        self.window!.rootViewController = navigationController;
+        self.window!.rootViewController = CustomSplitViewController().configured {
+            $0.setMasterViewController(ServicesViewController())
+        }
         self.window!.makeKeyAndVisible()
 
         return true;

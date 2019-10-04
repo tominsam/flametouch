@@ -118,7 +118,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         } else {
             let service = serviceGroup!.services[indexPath.row]
             let serviceController = DetailViewController(service: service)
-            navigationController?.pushViewController(serviceController, animated: true)
+            show(serviceController, sender: self)
         }
     }
     

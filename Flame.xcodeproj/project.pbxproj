@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		721767211C828C950089EC41 /* ServiceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767201C828C950089EC41 /* ServiceGroup.swift */; };
 		721767231C8296680089EC41 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767221C8296680089EC41 /* AboutViewController.swift */; };
+		722C529F2346FA8A00A17E37 /* CustomSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722C529E2346FA8A00A17E37 /* CustomSplitViewController.swift */; };
 		723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 723F91211D974EFD002B4069 /* SimpleCell.swift */; };
 		7254056C22EC0C4C00295143 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */; };
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
@@ -36,6 +37,8 @@
 /* Begin PBXFileReference section */
 		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
 		721767221C8296680089EC41 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		722C529D2346FA5500A17E37 /* Flame Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Flame Debug.entitlements"; sourceTree = "<group>"; };
+		722C529E2346FA8A00A17E37 /* CustomSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSplitViewController.swift; sourceTree = "<group>"; };
 		723F91211D974EFD002B4069 /* SimpleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
 		723F91231D975D90002B4069 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 				72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */,
 				72D24BB61C76BC110005FC8B /* DetailViewController.swift */,
 				721767221C8296680089EC41 /* AboutViewController.swift */,
+				722C529E2346FA8A00A17E37 /* CustomSplitViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -145,6 +149,7 @@
 		72EC68CE1BC9E50600AC2692 = {
 			isa = PBXGroup;
 			children = (
+				722C529D2346FA5500A17E37 /* Flame Debug.entitlements */,
 				72EC68D91BC9E50600AC2692 /* flametouch */,
 				7286077F1F5A4B1A00B436F8 /* fastlane */,
 				72EC68D81BC9E50600AC2692 /* Products */,
@@ -265,6 +270,7 @@
 				72C363BD223E0C14007BFA41 /* Configurable.swift in Sources */,
 				72D318C71D8B4DE3002E9FA6 /* ServiceName.swift in Sources */,
 				72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */,
+				722C529F2346FA8A00A17E37 /* CustomSplitViewController.swift in Sources */,
 				72C363BF223E0D57007BFA41 /* UITableView.swift in Sources */,
 				721767211C828C950089EC41 /* ServiceGroup.swift in Sources */,
 				7254056C22EC0C4C00295143 /* UINavigationController+Extensions.swift in Sources */,
@@ -344,12 +350,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "Flame Debug.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				INFOPLIST_FILE = flametouch/Info.plist;
 				MARKETING_VERSION = 2.4.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flame.debug;
 				PRODUCT_NAME = "$(TARGET_NAME) Debug";
+				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Debug;
 		};
@@ -399,11 +408,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = "Flame Debug.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				INFOPLIST_FILE = flametouch/Info.plist;
 				MARKETING_VERSION = 2.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Release;
 		};

@@ -186,7 +186,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let vc = HostViewController(serviceGroup: getRow(indexPath))
-        navigationController?.pushViewController(vc, animated: true)
+        show(vc, sender: self)
     }
 
     func getRow(_ indexPath: IndexPath) -> ServiceGroup {
