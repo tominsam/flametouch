@@ -99,12 +99,14 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             } else {
                 cell.title = addresses[indexPath.row - 1]
             }
+            cell.accessoryType = .none
             return cell
         } else {
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
             let service = serviceGroup!.services[indexPath.row]
             cell.title = service.name
             cell.subtitle = service.type
+            cell.accessoryType = .disclosureIndicator
             return cell
         }
     }

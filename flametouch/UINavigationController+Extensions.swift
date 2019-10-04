@@ -10,38 +10,29 @@ import UIKit
 
 extension UINavigationController {
     func theme() {
+        let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
 
-        navigationBar.barStyle = .black
-        navigationBar.isTranslucent = true
-        navigationBar.barTintColor = .red
-        navigationBar.tintColor = .white
-        navigationBar.shadowImage = nil
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.shadowImage = nil
+        appearance.shadowColor = nil
+        appearance.backgroundColor = .dynamic(light: .red, dark: .systemBackground)
+        appearance.titleTextAttributes = [
+            .foregroundColor: foreground
+        ]
+        appearance.largeTitleTextAttributes = [
+            .foregroundColor: foreground
+        ]
 
-        // iOS 13 nav bar theming
-        if #available(iOS 13.0, *) {
-            let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
-
-            let appearance = UINavigationBarAppearance()
-            appearance.backgroundColor = .dynamic(light: .red, dark: .systemBackground)
-            appearance.titleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            appearance.largeTitleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            let buttonAppearance = UIBarButtonItemAppearance()
-            buttonAppearance.normal.titleTextAttributes = [
-                .foregroundColor: foreground
-            ]
-            appearance.shadowImage = nil
-            appearance.shadowColor = nil
-            appearance.buttonAppearance = buttonAppearance
-            navigationBar.compactAppearance = nil
-            navigationBar.scrollEdgeAppearance = nil
-            navigationBar.standardAppearance = appearance
-            navigationBar.tintColor = foreground
-        }
-
+        let buttonAppearance = UIBarButtonItemAppearance()
+        buttonAppearance.normal.titleTextAttributes = [
+            .foregroundColor: foreground
+        ]
+        appearance.buttonAppearance = buttonAppearance
+        navigationBar.compactAppearance = nil
+        navigationBar.scrollEdgeAppearance = nil
+        navigationBar.standardAppearance = appearance
+        navigationBar.tintColor = foreground
     }
 }
 

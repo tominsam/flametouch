@@ -179,6 +179,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         let serviceGroup = getRow(indexPath)
         cell.title = serviceGroup.title
         cell.subtitle = serviceGroup.subTitle
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
 
@@ -191,7 +192,6 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     func getRow(_ indexPath: IndexPath) -> ServiceGroup {
         return browser().serviceGroups[(indexPath as NSIndexPath).row]
     }
-
 
 }
 

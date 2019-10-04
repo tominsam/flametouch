@@ -22,20 +22,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         ELog("started!")
 
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window!.backgroundColor = .systemBackground
-        self.window!.tintColor = .red
 
-
-        let viewController = ServicesViewController()
-
-        let navigationController = UINavigationController(rootViewController: viewController)
+        let navigationController = UINavigationController(rootViewController: ServicesViewController())
         navigationController.theme()
 
         self.window!.rootViewController = navigationController;
         self.window!.makeKeyAndVisible()
-        
-        //precondition(false)
-        
+
         return true;
     }
 
