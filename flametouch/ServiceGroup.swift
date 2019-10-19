@@ -16,15 +16,18 @@ class ServiceGroup: NSObject {
     init(service : NetService, address : String) {
         super.init()
         services.append(service)
+        sortServices()
         addresses.append(address)
+        sortAddresses()
     }
 
     func addService(_ service : NetService) {
         services.append(service)
+        sortServices()
+    }
 
-        services.sort(by: { (a, b) -> Bool in
-            return a.type.lowercased().compare(b.type.lowercased()) == ComparisonResult.orderedAscending
-        })
+    private func sortServices() {
+        services.sort { $0.type.lowercased() < $1.type.lowercased() }
     }
 
     func addAddress(_ address : String) {
@@ -32,7 +35,11 @@ class ServiceGroup: NSObject {
             return
         }
         addresses.append(address)
-        addresses.sort { $0.count < $1.count }
+        sortAddresses()
+    }
+
+    private func sortAddresses() {
+        addresses.sort { $0.count < $1.count || $0 < $1 }
     }
 
     var title : String {
@@ -43,7 +50,7 @@ class ServiceGroup: NSObject {
 
     var address : String {
         get {
-            return addresses.first!
+            return addresses.first ?? "."
         }
     }
 

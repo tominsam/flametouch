@@ -17,8 +17,10 @@ class ServiceName {
         "_airport._tcp.",
         "_sleep-proxy._udp.",
         "_ssh._tcp.",
+        "_smb._tcp.",
         "_ipp._tcp.", // printer
         "_googlecast._tcp.", // chromecast
+        "_flametouch._tcp.",
     ]
     
     static func nameForServiceGroup(_ group : ServiceGroup) -> String {

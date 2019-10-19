@@ -24,15 +24,24 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         self.title = service.type
         self.core.append([NSLocalizedString("Name", comment: "Label for the name of the service"), service.name])
         self.core.append([NSLocalizedString("Type", comment: "Label for the type of the service"), service.type + service.domain])
-        for hostname in service.addresses!.compactMap({getIFAddress($0)}) {
+        for hostname in service.addresses!.compactMap({getIFAddress($0)}).sorted() {
             self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
         }
         self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
 
         if let txtRecord = service.txtRecordData() {
             for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                self.txtData.append([key, String(bytes: value, encoding: .utf8)!])
+                if let stringValue = String(bytes: value, encoding: .utf8) {
+                    self.txtData.append([key, stringValue])
+                } else {
+                    self.txtData.append([key, value.hex])
+                }
             }
+        }
+
+        // Sort by key
+        self.txtData.sort { a, b in
+            return a[0].lowercased() < b[0].lowercased()
         }
     }
 
@@ -212,3 +221,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
 }
 
+extension Data {
+    var hex: String {
+        return self.map { b in String(format: "%02X", b) }.joined()
+    }
+}
