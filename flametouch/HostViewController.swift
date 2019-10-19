@@ -133,36 +133,34 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
 
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self = self else { return nil }
+        if indexPath.section == 0 { // Hostname + Address rows
+            // capture asap in case the tableview moves under us
+            let value: String
+            if (indexPath.row == 0) {
+                value = self.serviceGroup!.services[0].hostName ?? ""
+            } else {
+                value = self.addresses[indexPath.row - 1]
+            }
 
-            if indexPath.section == 0 {
-                // Hostname + Address rows
-
-                let copyValueAction = UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { [weak self] _ in
-                    guard let self = self else { return }
-                    if (indexPath.row == 0) {
-                        UIPasteboard.general.string = self.serviceGroup!.services[0].hostName
-                    } else {
-                        UIPasteboard.general.string = self.addresses[indexPath.row - 1]
-                    }
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+                let copyValueAction = UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = value
                 }
-
                 return UIMenu(title: "", children: [copyValueAction])
+            }
 
-            } else if let hasGroup = self.serviceGroup {
-                // Services
+        } else { // Service rows
+
+            guard let service = serviceGroup?.services[indexPath.row] else { return nil }
+
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
                 let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = hasGroup.services[indexPath.row].name
+                    UIPasteboard.general.string = service.name
                 }
                 let copyTypeAction = UIAction(title: "Copy Type", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = hasGroup.services[indexPath.row].type
+                    UIPasteboard.general.string = service.type
                 }
-
                 return UIMenu(title: "", children: [copyNameAction, copyTypeAction])
-
-            } else {
-                return nil
             }
         }
     }

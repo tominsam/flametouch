@@ -202,18 +202,16 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        // capture asap in case the tableview moves under us
+        let row = self.getRow(indexPath)
 
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self = self else { return nil }
-            let row = self.getRow(indexPath)
-
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                 UIPasteboard.general.string = row.title
             }
             let copyAddressAction = UIAction(title: "Copy IP Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                 UIPasteboard.general.string = row.address
             }
-
             return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
         }
     }

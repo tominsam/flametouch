@@ -170,10 +170,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
              	precondition(false, "Can't happen")
             }
         }
-        serviceGroups = groups.values.sorted {
-            $0.address.lowercased().compare($1.address.lowercased()) == ComparisonResult.orderedAscending
-        }
-
+        serviceGroups = groups.values.sorted { $0.title.lowercased() < $1.title.lowercased() }
 
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
     }

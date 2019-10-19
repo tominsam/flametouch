@@ -112,7 +112,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             break
         }
 
-        if canSelect(indexPath: indexPath) {
+        if urlFor(indexPath: indexPath) != nil {
+            // cell can be selected
             cell.selectionStyle = .default
             cell.rightView.textColor = cell.tintColor
         } else {
@@ -124,41 +125,34 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if canSelect(indexPath: indexPath) {
-            didSelect(indexPath: indexPath)
+        if let url = urlFor(indexPath: indexPath) {
+            didSelect(url: url)
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
         }
     }
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        // capture asap in case the tableview moves under us
+        let row = indexPath.section == 0 ? self.core[indexPath.row] : self.txtData[indexPath.row]
+        let url = self.urlFor(indexPath: indexPath)
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             guard let self = self else { return nil }
 
-            let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { [weak self] _ in
-                guard let self = self else { return }
-                if (indexPath.section == 0) {
-                    UIPasteboard.general.string = self.core[indexPath.row][0]
-                } else {
-                    UIPasteboard.general.string = self.txtData[indexPath.row][0]
+            var actions = [
+                UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = row[0]
+                },
+                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = row[1]
                 }
-            }
+            ]
 
-            let copyValueAction = UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { [weak self] _ in
-                guard let self = self else { return }
-                if (indexPath.section == 0) {
-                    UIPasteboard.general.string = self.core[indexPath.row][1]
-                } else {
-                    UIPasteboard.general.string = self.txtData[indexPath.row][1]
-                }
-            }
-            var actions = [copyNameAction, copyValueAction]
-
-            if self.canSelect(indexPath: indexPath) {
+            if let url = url {
                 actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
                     guard let self = self else { return }
-                    self.didSelect(indexPath: indexPath)
+                    self.didSelect(url: url)
                 })
             }
 
@@ -166,12 +160,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func canSelect(indexPath: IndexPath) -> Bool {
-        return urlFor(indexPath: indexPath) != nil
-    }
-
-    func didSelect(indexPath: IndexPath) {
-        if let url = urlFor(indexPath: indexPath), let scheme = url.scheme {
+    func didSelect(url: URL?) {
+        if let url = url, let scheme = url.scheme {
             switch scheme {
             case "http", "https":
                 // If there's a universal link handler for this URL, use that for preference
