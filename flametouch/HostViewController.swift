@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// View of a single host - lists the services of that host
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
@@ -121,28 +122,43 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             show(serviceController, sender: self)
         }
     }
-    
-    func tableView(_ tableView: UITableView, shouldShowMenuForRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, canPerformAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return action == #selector(UIResponderStandardEditActions.copy)
-    }
-    
-    func tableView(_ tableView: UITableView, performAction action: Selector, forRowAt indexPath: IndexPath, withSender sender: Any?) {
-        if (indexPath.section == 0) {
-            if (indexPath.row == 0) {
-                UIPasteboard.general.string = serviceGroup!.services[0].hostName
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self = self else { return nil }
+
+            if indexPath.section == 0 {
+                // Hostname + Address rows
+
+                let copyValueAction = UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { [weak self] _ in
+                    guard let self = self else { return }
+                    if (indexPath.row == 0) {
+                        UIPasteboard.general.string = self.serviceGroup!.services[0].hostName
+                    } else {
+                        UIPasteboard.general.string = self.addresses[indexPath.row - 1]
+                    }
+                }
+
+                return UIMenu(title: "", children: [copyValueAction])
+
+            } else if let hasGroup = self.serviceGroup {
+                // Services
+                let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = hasGroup.services[indexPath.row].name
+                }
+                let copyTypeAction = UIAction(title: "Copy Type", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = hasGroup.services[indexPath.row].type
+                }
+
+                return UIMenu(title: "", children: [copyNameAction, copyTypeAction])
+
             } else {
-                UIPasteboard.general.string = addresses[indexPath.row - 1]
-            }
-        } else {
-            if let hasGroup = serviceGroup {
-                UIPasteboard.general.string = hasGroup.services[indexPath.row].name
+                return nil
             }
         }
     }
-    
+
+
 }
 

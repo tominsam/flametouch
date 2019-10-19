@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Root view of the app, renders a list of hosts on the local network
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
@@ -192,6 +193,24 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     func getRow(_ indexPath: IndexPath) -> ServiceGroup {
         return browser().serviceGroups[(indexPath as NSIndexPath).row]
     }
+
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self = self else { return nil }
+            let row = self.getRow(indexPath)
+
+            let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                UIPasteboard.general.string = row.title
+            }
+            let copyAddressAction = UIAction(title: "Copy IP Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                UIPasteboard.general.string = row.address
+            }
+
+            return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
+        }
+    }
+
 
 }
 
