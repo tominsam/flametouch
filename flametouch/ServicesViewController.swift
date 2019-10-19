@@ -75,7 +75,14 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             name: NSNotification.Name(rawValue: "ServicesChanged"),
             object: nil)
     }
-    
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let selected = table.indexPathForSelectedRow {
+            table.deselectRow(at: selected, animated: true)
+        }
+    }
+
     @objc
     func aboutPressed() {
         let about = AboutViewController()
@@ -185,7 +192,6 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         let vc = HostViewController(serviceGroup: getRow(indexPath))
         show(vc, sender: self)
     }

@@ -50,6 +50,13 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         table.pinEdgesTo(view: view)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let selected = table.indexPathForSelectedRow {
+            table.deselectRow(at: selected, animated: true)
+        }
+    }
+
     func numberOfSections(in tableView: UITableView) -> Int {
         if txtData.isEmpty {
             return 1
@@ -108,8 +115,11 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        didSelect(indexPath: indexPath)
+        if canSelect(indexPath: indexPath) {
+            didSelect(indexPath: indexPath)
+        } else {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
     }
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {

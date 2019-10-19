@@ -47,6 +47,13 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if let selected = table.indexPathForSelectedRow {
+            table.deselectRow(at: selected, animated: true)
+        }
+    }
+
     func browser() -> ServiceBrowser {
         return AppDelegate.instance().browser
     }
@@ -101,6 +108,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 cell.title = addresses[indexPath.row - 1]
             }
             cell.accessoryType = .none
+            cell.selectionStyle = .none
             return cell
         } else {
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
@@ -108,14 +116,14 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             cell.title = service.name
             cell.subtitle = service.type
             cell.accessoryType = .disclosureIndicator
+            cell.selectionStyle = .default
             return cell
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         if (indexPath.section == 0) {
-            
+            tableView.deselectRow(at: indexPath, animated: true)
         } else {
             let service = serviceGroup!.services[indexPath.row]
             let serviceController = DetailViewController(service: service)
