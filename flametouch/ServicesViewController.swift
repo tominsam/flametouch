@@ -188,6 +188,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         cell.title = serviceGroup.title
         cell.subtitle = serviceGroup.subTitle
         cell.accessoryType = .disclosureIndicator
+        cell.selectionStyle = .default
         return cell
     }
 
