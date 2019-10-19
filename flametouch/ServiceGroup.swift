@@ -39,7 +39,14 @@ class ServiceGroup: NSObject {
     }
 
     private func sortAddresses() {
-        addresses.sort { $0.count < $1.count || $0 < $1 }
+        addresses.sort {
+            // Sort by length then alpha
+            if $0.count == $1.count {
+                return $0 < $1
+            } else {
+                return $0.count < $1.count
+            }
+        }
     }
 
     var title : String {

@@ -43,8 +43,10 @@ class ServiceName {
                 }
             }
         }
-        // fallback
-        return group.services.first!.name
+        // fallback to whichever is shorter out of the hostname and the service name
+        // (I'm assumoing that short == pithy)
+        guard let service = group.services.first else { return "" }
+        return [service.hostName, service.name].compactMap { $0 }.sorted { $0.count < $1.count }.first ?? ""
     }
 
     static func mapFromService(_ service : NetService) -> [String: String] {
