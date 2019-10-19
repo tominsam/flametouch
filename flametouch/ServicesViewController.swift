@@ -85,11 +85,18 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
     @objc
     func aboutPressed() {
+        #if targetEnvironment(macCatalyst)
+        // About screen gets a dedicated window
+        let userActivity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
+        UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil, errorHandler: nil)
+        #else
+        // About screen gets a modal
         let about = AboutViewController()
         about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
         let vc = UINavigationController(rootViewController: about)
         vc.theme()
         present(vc, animated: true, completion: nil)
+        #endif
     }
     
     @objc
@@ -123,7 +130,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
                 serviceJson["addresses"] = addressesJson
                 if let txtRecord = service.txtRecordData() {
                     for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                        serviceJson[key] = String(bytes: value, encoding: .utf8)
+                        serviceJson[key] = String(bytes: value, encoding: .utf8) ?? value.hex
                     }
                 }
 

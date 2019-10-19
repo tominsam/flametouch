@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		721767211C828C950089EC41 /* ServiceGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767201C828C950089EC41 /* ServiceGroup.swift */; };
 		721767231C8296680089EC41 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721767221C8296680089EC41 /* AboutViewController.swift */; };
+		721D2E84235AC81D00D763AB /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721D2E83235AC81D00D763AB /* SceneDelegate.swift */; };
+		721D2E86235AE31800D763AB /* AboutSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721D2E85235AE31800D763AB /* AboutSceneDelegate.swift */; };
 		722C529F2346FA8A00A17E37 /* CustomSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722C529E2346FA8A00A17E37 /* CustomSplitViewController.swift */; };
 		723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 723F91211D974EFD002B4069 /* SimpleCell.swift */; };
 		7254056C22EC0C4C00295143 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */; };
@@ -37,6 +39,8 @@
 /* Begin PBXFileReference section */
 		721767201C828C950089EC41 /* ServiceGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceGroup.swift; sourceTree = "<group>"; };
 		721767221C8296680089EC41 /* AboutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		721D2E83235AC81D00D763AB /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		721D2E85235AE31800D763AB /* AboutSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutSceneDelegate.swift; sourceTree = "<group>"; };
 		722C529D2346FA5500A17E37 /* Flame Debug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Flame Debug.entitlements"; sourceTree = "<group>"; };
 		722C529E2346FA8A00A17E37 /* CustomSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSplitViewController.swift; sourceTree = "<group>"; };
 		723F91211D974EFD002B4069 /* SimpleCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleCell.swift; sourceTree = "<group>"; };
@@ -125,6 +129,8 @@
 			isa = PBXGroup;
 			children = (
 				72EC68DA1BC9E50600AC2692 /* AppDelegate.swift */,
+				721D2E83235AC81D00D763AB /* SceneDelegate.swift */,
+				721D2E85235AE31800D763AB /* AboutSceneDelegate.swift */,
 				72B2F3BB1C7A925600175E55 /* Hostname.swift */,
 				72E0BF261D8B90A900070829 /* WirelessDetect.swift */,
 				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
@@ -280,8 +286,10 @@
 				72E16E911DB3023B00EE1179 /* ViewExtensions.swift in Sources */,
 				72EC68DB1BC9E50600AC2692 /* AppDelegate.swift in Sources */,
 				72CD665C1DB32096002B21A0 /* ELog.swift in Sources */,
+				721D2E84235AC81D00D763AB /* SceneDelegate.swift in Sources */,
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
+				721D2E86235AE31800D763AB /* AboutSceneDelegate.swift in Sources */,
 				72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */,
 				723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */,
 			);
