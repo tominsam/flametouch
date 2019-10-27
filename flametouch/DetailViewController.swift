@@ -165,12 +165,17 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             switch scheme {
             case "http", "https":
                 // If there's a universal link handler for this URL, use that for preference
+                #if targetEnvironment(macCatalyst)
+                let vc = SFSafariViewController(url: url)
+                self.present(vc, animated: true)
+                #else
                 UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
                     if !result {
                         let vc = SFSafariViewController(url: url)
                         self.present(vc, animated: true)
                     }
                 }
+                #endif
             default:
                 UIApplication.shared.open(url, options: [:]) { result in
                     if !result {

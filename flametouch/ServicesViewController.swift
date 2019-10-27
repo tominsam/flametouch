@@ -11,7 +11,15 @@ import UIKit
 /// Root view of the app, renders a list of hosts on the local network
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    let table = UITableView(frame: CGRect.zero, style: .grouped)
+    lazy var table: UITableView = {
+        #if targetEnvironment(macCatalyst)
+        let table = UITableView(frame: CGRect.zero, style: .plain)
+        return table
+        #else
+        return UITableView(frame: CGRect.zero, style: .grouped)
+        #endif
+    }()
+
     let networkOverlay = UIView(frame: CGRect.zero)
     let titleView = UILabel()
     let subtitleView = UILabel()
@@ -58,7 +66,13 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
         navigationController?.navigationBar.prefersLargeTitles = false
 
+        // Suppress info button on mac because there's a menu. Also hide the entire nav bar
+        #if targetEnvironment(macCatalyst)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        #else
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
+        #endif
+
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Export"), style: .plain, target: self, action: #selector(exportData))
         
         networkOverlay.isHidden = true // wirelessDetect.hasWireless()
@@ -182,7 +196,11 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        #if targetEnvironment(macCatalyst)
+        return nil
+        #else
         return "Hosts"
+        #endif
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

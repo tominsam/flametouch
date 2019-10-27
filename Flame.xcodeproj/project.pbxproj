@@ -19,6 +19,7 @@
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
+		72BC21B22365FFB100F9256C /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = 72BC21B12365FFB100F9256C /* Credits.rtfd */; };
 		72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BCE27C1F6B24E900491CCC /* Reachability.swift */; };
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72C363BD223E0C14007BFA41 /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C363BC223E0C14007BFA41 /* Configurable.swift */; };
@@ -53,6 +54,7 @@
 		72A73F391C82B5B700E6B21E /* Icon_160.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_160.png; sourceTree = "<group>"; };
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
+		72BC21B12365FFB100F9256C /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		72BCE27C1F6B24E900491CCC /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		72C363BA223E0587007BFA41 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
@@ -101,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				72A73F391C82B5B700E6B21E /* Icon_160.png */,
+				72BC21B12365FFB100F9256C /* Credits.rtfd */,
 				72A73F2C1C82AF3D00E6B21E /* about.html */,
 				72A73F321C82B1E400E6B21E /* about.css */,
 			);
@@ -256,6 +259,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72BC21B22365FFB100F9256C /* Credits.rtfd in Resources */,
 				72D318CA1D8B6645002E9FA6 /* Icon_160.png in Resources */,
 				72A73F331C82B1E400E6B21E /* about.css in Resources */,
 				72A73F2D1C82AF3D00E6B21E /* about.html in Resources */,
