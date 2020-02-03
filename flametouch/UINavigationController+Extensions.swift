@@ -10,6 +10,8 @@ import UIKit
 
 extension UINavigationController {
     func theme() {
+        #if targetEnvironment(macCatalyst)
+        #else
         let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
 
         let appearance = UINavigationBarAppearance()
@@ -33,6 +35,7 @@ extension UINavigationController {
         navigationBar.scrollEdgeAppearance = nil
         navigationBar.standardAppearance = appearance
         navigationBar.tintColor = foreground
+        #endif
     }
 }
 

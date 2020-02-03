@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = CustomSplitViewController().configured {
             $0.setMasterViewController(ServicesViewController())
         }
+        window?.tintColor = .systemRed
         window?.makeKeyAndVisible()
 
     }

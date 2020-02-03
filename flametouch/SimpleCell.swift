@@ -20,6 +20,7 @@ class SimpleCell : UITableViewCell, Reusable {
     lazy var subtitleView = UILabel().configured {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
+        $0.highlightedTextColor = .label
     }
 
     lazy var titleStack = UIStackView(arrangedSubviews: [titleView, subtitleView]).configured {
@@ -37,6 +38,7 @@ class SimpleCell : UITableViewCell, Reusable {
     lazy var rightView = UILabel().configured {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
+        $0.highlightedTextColor = .label
     }
 
     lazy var outerStack = UIStackView(arrangedSubviews: [iconView, titleStack, rightView]).configured {
@@ -59,9 +61,9 @@ class SimpleCell : UITableViewCell, Reusable {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
 
         // Force a background color to avoid buggy mac selection styles
-        selectedBackgroundView = UIView().configured {
-            $0.backgroundColor = .tertiarySystemGroupedBackground
-        }
+//        selectedBackgroundView = UIView().configured {
+//            $0.backgroundColor = .tertiarySystemGroupedBackground
+//        }
 
         contentView.addSubviewWithConstraints(outerStack, [
             outerStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),

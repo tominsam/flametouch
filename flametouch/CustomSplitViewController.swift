@@ -19,6 +19,7 @@ class CustomSplitViewController: UISplitViewController {
         super.init(nibName: nil, bundle: nil)
         super.delegate = self
         preferredDisplayMode = .allVisible
+        primaryBackgroundStyle = .sidebar
     }
 
     @available(*, unavailable)
@@ -44,6 +45,15 @@ class CustomSplitViewController: UISplitViewController {
         vc.theme()
         vc.viewControllers = viewControllers.isEmpty ? [emptyViewController] : viewControllers
         return vc
+    }
+
+    // Menu action. It's on the split view controller because that's always
+    // in the responder chain but still has a window/vc to present from.
+    @objc
+    func saveExportedData() {
+        guard let url = AppDelegate.instance().exportData() else { return }
+        let controller = UIDocumentPickerViewController(url: url, in: UIDocumentPickerMode.exportToService)
+        present(controller, animated: true)
     }
 
 }

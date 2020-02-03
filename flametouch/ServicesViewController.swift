@@ -115,70 +115,14 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @objc
     func exportData() {
-
-        var groupsJson : [Any] = []
-        var host_count = 0
-        var service_count = 0
-        for serviceGroup in browser().serviceGroups {
-            host_count += 1
-            var groupJson : [String:Any] = [:]
-            groupJson["name"] = serviceGroup.title
-            var addressesJson : [String] = []
-            for address in serviceGroup.addresses {
-                addressesJson.append(address)
-            }
-            groupJson["addresses"] = addressesJson
-            
-            var servicesJson : [Any] = []
-            for service in serviceGroup.services {
-                service_count += 1
-                var serviceJson : [String: Any] = [:]
-                serviceJson["name"] = service.name
-                serviceJson["port"] = service.port
-                serviceJson["type"] = service.type
-                var addressesJson : [String] = []
-                let addresses = service.addresses!.compactMap { getIFAddress($0) }
-                for address in addresses {
-                    addressesJson.append(address)
-                }
-                serviceJson["addresses"] = addressesJson
-                if let txtRecord = service.txtRecordData() {
-                    for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                        serviceJson[key] = String(bytes: value, encoding: .utf8) ?? value.hex
-                    }
-                }
-
-                servicesJson.append(serviceJson)
-            }
-            groupJson["services"] = servicesJson
-            
-            groupsJson.append(groupJson)
-        }
-
-        let file = "services_export.json"
-        
-        if let dir = NSSearchPathForDirectoriesInDomains(
-                FileManager.SearchPathDirectory.documentDirectory,
-                FileManager.SearchPathDomainMask.allDomainsMask,
-                true
-            ).first,
-            let path = NSURL(fileURLWithPath: dir).appendingPathComponent(file)
-        {
-            NSLog("path is \(path.path)")
-            let output = OutputStream(toFileAtPath: path.path, append: false)!
-            output.open()
-            JSONSerialization.writeJSONObject(groupsJson, to: output, options: JSONSerialization.WritingOptions.prettyPrinted, error: nil)
-            output.close()
-
-            // show system share dialog for this file
-            let controller = UIActivityViewController(activityItems: [path], applicationActivities: nil)
-            // on iPad, we attach the share sheet to the button that activated it
-            controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
-            present(controller, animated: true, completion: nil)
-        }
-
+        guard let url = AppDelegate.instance().exportData() else { return }
+        // show system share dialog for this file
+        let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        // on iPad, we attach the share sheet to the button that activated it
+        controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(controller, animated: true, completion: nil)
     }
-    
+
     @objc func servicesChanged() {
         table.reloadData()
         if !browser().serviceGroups.isEmpty {

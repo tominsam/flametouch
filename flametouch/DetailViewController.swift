@@ -115,7 +115,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         if urlFor(indexPath: indexPath) != nil {
             // cell can be selected
             cell.selectionStyle = .default
-            cell.rightView.textColor = cell.tintColor
+            cell.rightView.textColor = .systemRed // can't use tintcolor as we're not attached to the table yet
         } else {
             cell.selectionStyle = .none
             cell.rightView.textColor = .secondaryLabel
@@ -166,12 +166,12 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             case "http", "https":
                 // If there's a universal link handler for this URL, use that for preference
                 #if targetEnvironment(macCatalyst)
-                let vc = SFSafariViewController(url: url)
-                self.present(vc, animated: true)
+                UIApplication.shared.open(url)
                 #else
                 UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
                     if !result {
                         let vc = SFSafariViewController(url: url)
+                        vc.preferredControlTintColor = .systemRed
                         self.present(vc, animated: true)
                     }
                 }

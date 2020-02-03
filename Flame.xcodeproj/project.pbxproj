@@ -158,7 +158,6 @@
 		72EC68CE1BC9E50600AC2692 = {
 			isa = PBXGroup;
 			children = (
-				722C529D2346FA5500A17E37 /* Flame Debug.entitlements */,
 				72EC68D91BC9E50600AC2692 /* flametouch */,
 				7286077F1F5A4B1A00B436F8 /* fastlane */,
 				72EC68D81BC9E50600AC2692 /* Products */,
@@ -185,6 +184,7 @@
 				72A73F341C82B23C00E6B21E /* about */,
 				72EC68E11BC9E50600AC2692 /* Assets.xcassets */,
 				72EC68E61BC9E50600AC2692 /* Info.plist */,
+				722C529D2346FA5500A17E37 /* Flame Debug.entitlements */,
 				72DE64651FAD30150083C882 /* Gemfile */,
 				72C363BA223E0587007BFA41 /* Podfile */,
 				723F91231D975D90002B4069 /* README.md */,
