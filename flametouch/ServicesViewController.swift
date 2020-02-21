@@ -13,8 +13,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
     lazy var table: UITableView = {
         #if targetEnvironment(macCatalyst)
-        let table = UITableView(frame: CGRect.zero, style: .plain)
-        return table
+        return UITableView(frame: CGRect.zero, style: .plain)
         #else
         return UITableView(frame: CGRect.zero, style: .grouped)
         #endif
@@ -27,7 +26,11 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     let wirelessDetect = WirelessDetect()
     
     override func viewDidLoad() {
+        #if targetEnvironment(macCatalyst)
+        title = NSLocalizedString("Hosts", comment: "Title for a list of hosts")
+        #else
         title = NSLocalizedString("Flame", comment: "App name")
+        #endif
 
         view.addSubview(table)
         view.addSubview(networkOverlay)
@@ -68,7 +71,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
         // Suppress info button on mac because there's a menu. Also hide the entire nav bar
         #if targetEnvironment(macCatalyst)
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        //navigationController?.setNavigationBarHidden(true, animated: false)
         #else
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
         #endif
