@@ -11,14 +11,20 @@ import UIKit
 extension UINavigationController {
     func theme() {
         #if targetEnvironment(macCatalyst)
+        let foreground: UIColor = .dynamic(light: .label, dark: .white)
+        let icon: UIColor = .dynamic(light: .systemRed, dark: .systemRed)
+        let background: UIColor = .dynamic(light: .systemGroupedBackground, dark: .systemGroupedBackground)
         #else
         let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
+        let icon: UIColor = .dynamic(light: .white, dark: .systemRed)
+        let background: UIColor = .dynamic(light: .red, dark: .systemBackground)
+        #endif
 
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.shadowImage = nil
         appearance.shadowColor = nil
-        appearance.backgroundColor = .dynamic(light: .red, dark: .systemBackground)
+        appearance.backgroundColor = background
         appearance.titleTextAttributes = [
             .foregroundColor: foreground
         ]
@@ -28,14 +34,13 @@ extension UINavigationController {
 
         let buttonAppearance = UIBarButtonItemAppearance()
         buttonAppearance.normal.titleTextAttributes = [
-            .foregroundColor: foreground
+            .foregroundColor: icon
         ]
         appearance.buttonAppearance = buttonAppearance
         navigationBar.compactAppearance = nil
         navigationBar.scrollEdgeAppearance = nil
         navigationBar.standardAppearance = appearance
-        navigationBar.tintColor = foreground
-        #endif
+        navigationBar.tintColor = icon
     }
 }
 

@@ -57,6 +57,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             children: [exportCommand])
 
         builder.insertChild(exportMenu, atStartOfMenu: .file)
+
+        builder.remove(menu: .help)
     }
 
     func exportData() -> URL? {
