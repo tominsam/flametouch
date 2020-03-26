@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,10 +17,10 @@
 		7254CBCC1BCC52BA00F95122 /* ServiceBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */; };
 		72A73F2D1C82AF3D00E6B21E /* about.html in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F2C1C82AF3D00E6B21E /* about.html */; };
 		72A73F331C82B1E400E6B21E /* about.css in Resources */ = {isa = PBXBuildFile; fileRef = 72A73F321C82B1E400E6B21E /* about.css */; };
+		72AF69352427DC9B0057F0C8 /* aiReachability in Frameworks */ = {isa = PBXBuildFile; productRef = 72AF69342427DC9B0057F0C8 /* aiReachability */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
 		72BC21B22365FFB100F9256C /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = 72BC21B12365FFB100F9256C /* Credits.rtfd */; };
-		72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BCE27C1F6B24E900491CCC /* Reachability.swift */; };
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72C363BD223E0C14007BFA41 /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C363BC223E0C14007BFA41 /* Configurable.swift */; };
 		72C363BF223E0D57007BFA41 /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C363BE223E0D57007BFA41 /* UITableView.swift */; };
@@ -55,7 +55,6 @@
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
 		72BC21B12365FFB100F9256C /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
-		72BCE27C1F6B24E900491CCC /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		72C363BA223E0587007BFA41 /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
 		72C363BC223E0C14007BFA41 /* Configurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurable.swift; sourceTree = "<group>"; };
@@ -81,6 +80,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				72E0BF291D8B90F900070829 /* SystemConfiguration.framework in Frameworks */,
+				72AF69352427DC9B0057F0C8 /* aiReachability in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,7 +139,6 @@
 				72BEF7141D9705C9000A920E /* StringExtensions.swift */,
 				72E16E901DB3023B00EE1179 /* ViewExtensions.swift */,
 				72CD665B1DB32096002B21A0 /* ELog.swift */,
-				72BCE27C1F6B24E900491CCC /* Reachability.swift */,
 				72C363BC223E0C14007BFA41 /* Configurable.swift */,
 				72C363BE223E0D57007BFA41 /* UITableView.swift */,
 				7254056B22EC0C4C00295143 /* UINavigationController+Extensions.swift */,
@@ -216,6 +215,9 @@
 			dependencies = (
 			);
 			name = Flame;
+			packageProductDependencies = (
+				72AF69342427DC9B0057F0C8 /* aiReachability */,
+			);
 			productName = flametouch;
 			productReference = 72EC68D71BC9E50600AC2692 /* Flame Debug.app */;
 			productType = "com.apple.product-type.application";
@@ -245,6 +247,9 @@
 				Base,
 			);
 			mainGroup = 72EC68CE1BC9E50600AC2692;
+			packageReferences = (
+				72AF69332427DC9B0057F0C8 /* XCRemoteSwiftPackageReference "aiReachability" */,
+			);
 			productRefGroup = 72EC68D81BC9E50600AC2692 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -294,7 +299,6 @@
 				72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */,
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
 				721D2E86235AE31800D763AB /* AboutSceneDelegate.swift in Sources */,
-				72BCE27D1F6B24E900491CCC /* Reachability.swift in Sources */,
 				723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -453,6 +457,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		72AF69332427DC9B0057F0C8 /* XCRemoteSwiftPackageReference "aiReachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aiFigueiredo/aiReachability.git";
+			requirement = {
+				kind = revision;
+				revision = 4e33ca7bd44f01743eb7aab3437d96c1614e24af;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		72AF69342427DC9B0057F0C8 /* aiReachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72AF69332427DC9B0057F0C8 /* XCRemoteSwiftPackageReference "aiReachability" */;
+			productName = aiReachability;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 72EC68CF1BC9E50600AC2692 /* Project object */;
 }

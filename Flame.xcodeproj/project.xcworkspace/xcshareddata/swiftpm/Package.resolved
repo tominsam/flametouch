@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "aiReachability",
+        "repositoryURL": "https://github.com/aiFigueiredo/aiReachability.git",
+        "state": {
+          "branch": null,
+          "revision": "4e33ca7bd44f01743eb7aab3437d96c1614e24af",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
