@@ -23,7 +23,7 @@ func getIFAddress(_ data : Data) -> String? {
     let string = String(cString: hostname)
 
     // link local addresses don't cound
-    if string.hasPrefix("fe80:") || string.hasPrefix("127.") {
+    if string.hasPrefix("fe80:") || string.hasPrefix("127.") || string == "::1" {
         return nil
     }
 

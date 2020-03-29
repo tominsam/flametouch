@@ -38,6 +38,10 @@ class CustomSplitViewController: UISplitViewController {
         self.viewControllers = [master, makeNav()]
     }
 
+    public func clearDetailViewController() {
+        self.viewControllers = [viewControllers[0], makeNav()]
+    }
+
     // if the list is empty it'll contain the empty vc by default to control the background color
     private func makeNav(_ viewControllers: [UIViewController] = []) -> UINavigationController {
         let vc = UINavigationController()

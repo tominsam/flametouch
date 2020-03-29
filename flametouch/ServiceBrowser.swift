@@ -27,6 +27,11 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     /// service display groups
     var serviceGroups = [ServiceGroup]()
 
+    /// String filter to search the services
+    var filter: String? {
+        didSet { broadcast() }
+    }
+
     override init() {
         super.init()
         browser.delegate = self
@@ -171,6 +176,10 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
             }
         }
         serviceGroups = groups.values.sorted { $0.title.lowercased() < $1.title.lowercased() }
+
+        if let filter = filter {
+            serviceGroups = serviceGroups.filter { $0.matches(filter) }
+        }
 
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
     }

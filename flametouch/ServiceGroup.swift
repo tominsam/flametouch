@@ -49,19 +49,19 @@ class ServiceGroup: NSObject {
         }
     }
 
-    var title : String {
+    var title: String {
         get {
             return ServiceName.nameForServiceGroup(self)
         }
     }
 
-    var address : String {
+    var address: String {
         get {
             return addresses.first ?? "."
         }
     }
 
-    var subTitle : String {
+    var subTitle: String {
         get {
             if services.count > 1 {
                 return "\(address) (\(services.count) services)"
@@ -71,10 +71,22 @@ class ServiceGroup: NSObject {
         }
     }
 
-    override var description : String {
+    override var description: String {
         get {
             return "<ServiceGroup \(title) \(addresses) (\(services))>"
         }
+    }
+
+    func matches(_ filter: String) -> Bool {
+        if title.localizedCaseInsensitiveContains(filter) || subTitle.localizedCaseInsensitiveContains(filter) || address.localizedCaseInsensitiveContains(filter) {
+            return true
+        }
+        for service in services {
+            if service.name.localizedCaseInsensitiveContains(filter) || service.type.localizedCaseInsensitiveContains(filter) {
+                return true
+            }
+        }
+        return false
     }
 
 }

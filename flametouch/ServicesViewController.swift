@@ -12,17 +12,20 @@ import UIKit
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     lazy var table: UITableView = {
-        #if targetEnvironment(macCatalyst)
         return UITableView(frame: CGRect.zero, style: .plain)
-        #else
-        return UITableView(frame: CGRect.zero, style: .grouped)
-        #endif
     }()
 
     let networkOverlay = UIView(frame: CGRect.zero)
     let titleView = UILabel()
     let subtitleView = UILabel()
-    
+
+    lazy var searchController = UISearchController().configured {
+        $0.delegate = self
+        $0.searchResultsUpdater = self
+        $0.hidesNavigationBarDuringPresentation = false
+        $0.obscuresBackgroundDuringPresentation = false
+    }
+
     let wirelessDetect = WirelessDetect()
     
     override func viewDidLoad() {
@@ -32,17 +35,16 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         title = NSLocalizedString("Flame", comment: "App name")
         #endif
 
-        view.addSubview(table)
-        view.addSubview(networkOverlay)
-        
+        view.addSubviewWithInsets(table)
+        view.addSubviewWithInsets(networkOverlay)
+
+        table.tableHeaderView = searchController.searchBar
         table.dataSource = self
         table.delegate = self
-        table.setupForAutolayout()
+        //table.keyboardDismissMode = .onDrag
 
-        table.pinEdgesTo(view: view)
         table.registerReusableCell(SimpleCell.self)
 
-        networkOverlay.pinEdgesTo(view: view)
         networkOverlay.backgroundColor = .systemBackground
         networkOverlay.addSubview(titleView)
         let guide = networkOverlay.readableContentGuide
@@ -137,25 +139,12 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         return AppDelegate.instance().browser
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        #if targetEnvironment(macCatalyst)
-        return nil
-        #else
-        return "Hosts"
-        #endif
-    }
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return browser().serviceGroups.count;
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell:SimpleCell = tableView.dequeueReusableCell(for: indexPath)
+        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
         let serviceGroup = getRow(indexPath)
         cell.title = serviceGroup.title
         cell.subtitle = serviceGroup.subTitle
@@ -191,3 +180,13 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
 }
 
+extension ServicesViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+    func updateSearchResults(for searchController: UISearchController) {
+        (splitViewController as? CustomSplitViewController)?.clearDetailViewController()
+        if let searchText = searchController.searchBar.text?.trimmingCharacters(in: .whitespacesAndNewlines), !searchText.isEmpty {
+            browser().filter = searchText
+        } else {
+            browser().filter = nil
+        }
+    }
+}
