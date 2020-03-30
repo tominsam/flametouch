@@ -12,7 +12,7 @@ extension UITableView {
     func setupForAutolayout() {
         estimatedRowHeight = 80.0
         rowHeight = UITableView.automaticDimension
-        cellLayoutMarginsFollowReadableWidth = true
+        cellLayoutMarginsFollowReadableWidth = false
     }
 
 }

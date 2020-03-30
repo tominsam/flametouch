@@ -18,6 +18,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = CustomSplitViewController().configured {
+            $0.maximumPrimaryColumnWidth = 640
+            $0.minimumPrimaryColumnWidth = 320
+            $0.preferredPrimaryColumnWidthFraction = 0.4
             $0.setMasterViewController(ServicesViewController())
         }
         window?.tintColor = .systemRed
