@@ -35,6 +35,11 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         title = NSLocalizedString("Flame", comment: "App name")
         #endif
 
+        // This causes the search controller to treat _this_ view as the "presentation context"
+        // The effective upshot of this is that the search bar is pushed off screen on iPhone when
+        // we tap a row, rather than staying attached to the split view controller.
+        definesPresentationContext = true
+
         view.addSubviewWithInsets(table)
         view.addSubviewWithInsets(networkOverlay)
 
