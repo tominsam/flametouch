@@ -27,5 +27,11 @@ Build and push to Crashlytics Beta (also increments build number) with
 
     fastlane beta
 
+TODO
+
+* Some services (eg those broadcast my iOS in sleep mode but charging) seem to disappear and appear. Hosts should have some hysteresis so that the left pane doesn't jitter so much
+* When services appear and disappear the selected row in the left pane deselected
+* Some sort of search / filtering for left pane to only show hosts that match a specific service or name
+* New tab keyboard shortcut on mac, or remove tabbing. Either.
 
 

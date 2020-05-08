@@ -16,10 +16,10 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
 
     /// lookup of service type to browser for this service type.
-	var browsers = [NetService: NetServiceBrowser]()
+	var browsers = [String: NetServiceBrowser]()
 
     /// definitive list of all services
-    var services = [NetService]()
+    var services = Set<NetService>()
 
     /// list of sets of addresses assigned to a single machine
     var grouping = [Set<String>]()
@@ -46,7 +46,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
         browser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
         for (service, b) in browsers {
-            b.searchForServices(ofType: service.name, inDomain: service.domain)
+            b.searchForServices(ofType: service, inDomain: "")
         }
 
         broadcast()
@@ -68,22 +68,26 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
             // meta-browser found something new. Create a new service browser for it.
-            ELog("Found type \"\(service.name)\" \"\(service.domain)\"")
-            if let found = browsers[service] {
+            let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
+            ELog("Found type \"\(name)\"")
+            if let found = browsers[name] {
                 ELog("stopping existing browser (shouldn't really happen)")
                 found.stop();
             }
             let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self;
 
-            let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             newBrowser.searchForServices(ofType: name, inDomain: "")
-            browsers[service] = newBrowser
+            browsers[name] = newBrowser
 
         } else {
             // single-service browser found a new broadcast
             ELog("Found service " + service.type)
-            services.append(service)
+
+            // Services are not always cleaned up - for instance entering airplane mode won't remove services.
+            // TODO detect this and clean them up.
+            // But for now, at least don't leak duplicate service entries
+            services.insert(service)
             service.delegate = self
             service.resolve(withTimeout: 10)
             broadcast()
@@ -92,9 +96,10 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
-            if let b = browsers[service] {
+            let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
+            if let b = browsers[name] {
                 b.stop()
-                browsers.removeValue(forKey: service)
+                browsers.removeValue(forKey: name)
                 ELog("removed type " + service.name)
             } else {
 	            ELog("can't remove type " + service.name)
@@ -136,8 +141,8 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     func broadcast() {
         // alphabetize
-        services.sort {
-            return $0.type.lowercased().compare($1.type.lowercased()) == ComparisonResult.orderedAscending
+        let services = Array(self.services).sorted {
+            $0.type.lowercased().compare($1.type.lowercased()) == ComparisonResult.orderedAscending
         }
 
         grouping.removeAll()
