@@ -359,7 +359,7 @@
 		72D318C51D8B3234002E9FA6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Blueprint;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = "Flame Debug.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";

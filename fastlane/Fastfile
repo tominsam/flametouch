@@ -46,4 +46,10 @@ lane :icon do
         appicon_devices: [:ipad, :iphone, :ios_marketing],
         appicon_path: 'flametouch/Assets.xcassets',
     )
+    appicon(
+        appicon_image_file: 'Image Resources/Blueprint.png',
+        appicon_devices: [:ipad, :iphone, :ios_marketing],
+        appicon_path: 'flametouch/Assets.xcassets',
+        appicon_name: "Blueprint.appiconset"
+    )
 end
