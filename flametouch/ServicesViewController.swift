@@ -12,7 +12,10 @@ import UIKit
 class ServicesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     lazy var table: UITableView = {
-        return UITableView(frame: CGRect.zero, style: .plain)
+        let tableView = UITableView(frame: CGRect.zero, style: .plain)
+        // Fixes a background color overscroll bug
+        tableView.backgroundView = UIView()
+        return tableView
     }()
 
     let networkOverlay = UIView(frame: CGRect.zero)
