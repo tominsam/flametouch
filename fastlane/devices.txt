@@ -1,2 +1,0 @@
-Device ID	Device Name
-b71968cb1be6fb15f2a8edad576877afe1fa2d86	Seven
