@@ -20,6 +20,7 @@
 		72AF69352427DC9B0057F0C8 /* aiReachability in Frameworks */ = {isa = PBXBuildFile; productRef = 72AF69342427DC9B0057F0C8 /* aiReachability */; };
 		72B2F3BC1C7A925600175E55 /* Hostname.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BB1C7A925600175E55 /* Hostname.swift */; };
 		72B2F3BF1C7AF6CB00175E55 /* HostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */; };
+		72B5004F24AD5A9E00645517 /* NetService+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B5004E24AD5A9E00645517 /* NetService+Extensions.swift */; };
 		72BC21B22365FFB100F9256C /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = 72BC21B12365FFB100F9256C /* Credits.rtfd */; };
 		72BEF7151D9705C9000A920E /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72BEF7141D9705C9000A920E /* StringExtensions.swift */; };
 		72C363BD223E0C14007BFA41 /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72C363BC223E0C14007BFA41 /* Configurable.swift */; };
@@ -53,6 +54,7 @@
 		72B2F3BB1C7A925600175E55 /* Hostname.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hostname.swift; sourceTree = "<group>"; };
 		72B2F3BE1C7AF6CB00175E55 /* HostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
 		72B5004C24AD56BD00645517 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = SOURCE_ROOT; };
+		72B5004E24AD5A9E00645517 /* NetService+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetService+Extensions.swift"; sourceTree = "<group>"; };
 		72BC21B12365FFB100F9256C /* Credits.rtfd */ = {isa = PBXFileReference; lastKnownFileType = wrapper.rtfd; path = Credits.rtfd; sourceTree = "<group>"; };
 		72BEF7141D9705C9000A920E /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		72C363BC223E0C14007BFA41 /* Configurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurable.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				7254CBCB1BCC52BA00F95122 /* ServiceBrowser.swift */,
 				721767201C828C950089EC41 /* ServiceGroup.swift */,
 				72D318C61D8B4DE3002E9FA6 /* ServiceName.swift */,
+				72B5004E24AD5A9E00645517 /* NetService+Extensions.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 				721767231C8296680089EC41 /* AboutViewController.swift in Sources */,
 				721D2E86235AE31800D763AB /* AboutSceneDelegate.swift in Sources */,
 				723F91221D974EFD002B4069 /* SimpleCell.swift in Sources */,
+				72B5004F24AD5A9E00645517 /* NetService+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

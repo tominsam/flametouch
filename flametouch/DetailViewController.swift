@@ -15,34 +15,33 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     let service : NetService
     let table = UITableView(frame: CGRect.zero, style: .grouped)
 
-    var core = [[String]]()
-    var txtData = [[String]]()
+    var core = [(key: String, value: String)]()
+    var txtData = [(key: String, value: String)]()
 
     required init(service : NetService) {
         self.service = service
         super.init(nibName: nil, bundle: nil)
         self.title = service.type
-        self.core.append([NSLocalizedString("Name", comment: "Label for the name of the service"), service.name])
-        self.core.append([NSLocalizedString("Type", comment: "Label for the type of the service"), service.type + service.domain])
+        self.core.append((
+            key: NSLocalizedString("Name", comment: "Label for the name of the service"),
+            value: service.name
+        ))
+        self.core.append((
+            key: NSLocalizedString("Type", comment: "Label for the type of the service"),
+            value: service.type + service.domain
+        ))
         for hostname in service.addresses!.compactMap({getIFAddress($0)}).sorted() {
-            self.core.append([NSLocalizedString("Address", comment: "Label for the network address of the service"), hostname])
+            self.core.append((
+                key: NSLocalizedString("Address", comment: "Label for the network address of the service"),
+                value: hostname
+            ))
         }
-        self.core.append([NSLocalizedString("Port", comment: "Label for the network port of the service"), String(service.port)])
+        self.core.append((
+            key: NSLocalizedString("Port", comment: "Label for the network port of the service"),
+            value: String(service.port)
+        ))
 
-        if let txtRecord = service.txtRecordData() {
-            for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                if let stringValue = String(bytes: value, encoding: .utf8) {
-                    self.txtData.append([key, stringValue])
-                } else {
-                    self.txtData.append([key, value.hex])
-                }
-            }
-        }
-
-        // Sort by key
-        self.txtData.sort { a, b in
-            return a[0].lowercased() < b[0].lowercased()
-        }
+        self.txtData = service.txtData
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -101,12 +100,12 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
         switch (indexPath.section) {
         case 0:
-            cell.title = core[indexPath.row][0]
-            cell.right = core[indexPath.row][1]
+            cell.title = core[indexPath.row].key
+            cell.right = core[indexPath.row].value
             break
         case 1:
-            cell.title = txtData[indexPath.row][0]
-            cell.right = txtData[indexPath.row][1]
+            cell.title = txtData[indexPath.row].key
+            cell.right = txtData[indexPath.row].value
             break
         default:
             break
@@ -127,9 +126,8 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let url = urlFor(indexPath: indexPath) {
             didSelect(url: url)
-        } else {
-            tableView.deselectRow(at: indexPath, animated: true)
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
@@ -142,10 +140,10 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
             var actions = [
                 UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row[0]
+                    UIPasteboard.general.string = row.key
                 },
                 UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row[1]
+                    UIPasteboard.general.string = row.value
                 }
             ]
 
@@ -191,7 +189,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     func urlFor(indexPath: IndexPath) -> URL? {
         switch (indexPath.section) {
         case 0:
-            switch core[indexPath.row][1].split(separator: ".").first {
+            switch core[indexPath.row].value.split(separator: ".").first {
             case "_http":
                 return URL(string: "http://\(service.hostName!):\(service.port)/")
             case "_https":
@@ -205,7 +203,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             }
         case 1:
             // return the value if it looks like it parses as a decent url
-            if let url = URL(string: txtData[indexPath.row][1]), url.scheme != nil, url.host != nil {
+            if let url = URL(string: txtData[indexPath.row].value), url.scheme != nil, url.host != nil {
                 return url
             }
         default:

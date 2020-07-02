@@ -28,7 +28,7 @@ class ServiceName {
         for name in IMPORTANT_NAMES {
             for service in group.services {
                 if service.type == "_googlecast._tcp." {
-                    let map = mapFromService(service)
+                    let map = service.txtDict
                     if let name = map["fn"] {
                         return name
                     } else {
@@ -48,16 +48,4 @@ class ServiceName {
         guard let service = group.services.first else { return "" }
         return [service.hostName, service.name].compactMap { $0 }.sorted { $0.count < $1.count }.first ?? ""
     }
-
-    static func mapFromService(_ service : NetService) -> [String: String] {
-        var map = [String:String]()
-        if let txtRecord = service.txtRecordData() {
-            for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                map[key] = String(bytes: value, encoding: .utf8)
-            }
-        }
-        return map
-    }
-
-    
 }

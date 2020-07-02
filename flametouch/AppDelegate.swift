@@ -89,10 +89,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     addressesJson.append(address)
                 }
                 serviceJson["addresses"] = addressesJson
-                if let txtRecord = service.txtRecordData() {
-                    for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                        serviceJson[key] = String(bytes: value, encoding: .utf8) ?? value.hex
-                    }
+                for (key, value) in service.txtData {
+                    serviceJson[key] = value
                 }
 
                 servicesJson.append(serviceJson)

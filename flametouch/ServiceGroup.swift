@@ -85,6 +85,11 @@ class ServiceGroup: NSObject {
             if service.name.localizedCaseInsensitiveContains(filter) || service.type.localizedCaseInsensitiveContains(filter) {
                 return true
             }
+            for (key, value) in service.txtData {
+                if key.localizedCaseInsensitiveContains(filter) || value.localizedCaseInsensitiveContains(filter) {
+                    return true
+                }
+            }
         }
         return false
     }
