@@ -1,4 +1,4 @@
-# 2.6.1 (74)
+# 2.6.1 (75)
 
 Added a search bar to the hosts list that will search host names, service names and keys / values returned in the service data.
 Improvements to layout when displayed on wide screens.
