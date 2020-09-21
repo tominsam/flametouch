@@ -17,7 +17,7 @@ extension UINavigationController {
         #else
         let foreground: UIColor = .dynamic(light: .white, dark: .systemRed)
         let icon: UIColor = .dynamic(light: .white, dark: .systemRed)
-        let background: UIColor = .dynamic(light: .red, dark: .systemBackground)
+        let background: UIColor = .dynamic(light: .systemRed, dark: .systemBackground)
         #endif
 
         let appearance = UINavigationBarAppearance()

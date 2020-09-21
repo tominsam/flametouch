@@ -19,6 +19,7 @@ class CustomSplitViewController: UISplitViewController {
         super.init(nibName: nil, bundle: nil)
         super.delegate = self
         preferredDisplayMode = .allVisible
+        primaryBackgroundStyle = .sidebar
     }
 
     @available(*, unavailable)
