@@ -10,7 +10,9 @@ import UIKit
 
 class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     /// meta-service browser, discovers more services
-    let browser = NetServiceBrowser()
+    let browser = NetServiceBrowser().configured {
+        $0.includesPeerToPeer = true
+    }
 
     /// broadcast a service from the local device
     let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
