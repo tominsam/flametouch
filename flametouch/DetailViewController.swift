@@ -102,11 +102,9 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         case 0:
             cell.title = core[indexPath.row].key
             cell.right = core[indexPath.row].value
-            break
         case 1:
             cell.title = txtData[indexPath.row].key
             cell.right = txtData[indexPath.row].value
-            break
         default:
             break
         }

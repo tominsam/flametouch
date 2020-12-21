@@ -1,2 +1,6 @@
 disabled_rules:
   - trailing_comma
+  - inclusive_language
+  - function_body_length
+  - line_length
+  - identifier_name

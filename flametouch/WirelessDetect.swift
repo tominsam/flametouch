@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import SystemConfiguration
-import SystemConfiguration.CaptiveNetwork
 import aiReachability
 
 class WirelessDetect {

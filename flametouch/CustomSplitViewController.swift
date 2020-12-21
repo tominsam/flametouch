@@ -12,7 +12,7 @@ class CustomSplitViewController: UISplitViewController {
 
     override var delegate: UISplitViewControllerDelegate? {
         get { return self }
-        set { fatalError() }
+        set { fatalError(String(describing: newValue)) }
     }
 
     init() {

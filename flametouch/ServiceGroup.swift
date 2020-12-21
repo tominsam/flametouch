@@ -50,31 +50,23 @@ class ServiceGroup: NSObject {
     }
 
     var title: String {
-        get {
-            return ServiceName.nameForServiceGroup(self)
-        }
+        return ServiceName.nameForServiceGroup(self)
     }
 
     var address: String {
-        get {
-            return addresses.first ?? "."
-        }
+        return addresses.first ?? "."
     }
 
     var subTitle: String {
-        get {
-            if services.count > 1 {
-                return "\(address) (\(services.count) services)"
-            } else {
-                return "\(address) (One service)"
-            }
+        if services.count > 1 {
+            return "\(address) (\(services.count) services)"
+        } else {
+            return "\(address) (One service)"
         }
     }
 
     override var description: String {
-        get {
-            return "<ServiceGroup \(title) \(addresses) (\(services))>"
-        }
+        return "<ServiceGroup \(title) \(addresses) (\(services))>"
     }
 
     func matches(_ filter: String) -> Bool {
