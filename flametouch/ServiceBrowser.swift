@@ -97,7 +97,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
-        if (service.type == "_tcp.local." || service.type == "_udp.local.") {
+        if service.type == "_tcp.local." || service.type == "_udp.local." {
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             if let browser = browsers[name] {
                 browser.stop()
@@ -107,7 +107,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 	            ELog("can't remove type " + service.name)
             }
         } else {
-            if (services.contains(service)) {
+            if services.contains(service) {
         	    ELog("removed service " + service.type)
 	        	services.remove(at: services.firstIndex(of: service)!)
                 broadcast()
@@ -117,7 +117,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         }
     }
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
+    func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
         ELog("Did not search: \(errorDict)")
     }
 
@@ -138,8 +138,6 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
         ELog("lost domain \(domainString)")
     }
-
-
 
     func broadcast() {
         // alphabetize
@@ -191,7 +189,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
     }
 
-    private func groupFor(_ address : String) -> Set<String>? {
+    private func groupFor(_ address: String) -> Set<String>? {
 	    for group in grouping {
             if group.contains(address) {
                 return group
@@ -199,8 +197,8 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     	}
         return nil
     }
-    
-    func serviceGroupFor(_ addresses : [String]) -> ServiceGroup? {
+
+    func serviceGroupFor(_ addresses: [String]) -> ServiceGroup? {
         for address in addresses {
             for group in serviceGroups {
                 if group.addresses.contains(address) {
@@ -211,7 +209,7 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         return nil
     }
 
-    func groupForAddresses(_ addresses : [String]) -> Set<String>? {
+    func groupForAddresses(_ addresses: [String]) -> Set<String>? {
         for address in addresses {
             if let group = groupFor(address) {
                 return group

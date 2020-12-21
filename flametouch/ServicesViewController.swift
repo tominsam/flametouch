@@ -30,7 +30,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     let wirelessDetect = WirelessDetect()
-    
+
     override func viewDidLoad() {
         #if targetEnvironment(macCatalyst)
         title = NSLocalizedString("Hosts", comment: "Title for a list of hosts")
@@ -49,7 +49,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         table.tableHeaderView = searchController.searchBar
         table.dataSource = self
         table.delegate = self
-        //table.keyboardDismissMode = .onDrag
+        // table.keyboardDismissMode = .onDrag
 
         table.registerReusableCell(SimpleCell.self)
 
@@ -81,15 +81,15 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
 
         // Suppress info button on mac because there's a menu. Also hide the entire nav bar
         #if targetEnvironment(macCatalyst)
-        //navigationController?.setNavigationBarHidden(true, animated: false)
+        // navigationController?.setNavigationBarHidden(true, animated: false)
         #else
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIButton(type: .infoLight).image(for: .normal), style: .plain, target: self, action: #selector(aboutPressed))
         #endif
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "Export"), style: .plain, target: self, action: #selector(exportData))
-        
+
         networkOverlay.isHidden = true // wirelessDetect.hasWireless()
-        wirelessDetect.callback = { (wifi:Bool) -> Void in
+        wirelessDetect.callback = { (wifi: Bool) -> Void in
             let nowifi = !wifi
             let noservices = self.browser().serviceGroups.isEmpty
             let showOverlay = nowifi && noservices
@@ -125,7 +125,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
         present(vc, animated: true, completion: nil)
         #endif
     }
-    
+
     @objc
     func exportData() {
         guard let url = AppDelegate.instance().exportData() else { return }
@@ -148,7 +148,7 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return browser().serviceGroups.count;
+        return browser().serviceGroups.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -184,7 +184,6 @@ class ServicesViewController: UIViewController, UITableViewDataSource, UITableVi
             return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
         }
     }
-
 
 }
 

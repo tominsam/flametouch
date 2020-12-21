@@ -17,8 +17,8 @@ extension NetService {
 
             // https://github.com/lapcat/Bonjeff/commit/d275d79d5de1ac918965c25932e72f0485ac3e98
             let dict = CFNetServiceCreateDictionaryWithTXTData(nil, txtRecord as CFData)?
-                .takeRetainedValue() as? Dictionary<String,Data>
-                ?? ["":txtRecord]
+                .takeRetainedValue() as? [String: Data]
+                ?? ["": txtRecord]
 
             for (key, value) in dict {
                 if let stringValue = String(bytes: value, encoding: .utf8) {

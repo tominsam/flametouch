@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class SimpleCell : UITableViewCell, Reusable {
+class SimpleCell: UITableViewCell, Reusable {
     static var reuseId: String = "SimpleCell"
 
     lazy var titleView = UILabel().configured {
@@ -77,7 +77,7 @@ class SimpleCell : UITableViewCell, Reusable {
         prepareForReuse()
     }
 
-    required init?(coder : NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("no")
     }
 

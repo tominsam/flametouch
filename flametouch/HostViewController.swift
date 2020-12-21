@@ -12,15 +12,15 @@ import UIKit
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let table = UITableView(frame: CGRect.zero, style: .grouped)
-    var serviceGroup : ServiceGroup?
-    var addresses : [String]
+    var serviceGroup: ServiceGroup?
+    var addresses: [String]
 
-    required init(serviceGroup : ServiceGroup) {
+    required init(serviceGroup: ServiceGroup) {
         self.serviceGroup = serviceGroup
         addresses = serviceGroup.addresses
         super.init(nibName: nil, bundle: nil)
         title = serviceGroup.title
-        //ELog("serviceGroup is %@", serviceGroup)
+        // ELog("serviceGroup is %@", serviceGroup)
 
         NotificationCenter.default.addObserver(
             self,
@@ -77,7 +77,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let group = serviceGroup {
-            if (section == 0) {
+            if section == 0 {
                 return addresses.count + 1
             } else {
                 return group.services.count
@@ -87,7 +87,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if (section == 0) {
+        if section == 0 {
             return addresses.count > 1 ? "Addresses" : "Address"
         } else {
             return "Services"
@@ -95,9 +95,9 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath.section == 0) {
+        if indexPath.section == 0 {
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-            if (indexPath.row == 0) {
+            if indexPath.row == 0 {
                 cell.title = serviceGroup!.services[0].hostName
             } else {
                 cell.title = addresses[indexPath.row - 1]
@@ -117,7 +117,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (indexPath.section == 0) {
+        if indexPath.section == 0 {
             tableView.deselectRow(at: indexPath, animated: true)
         } else {
             let service = serviceGroup!.services[indexPath.row]
@@ -131,7 +131,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if indexPath.section == 0 { // Hostname + Address rows
             // capture asap in case the tableview moves under us
             let value: String
-            if (indexPath.row == 0) {
+            if indexPath.row == 0 {
                 value = self.serviceGroup!.services[0].hostName ?? ""
             } else {
                 value = self.addresses[indexPath.row - 1]
@@ -160,6 +160,4 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
-
 }
-

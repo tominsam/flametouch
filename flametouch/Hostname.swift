@@ -9,9 +9,9 @@
 import UIKit
 
 // Get the local ip addresses used by this node
-func getIFAddress(_ data : Data) -> String? {
+func getIFAddress(_ data: Data) -> String? {
 
-    //let hostname = [CChar](count: Int(INET6_ADDRSTRLEN), repeatedValue: 0)
+    // let hostname = [CChar](count: Int(INET6_ADDRSTRLEN), repeatedValue: 0)
     let hostname = UnsafeMutablePointer<Int8>.allocate(capacity: Int(INET6_ADDRSTRLEN))
 
 	var _ = getnameinfo(

@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         browser.resume()
         return true
     }
@@ -64,27 +64,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func exportData() -> URL? {
 
-        var groupsJson : [Any] = []
+        var groupsJson: [Any] = []
         var hostCount = 0
         var serviceCount = 0
         for serviceGroup in browser.serviceGroups {
             hostCount += 1
-            var groupJson : [String:Any] = [:]
+            var groupJson: [String: Any] = [:]
             groupJson["name"] = serviceGroup.title
-            var addressesJson : [String] = []
+            var addressesJson: [String] = []
             for address in serviceGroup.addresses {
                 addressesJson.append(address)
             }
             groupJson["addresses"] = addressesJson
 
-            var servicesJson : [Any] = []
+            var servicesJson: [Any] = []
             for service in serviceGroup.services {
                 serviceCount += 1
-                var serviceJson : [String: Any] = [:]
+                var serviceJson: [String: Any] = [:]
                 serviceJson["name"] = service.name
                 serviceJson["port"] = service.port
                 serviceJson["type"] = service.type
-                var addressesJson : [String] = []
+                var addressesJson: [String] = []
                 let addresses = service.addresses!.compactMap { getIFAddress($0) }
                 for address in addresses {
                     addressesJson.append(address)

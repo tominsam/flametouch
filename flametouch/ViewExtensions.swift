@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 extension UIView {
-    func pinEdgesTo(guide : UILayoutGuide) {
+    func pinEdgesTo(guide: UILayoutGuide) {
         translatesAutoresizingMaskIntoConstraints = false
         topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
         leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
@@ -18,7 +18,7 @@ extension UIView {
         bottomAnchor.constraint(equalTo: guide.bottomAnchor).isActive = true
     }
 
-    func pinEdgesTo(view : UIView) {
+    func pinEdgesTo(view: UIView) {
         translatesAutoresizingMaskIntoConstraints = false
         topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true

@@ -13,7 +13,7 @@ class ServiceGroup: NSObject {
     var services = [NetService]()
     var addresses = [String]()
 
-    init(service : NetService, address : String) {
+    init(service: NetService, address: String) {
         super.init()
         services.append(service)
         sortServices()
@@ -21,7 +21,7 @@ class ServiceGroup: NSObject {
         sortAddresses()
     }
 
-    func addService(_ service : NetService) {
+    func addService(_ service: NetService) {
         services.append(service)
         sortServices()
     }
@@ -30,7 +30,7 @@ class ServiceGroup: NSObject {
         services.sort { $0.type.lowercased() < $1.type.lowercased() }
     }
 
-    func addAddress(_ address : String) {
+    func addAddress(_ address: String) {
         if addresses.contains(address) {
             return
         }

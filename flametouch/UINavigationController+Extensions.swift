@@ -44,7 +44,6 @@ extension UINavigationController {
     }
 }
 
-
 fileprivate extension UIColor {
     static func dynamic(light: UIColor, dark: UIColor) -> UIColor {
         return UIColor { traitCollection in

@@ -23,8 +23,8 @@ class ServiceName {
         "_googlecast._tcp.", // chromecast
         "_flametouch._tcp.",
     ]
-    
-    static func nameForServiceGroup(_ group : ServiceGroup) -> String {
+
+    static func nameForServiceGroup(_ group: ServiceGroup) -> String {
         // Look for important names first
         for name in kImportantNames {
             for service in group.services {
@@ -35,7 +35,7 @@ class ServiceName {
                     } else {
                         return service.name
                     }
-                    //return mapFromService(service)["fn"] ?? service.name
+                    // return mapFromService(service)["fn"] ?? service.name
                 } else if service.type == "_ipp._tcp." && service.name.contains(" @ ") {
                     // "printer name @ computer name" for windows printer sharing
                     return service.name.components(separatedBy: " @ ")[1]

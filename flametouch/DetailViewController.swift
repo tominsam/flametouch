@@ -12,13 +12,13 @@ import SafariServices
 /// Shows the details of a particular service on a particular host
 class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    let service : NetService
+    let service: NetService
     let table = UITableView(frame: CGRect.zero, style: .grouped)
 
     var core = [(key: String, value: String)]()
     var txtData = [(key: String, value: String)]()
 
-    required init(service : NetService) {
+    required init(service: NetService) {
         self.service = service
         super.init(nibName: nil, bundle: nil)
         self.title = service.type
@@ -74,7 +74,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch (section) {
+        switch section {
         case 0:
             return NSLocalizedString("Core", comment: "Header label for core service settings")
         case 1:
@@ -85,7 +85,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch (section) {
+        switch section {
         case 0:
             return core.count
         case 1:
@@ -98,7 +98,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
 
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
             cell.title = core[indexPath.row].key
             cell.right = core[indexPath.row].value
@@ -187,7 +187,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
     }
 
     func urlFor(indexPath: IndexPath) -> URL? {
-        switch (indexPath.section) {
+        switch indexPath.section {
         case 0:
             switch core[indexPath.row].value.split(separator: ".").first {
             case "_http":

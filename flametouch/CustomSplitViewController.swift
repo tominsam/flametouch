@@ -84,7 +84,6 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
         return true
     }
 
-
     // When we collapse from 2 panes to 1 pane, we move all the views onto the new master view controller
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
         guard let master = primaryViewController as? UINavigationController, let detail = secondaryViewController as? UINavigationController else {

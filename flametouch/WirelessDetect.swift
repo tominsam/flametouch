@@ -12,13 +12,13 @@ import SystemConfiguration.CaptiveNetwork
 import aiReachability
 
 class WirelessDetect {
-    
+
     let reachability = NetworkMonitor()
-    
-    public var callback : ((Bool) -> Void)? = nil
-    
+
+    public var callback: ((Bool) -> Void)?
+
     init() {
-        reachability.networkUpdateHandler = { [weak self] status in
+        reachability.networkUpdateHandler = { [weak self] _ in
             // this is called on a background thread, but UI updates must
             // be on the main thread, like this:
             DispatchQueue.main.async {
@@ -29,5 +29,5 @@ class WirelessDetect {
         ELog("Startup Reachable \(String(describing: reachability.wifiState))")
         self.callback?(reachability.wifiState == .connected)
         }
-    
+
 }
