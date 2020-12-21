@@ -35,10 +35,12 @@ public extension UITableView {
     }
 
     func dequeueReusableCell<T>(for indexPath: IndexPath) -> T where T: Reusable, T: UITableViewCell {
+        // swiftlint:disable:next force_cast
         return dequeueReusableCell(withIdentifier: T.reuseId, for: indexPath) as! T
     }
 
     func dequeueReusableHeaderFooterView<T>() -> T where T: Reusable, T: UITableViewHeaderFooterView {
+        // swiftlint:disable:next force_cast
         return dequeueReusableHeaderFooterView(withIdentifier: T.reuseId) as! T
     }
 }

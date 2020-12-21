@@ -47,8 +47,8 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
         flameService.publish()
 
         browser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
-        for (service, b) in browsers {
-            b.searchForServices(ofType: service, inDomain: "")
+        for (service, browser) in browsers {
+            browser.searchForServices(ofType: service, inDomain: "")
         }
 
         broadcast()
@@ -58,8 +58,8 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func pause() {
         ELog("Pause")
         browser.stop()
-        for (_, b) in browsers {
-            b.stop()
+        for (_, browser) in browsers {
+            browser.stop()
         }
         flameService.stop()
         // remove them, because the meta-browser is going to re-create everything.
@@ -68,16 +68,16 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        if (service.type == "_tcp.local." || service.type == "_udp.local.") {
+        if service.type == "_tcp.local." || service.type == "_udp.local." {
             // meta-browser found something new. Create a new service browser for it.
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             ELog("Found type \"\(name)\"")
             if let found = browsers[name] {
                 ELog("stopping existing browser (shouldn't really happen)")
-                found.stop();
+                found.stop()
             }
             let newBrowser = NetServiceBrowser()
-            newBrowser.delegate = self;
+            newBrowser.delegate = self
 
             newBrowser.searchForServices(ofType: name, inDomain: "")
             browsers[name] = newBrowser
@@ -99,8 +99,8 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         if (service.type == "_tcp.local." || service.type == "_udp.local.") {
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-            if let b = browsers[name] {
-                b.stop()
+            if let browser = browsers[name] {
+                browser.stop()
                 browsers.removeValue(forKey: name)
                 ELog("removed type " + service.name)
             } else {

@@ -14,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let browser = ServiceBrowser()
 
     static func instance() -> AppDelegate {
+        // swiftlint:disable:next force_cast
         return UIApplication.shared.delegate as! AppDelegate
     }
 
@@ -64,10 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func exportData() -> URL? {
 
         var groupsJson : [Any] = []
-        var host_count = 0
-        var service_count = 0
+        var hostCount = 0
+        var serviceCount = 0
         for serviceGroup in browser.serviceGroups {
-            host_count += 1
+            hostCount += 1
             var groupJson : [String:Any] = [:]
             groupJson["name"] = serviceGroup.title
             var addressesJson : [String] = []
@@ -78,7 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             var servicesJson : [Any] = []
             for service in serviceGroup.services {
-                service_count += 1
+                serviceCount += 1
                 var serviceJson : [String: Any] = [:]
                 serviceJson["name"] = service.name
                 serviceJson["port"] = service.port

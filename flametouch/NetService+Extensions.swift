@@ -28,13 +28,11 @@ extension NetService {
                 }
             }
         }
-        return txtData.sorted { a, b in
-            return a.key.lowercased() < b.key.lowercased()
-        }
+        return txtData.sorted { $0.key.lowercased() < $1.key.lowercased() }
     }
 
     var txtDict: [String: String] {
-        Dictionary(txtData, uniquingKeysWith: { a, b in a })
+        Dictionary(txtData, uniquingKeysWith: { first, _ in first })
     }
 
 }

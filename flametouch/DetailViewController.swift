@@ -216,6 +216,6 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
 
 extension Data {
     var hex: String {
-        return self.map { b in String(format: "%02X", b) }.joined()
+        return self.map { byte in String(format: "%02X", byte) }.joined()
     }
 }

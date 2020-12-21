@@ -56,7 +56,7 @@ class CustomSplitViewController: UISplitViewController {
     @objc
     func saveExportedData() {
         guard let url = AppDelegate.instance().exportData() else { return }
-        let controller = UIDocumentPickerViewController(url: url, in: UIDocumentPickerMode.exportToService)
+        let controller = UIDocumentPickerViewController(forExporting: [url])
         present(controller, animated: true)
     }
 
@@ -92,7 +92,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
         }
         if detail.viewControllers != [emptyViewController] {
             // only collapse if the right pane _isn't_ the empty state
-            master.viewControllers = master.viewControllers + detail.viewControllers
+            master.viewControllers += detail.viewControllers
         }
         return true
     }

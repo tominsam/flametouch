@@ -12,10 +12,11 @@ class ServiceName {
 
     // Ordered list of "important" service names - these will be used to extract the
     // host name preferentially
-    static let IMPORTANT_NAMES = [
+    static let kImportantNames = [
         "_airplay._tcp.",
         "_airport._tcp.",
         "_sleep-proxy._udp.",
+        "_hap._tcp.",
         "_ssh._tcp.",
         "_smb._tcp.",
         "_ipp._tcp.", // printer
@@ -25,7 +26,7 @@ class ServiceName {
     
     static func nameForServiceGroup(_ group : ServiceGroup) -> String {
         // Look for important names first
-        for name in IMPORTANT_NAMES {
+        for name in kImportantNames {
             for service in group.services {
                 if service.type == "_googlecast._tcp." {
                     let map = service.txtDict

@@ -202,6 +202,7 @@
 			buildConfigurationList = 72EC68E91BC9E50600AC2692 /* Build configuration list for PBXNativeTarget "Flame" */;
 			buildPhases = (
 				72EC68D31BC9E50600AC2692 /* Sources */,
+				7267957C258FE410003168B5 /* swiftlint */,
 				72EC68D41BC9E50600AC2692 /* Frameworks */,
 				72EC68D51BC9E50600AC2692 /* Resources */,
 				72428D92251936A800F555FE /* Remove Catalyst Entitlements */,
@@ -288,6 +289,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${IS_MACCATALYST}\" = \"YES\" ]; then\n    ENTITLEMENTS_FILE=\"${TARGET_TEMP_DIR}/${FULL_PRODUCT_NAME}.xcent\"\n    \n    echo \"Removing com.apple.developer.user-fonts entitlement on Mac Catalyst from ${ENTITLEMENTS_FILE}\"\n    plutil -remove \"com\\.apple\\.developer\\.networking\\.multicast\" \"${ENTITLEMENTS_FILE}\"\nfi\n";
+		};
+		7267957C258FE410003168B5 /* swiftlint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = swiftlint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
