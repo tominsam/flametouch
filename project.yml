@@ -57,9 +57,9 @@ targets:
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).AboutSceneDelegate
     entitlements:
       path: Flame.entitlements
-      # properties:
-      #   com.apple.developer.networking.multicast: true
-      #   com.apple.security.files.user-selected.read-write: true
-      #   com.apple.security.network.client: true
-      #   com.apple.developer.networking.wifi-info: true
-      #   com.apple.security.app-sandbox: true
+      properties:
+        com.apple.developer.networking.multicast: true
+        com.apple.security.files.user-selected.read-write: true
+        com.apple.security.network.client: true
+        com.apple.developer.networking.wifi-info: true
+        com.apple.security.app-sandbox: true
