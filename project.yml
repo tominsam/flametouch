@@ -1,0 +1,65 @@
+# https://github.com/yonaskolb/XcodeGen/blob/master/Docs/ProjectSpec.md
+name: Flame
+options:
+  bundleIdPrefix: org.jerakeen
+packages:
+  aiReachability:
+    url: https://github.com/aiFigueiredo/aiReachability.git
+    revision: 4e33ca7bd44f01743eb7aab3437d96c1614e24af
+targets:
+  Flame:
+    name: Flame
+    type: application
+    platform: iOS
+    deploymentTarget: "14.0"
+    scheme:
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.jerakeen.flametouch
+        SUPPORTS_MACCATALYST: YES
+        DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
+        DEVELOPMENT_TEAM: 76AFK3W7M9
+        CODE_SIGN_STYLE: Manual
+        PROVISIONING_PROFILE_SPECIFIER: Flametouch dev (with multicast)
+        PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: Flametouch Mac Dev
+      debug:
+      release:
+    sources: [flametouch]
+    dependencies:
+      - package: aiReachability
+    info:
+      path: Info.plist
+      properties:
+        NSLocalNetworkUsageDescription: Flame lists the local network services to let you browse them
+        LSApplicationCategoryType: public.app-category.developer-tools
+        UILaunchStoryboardName: LaunchScreen
+        CFBundleShortVersionString: "76"
+        CFBundleVersion: "2.7.0"
+        ITSAppUsesNonExemptEncryption: false
+        UIStatusBarStyle: UIStatusBarStyleLightContent
+        UIViewControllerBasedStatusBarAppearance: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+          UISceneConfigurations:
+            UIWindowSceneSessionRoleApplication:
+              - UISceneConfigurationName: Main
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
+              - UISceneConfigurationName: About
+                UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).AboutSceneDelegate
+    entitlements:
+      path: Flame.entitlements
+      # properties:
+      #   com.apple.developer.networking.multicast: true
+      #   com.apple.security.files.user-selected.read-write: true
+      #   com.apple.security.network.client: true
+      #   com.apple.developer.networking.wifi-info: true
+      #   com.apple.security.app-sandbox: true

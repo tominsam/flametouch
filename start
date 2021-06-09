@@ -1,0 +1,1 @@
+killall Xcode; sleep 2; xcodegen && open Flame.xcodeproj
