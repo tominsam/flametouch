@@ -63,3 +63,6 @@ targets:
         com.apple.security.network.client: true
         com.apple.developer.networking.wifi-info: true
         com.apple.security.app-sandbox: true
+    postCompileScripts:
+      - script: swiftlint
+        name: Run SwiftLint
