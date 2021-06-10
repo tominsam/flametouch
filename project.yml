@@ -24,7 +24,7 @@ targets:
         PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: Flametouch Mac Dev
       debug:
       release:
-    sources: [flametouch]
+    sources: [flametouch, "README.md", "CHANGELOG.md"]
     dependencies:
       - package: aiReachability
     info:
