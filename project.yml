@@ -38,7 +38,9 @@ targets:
       properties:
         NSLocalNetworkUsageDescription: Flame lists the local network services to let you browse them
         LSApplicationCategoryType: public.app-category.developer-tools
-        UILaunchStoryboardName: LaunchScreen
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+          UIImageName: LaunchIcon
         CFBundleShortVersionString: "76"
         CFBundleVersion: "2.7.0"
         ITSAppUsesNonExemptEncryption: false
