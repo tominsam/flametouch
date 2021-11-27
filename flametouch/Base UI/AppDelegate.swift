@@ -33,7 +33,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     override func buildMenu(with builder: UIMenuBuilder) {
         let exportCommand = UIKeyCommand(
-            title: NSLocalizedString("Export…", comment: ""),
+            title: NSLocalizedString("Export…", comment: "Menu item to export network data"),
             image: nil,
             action: #selector(CustomSplitViewController.saveExportedData),
             input: "E",

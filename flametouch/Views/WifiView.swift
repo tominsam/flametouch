@@ -15,12 +15,12 @@ class WifiView: UIView {
         titleView.font = UIFont.preferredFont(forTextStyle: .title1)
         titleView.textAlignment = .center
         titleView.numberOfLines = 0
-        titleView.text = "No wireless network found".widont()
+        titleView.text = NSLocalizedString("No wireless network found", comment: "Title for a screen displayed when there is no WiFi network")
 
         subtitleView.textAlignment = .center
         subtitleView.numberOfLines = 0
         subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
-        subtitleView.text = "Connect to a WiFi network to see local services.".widont()
+        subtitleView.text = NSLocalizedString("Connect to a WiFi network to see local services.", comment: "Subtitle for a screen displayed when there is no WiFi network")
 
         let guide = readableContentGuide
         addSubviewWithConstraints(titleView, [

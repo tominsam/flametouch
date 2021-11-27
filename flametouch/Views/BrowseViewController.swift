@@ -49,9 +49,9 @@ class BrowseViewController: UIViewController {
 
     override func viewDidLoad() {
         #if targetEnvironment(macCatalyst)
-        title = NSLocalizedString("Hosts", comment: "Title for a list of hosts")
+        title = NSLocalizedString("Hosts", comment: "Title for a list of hosts (computers on the network)")
         #else
-        title = NSLocalizedString("Flame", comment: "App name")
+        title = NSLocalizedString("Flame", comment: "The name of the application")
         #endif
 
         // This causes the search controller to treat _this_ view as the "presentation context"

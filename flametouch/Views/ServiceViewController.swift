@@ -34,7 +34,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
             value: service.name
         ))
         core.append((
-            key: NSLocalizedString("Type", comment: "Label for the type of the service"),
+            key: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"),
             value: service.type
         ))
         for hostname in service.displayAddresses {
@@ -83,9 +83,9 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
-            return NSLocalizedString("Core", comment: "Header label for core service settings")
+            return NSLocalizedString("Core", comment: "Header label for a list of core service settings")
         case 1:
-            return NSLocalizedString("Data", comment: "Header label for service settings from data record")
+            return NSLocalizedString("Data", comment: "Header label for a list of service information from the data record")
         default:
             return nil
         }
