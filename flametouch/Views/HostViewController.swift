@@ -11,7 +11,13 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var host: Host
     var alive: Bool
 
-    let table = UITableView(frame: CGRect.zero, style: .grouped)
+    lazy var tableView = configure(UITableView(frame: CGRect.zero, style: .grouped)) { tableView in
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.setupForAutolayout()
+        tableView.registerReusableCell(SimpleCell.self)
+        tableView.selectionFollowsFocus = true
+    }
 
     required init(serviceController: ServiceController, host: Host) {
         self.serviceController = serviceController
@@ -31,18 +37,14 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     override func viewDidLoad() {
-        table.dataSource = self
-        table.delegate = self
-        table.setupForAutolayout()
-        table.registerReusableCell(SimpleCell.self)
-        view.addSubview(table)
-        table.pinEdgesTo(view: view)
+        view.addSubview(tableView)
+        tableView.pinEdgesTo(view: view)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let selected = table.indexPathForSelectedRow {
-            table.deselectRow(at: selected, animated: true)
+        if let selected = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selected, animated: true)
         }
     }
 
@@ -55,7 +57,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             alive = false
         }
         title = host.name
-        table.reloadData()
+        tableView.reloadData()
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {

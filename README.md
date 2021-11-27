@@ -4,6 +4,12 @@ If an application on your iPhone or iPod touch can handle any of the advertised 
 
 https://movieos.org/code/flame/
 
+## Development
+
+I use xcodegen to manage my project file. The `start` shell script will generate the project file and restart xcode with it.
+
+To build and run on a physical device you need the `com.apple.developer.networking.multicast` entitlement, which needs to be explicitly requested from Apple - it's not self service, and the app will not be able to discover local services without it.
+
 ## TODO
 
 * Some services (eg those broadcast by iOS in sleep mode but charging) seem to disappear and appear. Hosts should have some hysteresis so that the left pane doesn't jitter so much

@@ -13,7 +13,13 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     var txtData = [(key: String, value: String)]()
     var alive = true
 
-    let table = UITableView(frame: CGRect.zero, style: .grouped)
+    lazy var tableView = configure(UITableView(frame: .zero, style: .grouped)) { tableView in
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.setupForAutolayout()
+        tableView.registerReusableCell(SimpleCell.self)
+        tableView.selectionFollowsFocus = true
+    }
 
     required init(serviceController: ServiceController, service: Service) {
         self.serviceController = serviceController
@@ -57,18 +63,14 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     override func viewDidLoad() {
-        table.dataSource = self
-        table.delegate = self
-        table.setupForAutolayout()
-        table.registerReusableCell(SimpleCell.self)
-        self.view.addSubview(table)
-        table.pinEdgesTo(view: view)
+        view.addSubview(tableView)
+        tableView.pinEdgesTo(view: view)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let selected = table.indexPathForSelectedRow {
-            table.deselectRow(at: selected, animated: true)
+        if let selected = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: selected, animated: true)
         }
     }
 
@@ -190,7 +192,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
             alive = false
         }
         build()
-        table.reloadData()
+        tableView.reloadData()
     }
 
 }

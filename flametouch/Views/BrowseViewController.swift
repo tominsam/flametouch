@@ -11,17 +11,16 @@ class BrowseViewController: UIViewController {
     var filteredHosts = [Host]()
     var filter: String?
 
-    lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: CGRect.zero, style: .plain)
+    lazy var tableView = configure(UITableView(frame: .zero, style: .plain)) { tableView in
         // Fixes a background color overscroll bug
         tableView.backgroundView = UIView()
+        tableView.selectionFollowsFocus = true
         #if !targetEnvironment(macCatalyst)
         tableView.refreshControl = configure(UIRefreshControl()) { refresh in
             refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
         }
         #endif
-        return tableView
-    }()
+    }
 
     let networkOverlay = WifiView()
 
