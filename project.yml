@@ -12,7 +12,7 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "14.0"
-    scheme:
+    scheme: {}
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.jerakeen.flametouch
@@ -45,7 +45,7 @@ targets:
         CFBundleVersion: "2.7.0"
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
-        UIViewControllerBasedStatusBarAppearance: false
+        UIViewControllerBasedStatusBarAppearance: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft
@@ -69,8 +69,7 @@ targets:
         com.apple.developer.networking.multicast: true
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.network.client: true
-        com.apple.developer.networking.wifi-info: true
         com.apple.security.app-sandbox: true
     postCompileScripts:
-      - script: swiftlint
+      - script: /opt/homebrew/bin/swiftlint
         name: Run SwiftLint

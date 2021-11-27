@@ -1,39 +1,33 @@
-//
-//  Host.swift
-//  flametouch
-//
-//  Created by tominsam on 2/21/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2016 Thomas Insam. All rights reserved.
 
 import UIKit
 
 /// View of a single host - lists the services of that host
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
+    let serviceController: ServiceController
+    var serviceControllerObserver: ServiceControllerObserver?
+
+    var host: Host
+    var alive: Bool
+
     let table = UITableView(frame: CGRect.zero, style: .grouped)
-    var serviceGroup: ServiceGroup?
-    var addresses: [String]
 
-    required init(serviceGroup: ServiceGroup) {
-        self.serviceGroup = serviceGroup
-        addresses = serviceGroup.addresses
+    required init(serviceController: ServiceController, host: Host) {
+        self.serviceController = serviceController
+        self.host = host
+        self.alive = true
         super.init(nibName: nil, bundle: nil)
-        title = serviceGroup.title
-        // ELog("serviceGroup is %@", serviceGroup)
+        title = host.name
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(servicesChanged),
-            name: NSNotification.Name(rawValue: "ServicesChanged"),
-            object: nil)
+        serviceControllerObserver = serviceController.observeServiceChanges { [weak self] _ in
+            self?.hostsChanged()
+        }
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        serviceGroup = ServiceGroup(service: NetService(), address: "")
-        addresses = []
-        super.init(coder: aDecoder)
-        precondition(false) // don't want this happening
+        fatalError()
     }
 
     override func viewDidLoad() {
@@ -41,10 +35,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         table.delegate = self
         table.setupForAutolayout()
         table.registerReusableCell(SimpleCell.self)
-
         view.addSubview(table)
         table.pinEdgesTo(view: view)
-
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -54,20 +46,15 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
-    func browser() -> ServiceBrowser {
-        return AppDelegate.instance().browser
-    }
-
-    @objc func servicesChanged() {
-        if let group = browser().serviceGroupFor(addresses) {
-            serviceGroup = group
-            addresses = group.addresses
-            ELog("Addresses are \(addresses)")
+    func hostsChanged() {
+        if let found = serviceController.hostFor(addresses: host.addresses) {
+            host = found
+            alive = true
         } else {
             // this service is gone. Keep the addresses in case it comes back.
-            serviceGroup = nil
+            alive = false
         }
-        title = serviceGroup?.title
+        title = host.name
         table.reloadData()
     }
 
@@ -76,19 +63,16 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let group = serviceGroup {
-            if section == 0 {
-                return addresses.count + 1
-            } else {
-                return group.services.count
-            }
+        if section == 0 {
+            return host.displayAddresses.count
+        } else {
+            return host.services.count
         }
-        return 0
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return addresses.count > 1 ? "Addresses" : "Address"
+            return host.displayAddresses.count > 1 ? "Addresses" : "Address"
         } else {
             return "Services"
         }
@@ -97,21 +81,20 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-            if indexPath.row == 0 {
-                cell.title = serviceGroup!.services[0].hostName
-            } else {
-                cell.title = addresses[indexPath.row - 1]
-            }
+            cell.title = host.displayAddresses[indexPath.row]
+            cell.subtitle = nil
             cell.accessoryType = .none
             cell.selectionStyle = .none
+            cell.contentView.alpha = alive ? 1 : 0.5
             return cell
         } else {
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-            let service = serviceGroup!.services[indexPath.row]
+            let service = host.displayServices[indexPath.row]
             cell.title = service.name
             cell.subtitle = service.type
             cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .default
+            cell.contentView.alpha = alive ? 1 : 0.5
             return cell
         }
     }
@@ -120,8 +103,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if indexPath.section == 0 {
             tableView.deselectRow(at: indexPath, animated: true)
         } else {
-            let service = serviceGroup!.services[indexPath.row]
-            let serviceController = DetailViewController(service: service)
+            let service = host.displayServices[indexPath.row]
+            let serviceController = ServiceViewController(serviceController: serviceController, service: service)
             show(serviceController, sender: self)
         }
     }
@@ -130,13 +113,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         if indexPath.section == 0 { // Hostname + Address rows
             // capture asap in case the tableview moves under us
-            let value: String
-            if indexPath.row == 0 {
-                value = self.serviceGroup!.services[0].hostName ?? ""
-            } else {
-                value = self.addresses[indexPath.row - 1]
-            }
-
+            let value = host.displayAddresses[indexPath.row]
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
                 let copyValueAction = UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                     UIPasteboard.general.string = value
@@ -146,16 +123,24 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         } else { // Service rows
 
-            guard let service = serviceGroup?.services[indexPath.row] else { return nil }
+            let service = host.displayServices[indexPath.row]
 
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                var actions = [UIAction]()
+                actions.append(UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                     UIPasteboard.general.string = service.name
-                }
-                let copyTypeAction = UIAction(title: "Copy Type", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                })
+                actions.append(UIAction(title: "Copy Type", image: UIImage(systemName: "arrowshape.turn.up.right")) { _ in
                     UIPasteboard.general.string = service.type
+                })
+                if let url = service.url {
+                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
+                        guard let self = self else { return }
+                        AppDelegate.instance().openUrl(url, from: self)
+                    })
                 }
-                return UIMenu(title: "", children: [copyNameAction, copyTypeAction])
+
+                return UIMenu(title: "", children: actions)
             }
         }
     }

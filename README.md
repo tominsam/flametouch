@@ -6,7 +6,7 @@ https://movieos.org/code/flame/
 
 ## TODO
 
-* Some services (eg those broadcast my iOS in sleep mode but charging) seem to disappear and appear. Hosts should have some hysteresis so that the left pane doesn't jitter so much
+* Some services (eg those broadcast by iOS in sleep mode but charging) seem to disappear and appear. Hosts should have some hysteresis so that the left pane doesn't jitter so much
 * When services appear and disappear the selected row in the left pane deselected
 * New tab keyboard shortcut on mac, or remove tabbing. Either.
 

@@ -1,10 +1,4 @@
-//
-//  ViewExtensions.swift
-//  Flame
-//
-//  Created by tominsam on 10/15/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2016 Thomas Insam. All rights reserved.
 
 import Foundation
 import UIKit
@@ -46,13 +40,13 @@ extension UIView {
             view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insets.right),
             view.topAnchor.constraint(equalTo: topAnchor, constant: insets.top),
             view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom),
-            ])
+        ])
     }
 
     func addSubviewInCenter(_ view: UIView) {
         addSubviewWithConstraints(view, [
             view.centerXAnchor.constraint(equalTo: centerXAnchor),
             view.centerYAnchor.constraint(equalTo: centerYAnchor),
-            ])
+        ])
     }
 }

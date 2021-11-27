@@ -1,12 +1,16 @@
+// Copyright 2019 Thomas Insam. All rights reserved.
+
 import UIKit
 
 class CustomSplitViewController: UISplitViewController {
 
-    public lazy var master = StaticNavigationController().configured {
+    let serviceController: ServiceController
+
+    public lazy var master = configure(StaticNavigationController()) {
         $0.theme()
     }
 
-    private lazy var emptyViewController = UIViewController().configured {
+    private lazy var emptyViewController = configure(UIViewController()) {
         $0.view.backgroundColor = .systemGroupedBackground
     }
 
@@ -15,7 +19,8 @@ class CustomSplitViewController: UISplitViewController {
         set { fatalError(String(describing: newValue)) }
     }
 
-    init() {
+    init(serviceController: ServiceController) {
+        self.serviceController = serviceController
         super.init(nibName: nil, bundle: nil)
         super.delegate = self
         preferredDisplayMode = .oneBesideSecondary
@@ -55,7 +60,7 @@ class CustomSplitViewController: UISplitViewController {
     // in the responder chain but still has a window/vc to present from.
     @objc
     func saveExportedData() {
-        guard let url = AppDelegate.instance().exportData() else { return }
+        guard let url = ServiceExporter.export(hosts: serviceController.hosts) else { return }
         let controller = UIDocumentPickerViewController(forExporting: [url])
         present(controller, animated: true)
     }

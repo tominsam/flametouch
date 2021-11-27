@@ -4,3 +4,14 @@ disabled_rules:
   - function_body_length
   - line_length
   - identifier_name
+  - cyclomatic_complexity
+
+custom_rules:
+  restrict_non_ascii:
+    included: ".*\\.swift"
+    name: "Restrict Unicode"
+    regex: "([^\u0000-\u007F]+)"
+    match_kinds:
+      - identifier
+    message: "Non-ascii not allowed"
+    severity: error

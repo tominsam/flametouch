@@ -1,10 +1,4 @@
-//
-//  AboutSceneDelegate.swift
-//  Flame
-//
-//  Created by tominsam on 10/18/19.
-//  Copyright © 2019 tominsam. All rights reserved.
-//
+// Copyright 2019 Thomas Insam. All rights reserved.
 
 import UIKit
 

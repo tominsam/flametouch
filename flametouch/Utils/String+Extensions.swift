@@ -1,10 +1,4 @@
-//
-//  StringExtensions.swift
-//  Flame
-//
-//  Created by tominsam on 9/24/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2019 Thomas Insam. All rights reserved.
 
 import Foundation
 

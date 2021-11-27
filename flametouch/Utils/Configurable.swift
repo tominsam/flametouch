@@ -1,16 +1,8 @@
+// Copyright 2019 Thomas Insam. All rights reserved.
+
 import Foundation
 
-internal protocol Configurable { }
-
-extension Configurable {
-    func configured(transform: (inout Self) throws -> Void) rethrows -> Self {
-        var mutableSelf = self
-        try transform(&mutableSelf)
-        return mutableSelf
-    }
+public func configure<T>(_ thing: T, _ block: (T) -> Void) -> T {
+    block(thing)
+    return thing
 }
-
-extension NSObject: Configurable { }
-extension Array: Configurable { }
-extension JSONDecoder: Configurable { }
-extension JSONEncoder: Configurable { }

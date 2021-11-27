@@ -1,10 +1,4 @@
-//
-//  AboutViewController.swift
-//  flametouch
-//
-//  Created by tominsam on 2/27/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2016 Thomas Insam. All rights reserved.
 
 import UIKit
 import SafariServices

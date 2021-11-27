@@ -1,52 +1,59 @@
-//
-//  ServiceViewController.swift
-//  flametouch
-//
-//  Created by tominsam on 2/18/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2016 Thomas Insam. All rights reserved.
 
 import UIKit
-import SafariServices
 
 /// Shows the details of a particular service on a particular host
-class DetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ServiceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    let service: NetService
-    let table = UITableView(frame: CGRect.zero, style: .grouped)
+    let serviceController: ServiceController
+    var serviceControllerObserver: ServiceControllerObserver?
 
+    var service: Service
     var core = [(key: String, value: String)]()
     var txtData = [(key: String, value: String)]()
+    var alive = true
 
-    required init(service: NetService) {
+    let table = UITableView(frame: CGRect.zero, style: .grouped)
+
+    required init(serviceController: ServiceController, service: Service) {
+        self.serviceController = serviceController
         self.service = service
         super.init(nibName: nil, bundle: nil)
-        self.title = service.type
-        self.core.append((
+        build()
+        serviceControllerObserver = serviceController.observeServiceChanges { [weak self] _ in
+            self?.hostsChanged()
+        }
+    }
+
+    func build() {
+        title = service.type
+
+        core.removeAll()
+        core.append((
             key: NSLocalizedString("Name", comment: "Label for the name of the service"),
             value: service.name
         ))
-        self.core.append((
+        core.append((
             key: NSLocalizedString("Type", comment: "Label for the type of the service"),
-            value: service.type + service.domain
+            value: service.type
         ))
-        for hostname in service.addresses!.compactMap({getIFAddress($0)}).sorted() {
-            self.core.append((
+        for hostname in service.displayAddresses {
+            core.append((
                 key: NSLocalizedString("Address", comment: "Label for the network address of the service"),
                 value: hostname
             ))
         }
-        self.core.append((
+        core.append((
             key: NSLocalizedString("Port", comment: "Label for the network port of the service"),
             value: String(service.port)
         ))
 
-        self.txtData = service.txtData
+        txtData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        self.service = NetService() // dummy object
-        super.init(coder: aDecoder)
+        fatalError()
     }
 
     override func viewDidLoad() {
@@ -118,12 +125,13 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             cell.rightView.textColor = .secondaryLabel
         }
 
+        cell.contentView.alpha = alive ? 1 : 0.3
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let url = urlFor(indexPath: indexPath) {
-            didSelect(url: url)
+            AppDelegate.instance().openUrl(url, from: self)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -148,7 +156,7 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             if let url = url {
                 actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
                     guard let self = self else { return }
-                    self.didSelect(url: url)
+                    AppDelegate.instance().openUrl(url, from: self)
                 })
             }
 
@@ -156,48 +164,11 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
 
-    func didSelect(url: URL?) {
-        if let url = url, let scheme = url.scheme {
-            switch scheme {
-            case "http", "https":
-                // If there's a universal link handler for this URL, use that for preference
-                #if targetEnvironment(macCatalyst)
-                UIApplication.shared.open(url)
-                #else
-                UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-                    if !result {
-                        let vc = SFSafariViewController(url: url)
-                        vc.preferredControlTintColor = .systemRed
-                        self.present(vc, animated: true)
-                    }
-                }
-                #endif
-            default:
-                UIApplication.shared.open(url, options: [:]) { result in
-                    if !result {
-                        let alertController = UIAlertController(title: "Can't open URL", message: "I couldn't open that URL - maybe you need a particular app installed", preferredStyle: .alert)
-                        alertController.addAction(UIAlertAction(title: "OK", style: .default))
-                        self.present(alertController, animated: true)
-                    }
-                }
-            }
-        }
-    }
-
     func urlFor(indexPath: IndexPath) -> URL? {
         switch indexPath.section {
         case 0:
-            switch core[indexPath.row].value.split(separator: ".").first {
-            case "_http":
-                return URL(string: "http://\(service.hostName!):\(service.port)/")
-            case "_https":
-                return URL(string: "https://\(service.hostName!):\(service.port)/")
-            case "_ssh":
-                return URL(string: "ssh://\(service.hostName!):\(service.port)/")
-            case "_smb":
-                return URL(string: "smb://\(service.hostName!):\(service.port)/")
-            default:
-                return nil
+            if core[indexPath.row].value == service.type {
+                return service.url
             }
         case 1:
             // return the value if it looks like it parses as a decent url
@@ -208,6 +179,18 @@ class DetailViewController: UIViewController, UITableViewDataSource, UITableView
             break
         }
         return nil
+    }
+
+    func hostsChanged() {
+        if let found = serviceController.serviceFor(addresses: service.addresses, type: service.type) {
+            service = found
+            alive = true
+        } else {
+            // this service is gone. Keep the addresses in case it comes back.
+            alive = false
+        }
+        build()
+        table.reloadData()
     }
 
 }

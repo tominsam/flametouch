@@ -1,16 +1,12 @@
-//
-//  SceneDelegate.swift
-//  Flame
-//
-//  Created by tominsam on 10/18/19.
-//  Copyright © 2019 tominsam. All rights reserved.
-//
+// Copyright 2019 Thomas Insam. All rights reserved.
 
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+
+    let serviceController = ServiceController()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         NSLog("Scene started")
@@ -24,16 +20,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         #endif
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = CustomSplitViewController().configured {
+        window?.rootViewController = configure(CustomSplitViewController(serviceController: serviceController)) {
             $0.maximumPrimaryColumnWidth = 640
             $0.minimumPrimaryColumnWidth = 320
             $0.preferredPrimaryColumnWidthFraction = 0.4
             $0.primaryBackgroundStyle = .none // Or .sidebar but I hate it.
-            $0.setMasterViewController(ServicesViewController())
+            $0.setMasterViewController(BrowseViewController(serviceController: serviceController))
         }
         window?.tintColor = .systemRed
         window?.makeKeyAndVisible()
+    }
 
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        ELog("sceneDidEnterBackground")
+        #if !targetEnvironment(macCatalyst)
+        serviceController.stop()
+        #endif
+    }
+
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        ELog("sceneWillEnterForeground")
+        serviceController.start()
     }
 
 }

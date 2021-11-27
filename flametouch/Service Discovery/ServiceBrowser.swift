@@ -1,97 +1,99 @@
-//
-//  ServiceBrowser.swift
-//  flametouch
-//
-//  Created by tominsam on 10/12/15.
-//  Copyright © 2015 tominsam. All rights reserved.
-//
+// Copyright 2015 Thomas Insam. All rights reserved.
 
+import Foundation
 import UIKit
 
-class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
+protocol ServiceBrowserDelegate: NSObjectProtocol {
+    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices netServices: Set<NetService>)
+}
+
+class ServiceBrowser: NSObject {
+
+    weak var delegate: ServiceBrowserDelegate?
+
     /// meta-service browser, discovers more services
-    let browser = NetServiceBrowser().configured {
+    private let metaServiceBrowser = configure(NetServiceBrowser()) {
+        // Don't look for bluetooth connections, never seen it work
         $0.includesPeerToPeer = true
     }
 
     /// broadcast a service from the local device
-    let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
+    private let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
 
     /// lookup of service type to browser for this service type.
-	var browsers = [String: NetServiceBrowser]()
+    private var netServiceBrowsers = [String: NetServiceBrowser]()
 
     /// definitive list of all services
-    var services = Set<NetService>()
-
-    /// list of sets of addresses assigned to a single machine
-    var grouping = [Set<String>]()
-
-    /// service display groups
-    var serviceGroups = [ServiceGroup]()
-
-    /// String filter to search the services
-    var filter: String? {
-        didSet { broadcast() }
-    }
+    private var netServices = Set<NetService>()
 
     override init() {
         super.init()
-        browser.delegate = self
+        metaServiceBrowser.delegate = self
         flameService.delegate = self
     }
 
+    private func broadcast() {
+        delegate?.serviceBrowser(self, didChangeServices: netServices)
+    }
+
     /// start meta-browser and all service browsers
-    func resume() {
+    func start() {
         ELog("Resume")
 
         flameService.publish()
 
-        browser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
-        for (service, browser) in browsers {
-            browser.searchForServices(ofType: service, inDomain: "")
+        metaServiceBrowser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
+        for (serviceType, netServiceBrowser) in netServiceBrowsers {
+            netServiceBrowser.searchForServices(ofType: serviceType, inDomain: "")
         }
-
         broadcast()
     }
 
     /// stop the metabrowser and all service browsers
-    func pause() {
+    func stop() {
         ELog("Pause")
-        browser.stop()
-        for (_, browser) in browsers {
+        for service in netServices {
+            service.stopMonitoring()
+        }
+        for (_, browser) in netServiceBrowsers {
+            browser.delegate = nil
             browser.stop()
         }
+        metaServiceBrowser.stop()
         flameService.stop()
-        // remove them, because the meta-browser is going to re-create everything.
-        browsers.removeAll()
-        services.removeAll()
+        netServiceBrowsers.removeAll()
+        netServices.removeAll()
+        broadcast()
     }
+}
+
+// MARK: NetServiceBrowserDelegate
+extension ServiceBrowser: NetServiceBrowserDelegate {
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             // meta-browser found something new. Create a new service browser for it.
-            let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-            ELog("Found type \"\(name)\"")
-            if let found = browsers[name] {
-                ELog("stopping existing browser (shouldn't really happen)")
+            let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
+            ELog("✅ Found type \"\(serviceType)\"")
+            if let found = netServiceBrowsers[serviceType] {
+                ELog("stopping existing browser")
                 found.stop()
             }
+
             let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self
-
-            newBrowser.searchForServices(ofType: name, inDomain: "")
-            browsers[name] = newBrowser
+            newBrowser.searchForServices(ofType: serviceType, inDomain: "")
+            netServiceBrowsers[serviceType] = newBrowser
 
         } else {
             // single-service browser found a new broadcast
-            ELog("Found service " + service.type)
+            ELog("🟡 Found service \(service.type)")
 
             // Services are not always cleaned up - for instance entering airplane mode won't remove services.
-            // TODO detect this and clean them up.
-            // But for now, at least don't leak duplicate service entries
-            services.insert(service)
+            netServices.insert(service)
             service.delegate = self
             service.resolve(withTimeout: 10)
+            service.startMonitoring()
             broadcast()
         }
     }
@@ -99,35 +101,40 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-            if let browser = browsers[name] {
-                browser.stop()
-                browsers.removeValue(forKey: name)
-                ELog("removed type " + service.name)
-            } else {
-	            ELog("can't remove type " + service.name)
-            }
+            ELog("🅾️ removed type \(name)")
+            //            guard let browser = netServiceBrowsers[name] else {
+            //                ELog("‼️ can't remove type \(service.name)")
+            //                return
+            //            }
+            //                browser.stop()
+            //                netServiceBrowsers.removeValue(forKey: name)
         } else {
-            if services.contains(service) {
-        	    ELog("removed service " + service.type)
-	        	services.remove(at: services.firstIndex(of: service)!)
-                broadcast()
-        	} else {
-                ELog("can't remove service \(service.type)")
+            ELog("🔴 removed service \(service.type)")
+            guard let index = netServices.firstIndex(of: service) else {
+                ELog("‼️ can't remove service \(service.type)")
+                return
             }
+            service.stopMonitoring()
+            netServices.remove(at: index)
         }
+        broadcast()
     }
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
         ELog("Did not search: \(errorDict)")
     }
+}
+
+// MARK: NetServiceDelegate
+extension ServiceBrowser: NetServiceDelegate {
 
     func netServiceDidResolveAddress(_ service: NetService) {
-        ELog("resolved \(service)")
+        ELog("🟢 resolved \(service.type) \(service.name)")
         broadcast()
-	}
+    }
 
     func netService(_ service: NetService, didUpdateTXTRecord data: Data) {
-        ELog("New data for \(service)")
+        ELog("❕ New data for \(service.type) \(service.name)")
         broadcast()
     }
 
@@ -137,85 +144,6 @@ class ServiceBrowser: NSObject, NetServiceBrowserDelegate, NetServiceDelegate {
 
     func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
         ELog("lost domain \(domainString)")
-    }
-
-    func broadcast() {
-        // alphabetize
-        let services = Array(self.services).sorted {
-            $0.type.lowercased().compare($1.type.lowercased()) == ComparisonResult.orderedAscending
-        }
-
-        grouping.removeAll()
-        for service in services {
-            let addresses = service.addresses!.compactMap { getIFAddress($0) }
-            if var existingGroup = groupForAddresses(addresses) {
-                existingGroup.formUnion(Set(addresses))
-            } else {
-                grouping.append(Set(addresses))
-            }
-        }
-
-        var groups = [String: ServiceGroup]()
-        for service in services {
-            let addresses = service.addresses!.compactMap { getIFAddress($0) }
-            if addresses.isEmpty {
-                continue
-            }
-            if let group = groupForAddresses(addresses) {
-                // shortest address - picks ipv4 first
-                let ip = group.sorted {$0.count  < $1.count}.first!
-                if let serviceGroup = groups[ip] {
-                    serviceGroup.addService(service)
-                    for address in group {
-                        serviceGroup.addAddress(address)
-                    }
-                } else {
-                    let serviceGroup = ServiceGroup(service: service, address: ip)
-                    for address in group {
-                        serviceGroup.addAddress(address)
-                    }
-                    groups[ip] = serviceGroup
-                }
-            } else {
-             	precondition(false, "Can't happen")
-            }
-        }
-        serviceGroups = groups.values.sorted { $0.title.lowercased() < $1.title.lowercased() }
-
-        if let filter = filter {
-            serviceGroups = serviceGroups.filter { $0.matches(filter) }
-        }
-
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "ServicesChanged"), object: nil)
-    }
-
-    private func groupFor(_ address: String) -> Set<String>? {
-	    for group in grouping {
-            if group.contains(address) {
-                return group
-            }
-    	}
-        return nil
-    }
-
-    func serviceGroupFor(_ addresses: [String]) -> ServiceGroup? {
-        for address in addresses {
-            for group in serviceGroups {
-                if group.addresses.contains(address) {
-                    return group
-                }
-            }
-        }
-        return nil
-    }
-
-    func groupForAddresses(_ addresses: [String]) -> Set<String>? {
-        for address in addresses {
-            if let group = groupFor(address) {
-                return group
-            }
-        }
-        return nil
     }
 
 }

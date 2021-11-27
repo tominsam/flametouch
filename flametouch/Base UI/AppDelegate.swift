@@ -1,44 +1,34 @@
-//
-//  AppDelegate.swift
-//  flametouch
-//
-//  Created by tominsam on 10/10/15.
-//  Copyright © 2015 tominsam. All rights reserved.
-//
+// Copyright 2015 Thomas Insam. All rights reserved.
 
 import UIKit
+import SafariServices
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    let browser = ServiceBrowser()
 
     static func instance() -> AppDelegate {
         // swiftlint:disable:next force_cast
         return UIApplication.shared.delegate as! AppDelegate
     }
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        browser.resume()
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
         return true
     }
 
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
         switch options.userActivities.first?.activityType {
         case "org.jerakeen.flametouch.about":
-            return UISceneConfiguration(name: "About", sessionRole: .windowApplication)
+            return UISceneConfiguration(name: "About", sessionRole: connectingSceneSession.role)
         default:
-            return UISceneConfiguration(name: "Main", sessionRole: .windowApplication)
+            return UISceneConfiguration(name: "Main", sessionRole: connectingSceneSession.role)
         }
-
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        browser.pause()
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        browser.resume()
     }
 
     override func buildMenu(with builder: UIMenuBuilder) {
@@ -62,60 +52,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         builder.remove(menu: .help)
     }
 
-    func exportData() -> URL? {
-
-        var groupsJson: [Any] = []
-        var hostCount = 0
-        var serviceCount = 0
-        for serviceGroup in browser.serviceGroups {
-            hostCount += 1
-            var groupJson: [String: Any] = [:]
-            groupJson["name"] = serviceGroup.title
-            var addressesJson: [String] = []
-            for address in serviceGroup.addresses {
-                addressesJson.append(address)
-            }
-            groupJson["addresses"] = addressesJson
-
-            var servicesJson: [Any] = []
-            for service in serviceGroup.services {
-                serviceCount += 1
-                var serviceJson: [String: Any] = [:]
-                serviceJson["name"] = service.name
-                serviceJson["port"] = service.port
-                serviceJson["type"] = service.type
-                var addressesJson: [String] = []
-                let addresses = service.addresses!.compactMap { getIFAddress($0) }
-                for address in addresses {
-                    addressesJson.append(address)
-                }
-                serviceJson["addresses"] = addressesJson
-                for (key, value) in service.txtData {
-                    serviceJson[key] = value
-                }
-
-                servicesJson.append(serviceJson)
-            }
-            groupJson["services"] = servicesJson
-
-            groupsJson.append(groupJson)
+    func openUrl(_ url: URL?, from presentingViewController: UIViewController) {
+        guard let url = url, let scheme = url.scheme else {
+            return
         }
-
-        let file = "services_export.json"
-
-        guard let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true).first,
-            let path = NSURL(fileURLWithPath: dir).appendingPathComponent(file)
-            else {
-                return nil
+        switch scheme {
+        case "http", "https":
+            // If there's a universal link handler for this URL, use that for preference
+            #if targetEnvironment(macCatalyst)
+            UIApplication.shared.open(url)
+            #else
+            UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
+                if !result {
+                    let vc = SFSafariViewController(url: url)
+                    vc.preferredControlTintColor = .systemRed
+                    presentingViewController.present(vc, animated: true)
+                }
+            }
+            #endif
+        default:
+            UIApplication.shared.open(url, options: [:]) { result in
+                if !result {
+                    let alertController = UIAlertController(title: "Can't open URL", message: "I couldn't open that URL - maybe you need a particular app installed", preferredStyle: .alert)
+                    alertController.addAction(UIAlertAction(title: "OK", style: .default))
+                    presentingViewController.present(alertController, animated: true)
+                }
+            }
         }
-
-        NSLog("path is \(path.path)")
-        let output = OutputStream(toFileAtPath: path.path, append: false)!
-        output.open()
-        JSONSerialization.writeJSONObject(groupsJson, to: output, options: JSONSerialization.WritingOptions.prettyPrinted, error: nil)
-        output.close()
-
-        return path
     }
 
 }

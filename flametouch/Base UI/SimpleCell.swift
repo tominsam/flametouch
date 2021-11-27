@@ -1,10 +1,4 @@
-//
-//  SimpleCell.swift
-//  Flame
-//
-//  Created by tominsam on 9/24/16.
-//  Copyright © 2016 tominsam. All rights reserved.
-//
+// Copyright 2016 Thomas Insam. All rights reserved.
 
 import Foundation
 import UIKit
@@ -12,36 +6,36 @@ import UIKit
 class SimpleCell: UITableViewCell, Reusable {
     static var reuseId: String = "SimpleCell"
 
-    lazy var titleView = UILabel().configured {
+    lazy var titleView = configure(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .label
     }
 
-    lazy var subtitleView = UILabel().configured {
+    lazy var subtitleView = configure(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
         $0.highlightedTextColor = .label
     }
 
-    lazy var titleStack = UIStackView(arrangedSubviews: [titleView, subtitleView]).configured {
+    lazy var titleStack = configure(UIStackView(arrangedSubviews: [titleView, subtitleView])) {
         $0.axis = .vertical
         $0.alignment = .fill
         $0.spacing = 8
     }
 
-    lazy var iconView = UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).configured {
+    lazy var iconView = configure(UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))) {
         $0.contentMode = .scaleAspectFit
         $0.image = nil
         $0.tintColor = .label
     }
 
-    lazy var rightView = UILabel().configured {
+    lazy var rightView = configure(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
         $0.highlightedTextColor = .label
     }
 
-    lazy var outerStack = UIStackView(arrangedSubviews: [iconView, titleStack, rightView]).configured {
+    lazy var outerStack = configure(UIStackView(arrangedSubviews: [iconView, titleStack, rightView])) {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.distribution = .fill
@@ -61,8 +55,8 @@ class SimpleCell: UITableViewCell, Reusable {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
 
         // Force a background color to avoid buggy mac selection styles
-        selectedBackgroundView = UIView().configured {
-            $0.backgroundColor = .tertiarySystemGroupedBackground
+        selectedBackgroundView = configure(UIView()) {
+            $0.backgroundColor = .systemGray5
         }
 
         contentView.addSubviewWithConstraints(outerStack, [
