@@ -82,8 +82,6 @@ class BrowseViewController: UIViewController {
 
         tableView.registerReusableCell(SimpleCell.self)
 
-        navigationController?.navigationBar.prefersLargeTitles = true
-
         // Suppress info button on mac because there's an about menu, but catalyst
         // does want an explicit refresh button.
         #if targetEnvironment(macCatalyst)

@@ -8,6 +8,9 @@ class CustomSplitViewController: UISplitViewController {
 
     public lazy var master = configure(StaticNavigationController()) {
         $0.theme()
+        // Base nav VC is for iPad, then the split view is immediately
+        // collapsed for phones. Collapsing unsets prefersLargeTitles.
+        $0.navigationBar.prefersLargeTitles = true
     }
 
     private lazy var emptyViewController = configure(UIViewController()) {
@@ -99,6 +102,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
             // only collapse if the right pane _isn't_ the empty state
             master.viewControllers += detail.viewControllers
         }
+        master.navigationBar.prefersLargeTitles = false
         return true
     }
 
@@ -110,6 +114,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
         }
         let restOfStack = Array(master.viewControllers[1...])
         master.viewControllers = [top]
+        master.navigationBar.prefersLargeTitles = true
         return makeNav(restOfStack)
     }
 }
