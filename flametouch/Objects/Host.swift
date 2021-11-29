@@ -59,12 +59,11 @@ struct Host: Equatable, Hashable {
 
     var displayServices: [Service] {
         return services.sorted {
-            return $0.type < $1.type
-            //            if $0.name == $1.name {
-            //                return $0.type < $1.type
-            //            } else {
-            //                return $0.name < $1.name
-            //            }
+            if $0.type == $1.type {
+                return $0.name < $1.name
+            } else {
+                return $0.type < $1.type
+            }
         }
     }
 

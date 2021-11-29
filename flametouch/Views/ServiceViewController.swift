@@ -208,7 +208,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     func hostsChanged() {
-        if let found = serviceController.serviceFor(addresses: service.addresses, type: service.type) {
+        if let found = serviceController.serviceFor(addresses: service.addresses, type: service.type, name: service.name) {
             service = found
             alive = true
         } else {

@@ -58,9 +58,9 @@ class ServiceController: NSObject {
         return hosts.first { $0.hasAnyAddress(addresses) }
     }
 
-    func serviceFor(addresses: Set<String>, type: String) -> Service? {
+    func serviceFor(addresses: Set<String>, type: String, name: String) -> Service? {
         guard let host = hostFor(addresses: addresses) else { return nil }
-        return host.services.first { $0.type == type }
+        return host.services.first { $0.type == type && $0.name == name }
     }
 
     func observeServiceChanges(_ block: @escaping ([Host]) -> Void) -> ServiceControllerObserver {
