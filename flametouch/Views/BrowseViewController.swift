@@ -219,9 +219,11 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return " "
-//    }
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // returning any view at all here means there'll be space between the first cell
+        // and the search bar.
+        return UIView()
+    }
 }
 
 extension BrowseViewController: UISearchResultsUpdating, UISearchControllerDelegate {
