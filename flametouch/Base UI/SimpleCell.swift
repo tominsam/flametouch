@@ -55,9 +55,9 @@ class SimpleCell: UITableViewCell, Reusable {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
 
         // Force a background color to avoid buggy mac selection styles
-        selectedBackgroundView = configure(UIView()) {
-            $0.backgroundColor = .systemGray5
-        }
+//        selectedBackgroundView = configure(UIView()) {
+//            $0.backgroundColor = .systemGray5
+//        }
 
         contentView.addSubviewWithConstraints(outerStack, [
             outerStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),

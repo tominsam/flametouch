@@ -35,6 +35,7 @@ class CustomSplitViewController: UISplitViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .opaqueSeparator
+        //view.backgroundColor = .systemGroupedBackground
     }
 
     // set view for left pane

@@ -10,6 +10,7 @@ class ServiceNamer {
         case airplay = "_airplay._tcp."
         case airport = "_airport._tcp."
         case sleep = "_sleep-proxy._udp."
+        case homeassistant = "_home-assistant._tcp."
         case homekit = "_hap._tcp."
         case ssh = "_ssh._tcp."
         case smb = "_smb._tcp."
@@ -61,6 +62,8 @@ class ServiceNamer {
                         return "Apple TV (\(service.name))"
                     }
                 }
+            case .homeassistant:
+                return "Home Assistant (\(service.data["location_name"] ?? "New"))"
 
             default:
                 break

@@ -113,7 +113,7 @@ extension ServiceController: ServiceBrowserDelegate {
 
         let hosts = groups.map { Host(services: $0.value) }
 
-        self.hosts = hosts.sorted { $0.name < $1.name }
+        self.hosts = hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
 
         observers.reap()
         for weakObserver in observers {

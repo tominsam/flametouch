@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = configure(CustomSplitViewController(serviceController: serviceController)) {
             $0.maximumPrimaryColumnWidth = 640
             $0.minimumPrimaryColumnWidth = 320
-            $0.preferredPrimaryColumnWidthFraction = 0.4
+            $0.preferredPrimaryColumnWidthFraction = 0.35
             $0.primaryBackgroundStyle = .none // Or .sidebar but I hate it.
             $0.setMasterViewController(BrowseViewController(serviceController: serviceController))
         }

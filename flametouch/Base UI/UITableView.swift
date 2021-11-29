@@ -6,9 +6,13 @@ extension UITableView {
     func setupForAutolayout() {
         estimatedRowHeight = 80.0
         rowHeight = UITableView.automaticDimension
-        cellLayoutMarginsFollowReadableWidth = false
+        cellLayoutMarginsFollowReadableWidth = true
+        // catalyst keyboard focus fix
+        selectionFollowsFocus = true
+        // Fixes a background color overscroll bug
+        backgroundView = UIView()
+        layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     }
-
 }
 
 @objc

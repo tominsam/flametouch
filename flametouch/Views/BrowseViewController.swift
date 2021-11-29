@@ -11,10 +11,8 @@ class BrowseViewController: UIViewController {
     var filteredHosts = [Host]()
     var filter: String?
 
-    lazy var tableView = configure(UITableView(frame: .zero, style: .plain)) { tableView in
-        // Fixes a background color overscroll bug
-        tableView.backgroundView = UIView()
-        tableView.selectionFollowsFocus = true
+    lazy var tableView = configure(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
+        tableView.setupForAutolayout()
         #if !targetEnvironment(macCatalyst)
         tableView.refreshControl = configure(UIRefreshControl()) { refresh in
             refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
@@ -27,8 +25,25 @@ class BrowseViewController: UIViewController {
     lazy var searchController = configure(UISearchController()) {
         $0.delegate = self
         $0.searchResultsUpdater = self
+        // Don't move the search bar over the navigation what searching
         $0.hidesNavigationBarDuringPresentation = false
+        // don't dim when searching
         $0.obscuresBackgroundDuringPresentation = false
+        // align with the insetgrouped bubbles
+        $0.searchBar.layoutMargins = tableView.layoutMargins
+        // don't draw background or borders behind bubbles - fits in with table better
+        $0.searchBar.searchBarStyle = .default
+        // Both background setters are needed to keep the right color
+        // but also have the bar be opaque when focussed.
+        $0.searchBar.backgroundColor = .systemGroupedBackground
+        $0.searchBar.backgroundImage = UIImage()
+        // Match search bar background and corner radius to the cells
+        $0.searchBar.searchTextField.backgroundColor = .secondarySystemGroupedBackground
+        $0.searchBar.searchTextField.layer.cornerRadius = 10
+        $0.searchBar.searchTextField.layer.masksToBounds = true
+        // Align icon to the contents of the cells
+        $0.searchBar.setPositionAdjustment(UIOffset(horizontal: 6, vertical: 0), for: .search)
+        $0.searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 2, vertical: 0)
     }
 
     let wirelessDetect = WirelessDetect()
@@ -64,11 +79,10 @@ class BrowseViewController: UIViewController {
         tableView.tableHeaderView = searchController.searchBar
         tableView.dataSource = self
         tableView.delegate = self
-        // tableView.keyboardDismissMode = .onDrag
 
         tableView.registerReusableCell(SimpleCell.self)
 
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
 
         // Suppress info button on mac because there's an about menu, but catalyst
         // does want an explicit refresh button.
@@ -203,9 +217,13 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
             let copyAddressAction = UIAction(title: "Copy IP Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                 UIPasteboard.general.string = row.address
             }
-            return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
+            return UIMenu(title: row.name, children: [copyNameAction, copyAddressAction])
         }
     }
+
+//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+//        return " "
+//    }
 }
 
 extension BrowseViewController: UISearchResultsUpdating, UISearchControllerDelegate {

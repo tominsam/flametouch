@@ -11,12 +11,11 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var host: Host
     var alive: Bool
 
-    lazy var tableView = configure(UITableView(frame: CGRect.zero, style: .grouped)) { tableView in
+    lazy var tableView = configure(UITableView(frame: CGRect.zero, style: .insetGrouped)) { tableView in
         tableView.dataSource = self
         tableView.delegate = self
         tableView.setupForAutolayout()
         tableView.registerReusableCell(SimpleCell.self)
-        tableView.selectionFollowsFocus = true
     }
 
     required init(serviceController: ServiceController, host: Host) {
