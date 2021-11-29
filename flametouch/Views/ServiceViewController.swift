@@ -140,29 +140,53 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
 
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         // capture asap in case the tableview moves under us
-        let row = indexPath.section == 0 ? self.core[indexPath.row] : self.txtData[indexPath.row]
-        let url = self.urlFor(indexPath: indexPath)
+        if indexPath.section == 0 {
+            let row = self.core[indexPath.row]
+            let url = self.urlFor(indexPath: indexPath)
 
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self = self else { return nil }
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                guard let self = self else { return nil }
 
-            var actions = [
-                UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row.key
-                },
-                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row.value
+                var actions = [
+                    UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                        UIPasteboard.general.string = row.value
+                    }
+                ]
+
+                if let url = url {
+                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
+                        guard let self = self else { return }
+                        AppDelegate.instance().openUrl(url, from: self)
+                    })
                 }
-            ]
 
-            if let url = url {
-                actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
-                    guard let self = self else { return }
-                    AppDelegate.instance().openUrl(url, from: self)
-                })
+                return UIMenu(title: row.value, children: actions)
             }
+        } else {
+            let row = self.txtData[indexPath.row]
+            let url = self.urlFor(indexPath: indexPath)
 
-            return UIMenu(title: "", children: actions)
+            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+                guard let self = self else { return nil }
+
+                var actions = [
+                    UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                        UIPasteboard.general.string = row.key
+                    },
+                    UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                        UIPasteboard.general.string = row.value
+                    }
+                ]
+
+                if let url = url {
+                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
+                        guard let self = self else { return }
+                        AppDelegate.instance().openUrl(url, from: self)
+                    })
+                }
+
+                return UIMenu(title: row.key, children: actions)
+            }
         }
     }
 
