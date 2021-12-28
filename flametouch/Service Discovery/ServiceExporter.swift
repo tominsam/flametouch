@@ -32,9 +32,11 @@ class ServiceExporter {
                     addressesJson.append(address)
                 }
                 serviceJson["addresses"] = addressesJson
+                var txtData = [String: String]()
                 for (key, value) in service.data {
-                    serviceJson[key] = value
+                    txtData[key] = value
                 }
+                serviceJson["txtData"] = txtData
                 servicesJson.append(serviceJson)
             }
             groupJson["services"] = servicesJson
@@ -52,7 +54,7 @@ class ServiceExporter {
         NSLog("path is %@", path.path)
         let output = OutputStream(toFileAtPath: path.path, append: false)!
         output.open()
-        JSONSerialization.writeJSONObject(groupsJson, to: output, options: JSONSerialization.WritingOptions.prettyPrinted, error: nil)
+        JSONSerialization.writeJSONObject(groupsJson, to: output, options: [.prettyPrinted, .sortedKeys], error: nil)
         output.close()
 
         return path

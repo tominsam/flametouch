@@ -6,9 +6,9 @@ import SafariServices
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let serviceController = ServiceController()
+    let serviceController: ServiceController = ServiceControllerImpl()
     var serviceControllerRefCount: Int = 0
-    var serviceRefreshTimer: Timer? = nil
+    var serviceRefreshTimer: Timer?
 
     static var instance: AppDelegate {
         // swiftlint:disable:next force_cast
@@ -97,11 +97,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func sceneDelegateDidEnterBackground(_ sceneDelegate: SceneDelegate) {
-        #if targetEnvironment(macCatalyst)
-        // Don't pause the browser on catalyst
-        return
-        #endif
-
         // If there are no more forground scenes, stop the service browser
         for scene in UIApplication.shared.connectedScenes {
             ELog("State is \(scene.activationState.rawValue)")
