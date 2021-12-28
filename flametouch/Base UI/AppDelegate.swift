@@ -8,6 +8,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     let serviceController = ServiceController()
     var serviceControllerRefCount: Int = 0
+    var serviceRefreshTimer: Timer? = nil
 
     static var instance: AppDelegate {
         // swiftlint:disable:next force_cast
@@ -86,6 +87,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func sceneDelegateWillEnterForeground(_ sceneDelegate: SceneDelegate) {
         serviceController.start()
+        if serviceRefreshTimer == nil {
+            serviceRefreshTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+                ELog("tick")
+                self?.serviceController.stop()
+                self?.serviceController.start()
+            }
+        }
     }
 
     func sceneDelegateDidEnterBackground(_ sceneDelegate: SceneDelegate) {
@@ -109,6 +117,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         ELog("Stopping ServiceController")
+        serviceRefreshTimer?.invalidate()
+        serviceRefreshTimer = nil
         serviceController.stop()
     }
 
