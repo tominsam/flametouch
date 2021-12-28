@@ -5,6 +5,8 @@ disabled_rules:
   - line_length
   - identifier_name
   - cyclomatic_complexity
+  - type_body_length
+  - file_length
 
 custom_rules:
   restrict_non_ascii:

@@ -34,6 +34,8 @@ targets:
         buildPhase: none
       - path: "project.yml"
         buildPhase: none
+      - path: ".swiftlint.yml"
+        buildPhase: none
     dependencies:
       - package: aiReachability
     info:
