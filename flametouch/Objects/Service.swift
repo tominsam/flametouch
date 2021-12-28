@@ -86,10 +86,10 @@ extension Service: Equatable, Hashable {
 
     static func == (lhs: Service, rhs: Service) -> Bool {
         return lhs.name == rhs.name
-        && lhs.type == rhs.type
-        && lhs.domain == rhs.domain
-        && lhs.port == rhs.port
-        && lhs.addresses == rhs.addresses
+            && lhs.type == rhs.type
+            && lhs.domain == rhs.domain
+            && lhs.port == rhs.port
+            && lhs.addresses == rhs.addresses
     }
 
     func hash(into hasher: inout Hasher) {
