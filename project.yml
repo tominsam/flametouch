@@ -44,7 +44,7 @@ targets:
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
-        CFBundleShortVersionString: "79"
+        CFBundleShortVersionString: "80"
         CFBundleVersion: "3.0.0"
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
