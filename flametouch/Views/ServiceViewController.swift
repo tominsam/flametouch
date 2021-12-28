@@ -139,7 +139,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let url = urlFor(indexPath: indexPath) {
-            AppDelegate.instance().openUrl(url, from: self)
+            AppDelegate.instance.openUrl(url, from: self)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -162,7 +162,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                 if let url = url {
                     actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
                         guard let self = self else { return }
-                        AppDelegate.instance().openUrl(url, from: self)
+                        AppDelegate.instance.openUrl(url, from: self)
                     })
                 }
 
@@ -187,7 +187,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                 if let url = url {
                     actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
                         guard let self = self else { return }
-                        AppDelegate.instance().openUrl(url, from: self)
+                        AppDelegate.instance.openUrl(url, from: self)
                     })
                 }
 

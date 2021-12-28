@@ -175,7 +175,7 @@ class BrowseViewController: UIViewController {
         serviceController.restart()
         if let refresh = sender as? UIRefreshControl {
             // iOS devices have pull-to-refresh that we need to stop
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 refresh.endRefreshing()
             }
         }

@@ -45,7 +45,7 @@ class ServiceBrowser: NSObject {
 
     /// start meta-browser and all service browsers
     func start() {
-        ELog("Resume")
+        ELog("Start")
 
         flameService.publish()
 
@@ -58,7 +58,7 @@ class ServiceBrowser: NSObject {
 
     /// stop the metabrowser and all service browsers
     func stop() {
-        ELog("Pause")
+        ELog("Stop")
         for service in netServices {
             service.stopMonitoring()
         }

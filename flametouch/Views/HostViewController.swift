@@ -137,7 +137,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 if let url = service.url {
                     actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
                         guard let self = self else { return }
-                        AppDelegate.instance().openUrl(url, from: self)
+                        AppDelegate.instance.openUrl(url, from: self)
                     })
                 }
 

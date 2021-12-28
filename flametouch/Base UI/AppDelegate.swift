@@ -6,7 +6,10 @@ import SafariServices
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    static func instance() -> AppDelegate {
+    let serviceController = ServiceController()
+    var serviceControllerRefCount: Int = 0
+
+    static var instance: AppDelegate {
         // swiftlint:disable:next force_cast
         return UIApplication.shared.delegate as! AppDelegate
     }
@@ -79,6 +82,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+    }
+
+    func sceneDelegateWillEnterForeground(_ sceneDelegate: SceneDelegate) {
+        serviceController.start()
+    }
+
+    func sceneDelegateDidEnterBackground(_ sceneDelegate: SceneDelegate) {
+        #if targetEnvironment(macCatalyst)
+        // Don't pause the browser on catalyst
+        return
+        #endif
+
+        // If there are no more forground scenes, stop the service browser
+        for scene in UIApplication.shared.connectedScenes {
+            ELog("State is \(scene.activationState.rawValue)")
+            switch scene.activationState {
+            case .foregroundActive, .foregroundInactive:
+                // Found a foreground scene
+                return
+            case .unattached, .background:
+                // Not a foreground scene
+                break
+            @unknown default:
+                fatalError()
+            }
+        }
+        ELog("Stopping ServiceController")
+        serviceController.stop()
     }
 
 }

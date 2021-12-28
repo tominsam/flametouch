@@ -2,8 +2,9 @@
 
 import Foundation
 
-func ELog(_ message: String) {
+func ELog(_ message: String, fileName: String = #file) {
     #if DEBUG
-    NSLog("[ELog] %@", message)
+    let file = fileName.split(separator: "/").last?.split(separator: ".").first ?? ""
+    NSLog("%@", "[🔥][\(file)] \(message)")
     #endif
 }

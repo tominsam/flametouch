@@ -6,8 +6,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-    let serviceController = ServiceController()
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         NSLog("Scene started")
         guard let windowScene = scene as? UIWindowScene else { fatalError() }
@@ -18,6 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             titlebar.toolbar = nil
         }
         #endif
+
+        let serviceController = AppDelegate.instance.serviceController
 
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = configure(CustomSplitViewController(serviceController: serviceController)) {
@@ -33,14 +33,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         ELog("sceneDidEnterBackground")
-        #if !targetEnvironment(macCatalyst)
-        serviceController.stop()
-        #endif
+        AppDelegate.instance.sceneDelegateDidEnterBackground(self)
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
         ELog("sceneWillEnterForeground")
-        serviceController.start()
+        AppDelegate.instance.sceneDelegateWillEnterForeground(self)
     }
 
 }
