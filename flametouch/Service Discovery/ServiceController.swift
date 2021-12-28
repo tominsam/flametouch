@@ -30,6 +30,14 @@ class ServiceController: NSObject {
 
     private var observers = [WeakObserver]()
 
+    private var stoppedDate : Date? = nil
+
+#if DEBUG
+    static let maxStopTime: TimeInterval = 10
+#else
+    static let maxStopTime: TimeInterval = 180
+#endif
+
     /// list of sets of addresses assigned to a single machine
     var hosts = [Host]()
 
@@ -40,15 +48,27 @@ class ServiceController: NSObject {
     }
 
     func start() {
+        // If we were stopped for a while, reset all services,
+        // otherwise we'll allow the old services list to persist
+        // even though we restarted the browser
+        if let stoppedDate = stoppedDate {
+            if stoppedDate.timeIntervalSinceNow < -ServiceController.maxStopTime {
+                browser.reset()
+            }
+        }
+
         browser.start()
     }
 
     func stop() {
         browser.stop()
+        stoppedDate = Date()
     }
 
     func restart() {
-        stop()
+        browser.stop()
+        browser.reset()
+        stoppedDate = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.start()
         }

@@ -62,6 +62,10 @@ class ServiceBrowser: NSObject {
         metaServiceBrowser.stop()
         flameService.stop()
         netServiceBrowsers.removeAll()
+        broadcast()
+    }
+
+    func reset() {
         netServices.removeAll()
         broadcast()
     }

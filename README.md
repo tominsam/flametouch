@@ -12,7 +12,8 @@ To build and run on a physical device you need the `com.apple.developer.networki
 
 ## TODO
 
-* Some services (eg those broadcast by iOS in sleep mode but charging) seem to disappear and appear. Hosts should have some hysteresis so that the left pane doesn't jitter so much
-* When services appear and disappear the selected row in the left pane deselected
 * New tab keyboard shortcut on mac, or remove tabbing. Either.
+* Service discovery isn't reliable and refreshing will often find new things. Clearly I can't trust the OS. Periodically drop and restart service discovery, but retain all the old services to prevent jitter, and then have some sort of "still alive" tracking so that removed services will be rendered as such in the UI.
+* Long domains and service names are clipping and there's no real way of seeing the full thing.
+* Need better way of copying IP and names without relying on users discovering long-press of rows.
 
