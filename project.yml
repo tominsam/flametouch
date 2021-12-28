@@ -32,6 +32,8 @@ targets:
         buildPhase: none
       - path: "CHANGELOG.md"
         buildPhase: none
+      - path: "project.yml"
+        buildPhase: none
     dependencies:
       - package: aiReachability
     info:
@@ -42,8 +44,8 @@ targets:
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
-        CFBundleShortVersionString: "76"
-        CFBundleVersion: "2.7.0"
+        CFBundleShortVersionString: "77"
+        CFBundleVersion: "3.0.0"
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
         UIViewControllerBasedStatusBarAppearance: true
