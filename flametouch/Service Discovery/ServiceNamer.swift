@@ -7,23 +7,23 @@ class ServiceNamer {
     // Ordered list of "important" service names - these will be used to extract the
     // host name preferentially
     enum ImportantServices: String, CaseIterable {
-        case airplay = "_airplay._tcp."
-        case airport = "_airport._tcp."
-        case sleep = "_sleep-proxy._udp."
-        case homeassistant = "_home-assistant._tcp."
-        case homekit = "_hap._tcp."
-        case ssh = "_ssh._tcp."
-        case smb = "_smb._tcp."
-        case printer = "_ipp._tcp."
-        case chromecast = "_googlecast._tcp."
-        case flametouch = "_flametouch._tcp."
-        case dyson = "_dyson_mqtt._tcp."
+        case airplay = "_airplay."
+        case airport = "_airport."
+        case sleep = "_sleep-proxy."
+        case homeassistant = "_home-assistant."
+        case homekit = "_hap."
+        case ssh = "_ssh."
+        case smb = "_smb."
+        case printer = "_ipp."
+        case chromecast = "_googlecast."
+        case flametouch = "_flametouch."
+        case dyson = "_dyson_mqtt."
     }
 
     static func nameForServices(_ services: Set<Service>) -> String? {
         // Look for important names first. The **first** one we find will name the service
         for name in ImportantServices.allCases {
-            guard let service = services.filter({ $0.type == name.rawValue }).first else { continue }
+            guard let service = services.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
             switch name {
 
             case .chromecast:
