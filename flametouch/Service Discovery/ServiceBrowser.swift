@@ -76,7 +76,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             ELog("✅ Found type \"\(serviceType)\"")
             if let found = netServiceBrowsers[serviceType] {
-                ELog("stopping existing browser")
+                ELog("stopping existing browser for \(serviceType)")
                 found.stop()
             }
 
@@ -102,12 +102,12 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             ELog("🅾️ removed type \(name)")
-            //            guard let browser = netServiceBrowsers[name] else {
-            //                ELog("‼️ can't remove type \(service.name)")
-            //                return
-            //            }
-            //                browser.stop()
-            //                netServiceBrowsers.removeValue(forKey: name)
+            guard let browser = netServiceBrowsers[name] else {
+                ELog("‼️ can't remove type \(service.name)")
+                return
+            }
+            browser.stop()
+            netServiceBrowsers.removeValue(forKey: name)
         } else {
             ELog("🔴 removed service \(service.type)")
             guard let index = netServices.firstIndex(of: service) else {
@@ -129,7 +129,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
 extension ServiceBrowser: NetServiceDelegate {
 
     func netServiceDidResolveAddress(_ service: NetService) {
-        ELog("🟢 resolved \(service.type) \(service.name)")
+        ELog("🟢 resolved \(service.type) \(service.name) as \(service.stringAddresses)")
         broadcast()
     }
 

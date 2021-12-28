@@ -27,6 +27,7 @@ targets:
     sources:
       - path: "flametouch"
         name: "Code"
+        compilerFlags: "-Xfrontend -warn-concurrency -Xfrontend -enable-actor-data-race-checks"
       - path: "README.md"
         buildPhase: none
       - path: "CHANGELOG.md"

@@ -114,13 +114,12 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
         if indexPath.section == 0 { // Hostname + Address rows
             // capture asap in case the tableview moves under us
-            let name = host.name
             let value = host.displayAddresses[indexPath.row]
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
                 let copyValueAction = UIAction(title: "Copy Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                     UIPasteboard.general.string = value
                 }
-                return UIMenu(title: value, children: [copyValueAction])
+                return UIMenu(title: "", children: [copyValueAction])
             }
 
         } else { // Service rows
@@ -132,7 +131,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 actions.append(UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                     UIPasteboard.general.string = service.name
                 })
-                actions.append(UIAction(title: "Copy Type", image: UIImage(systemName: "arrowshape.turn.up.right")) { _ in
+                actions.append(UIAction(title: "Copy Type", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                     UIPasteboard.general.string = service.type
                 })
                 if let url = service.url {
@@ -142,7 +141,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
                     })
                 }
 
-                return UIMenu(title: service.name, children: actions)
+                return UIMenu(title: "", children: actions)
             }
         }
 

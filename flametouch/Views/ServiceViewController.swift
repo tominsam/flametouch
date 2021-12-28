@@ -160,7 +160,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                     })
                 }
 
-                return UIMenu(title: row.value, children: actions)
+                return UIMenu(title: "", children: actions)
             }
         } else {
             let row = self.txtData[indexPath.row]
@@ -185,7 +185,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                     })
                 }
 
-                return UIMenu(title: row.key, children: actions)
+                return UIMenu(title: "", children: actions)
             }
         }
     }

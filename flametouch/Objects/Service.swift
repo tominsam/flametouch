@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct Service: Equatable, Hashable {
+struct Service {
 
     // From the service itself
     let name: String
@@ -65,6 +65,28 @@ struct Service: Equatable, Hashable {
         default:
             return nil
         }
+    }
+
+}
+
+// Services are equivalent if they have the same name, type, port, and addresses
+// (more strict than the spec but good enough for our needs.) This needs to be
+// done instead of implicit struct equality because UDP services (eg thread)
+// tend to resolve more than once.
+extension Service: Equatable, Hashable {
+
+    static func == (lhs: Service, rhs: Service) -> Bool {
+        return lhs.name == rhs.name
+        && lhs.type == rhs.type
+        && lhs.port == rhs.port
+        && lhs.addresses == rhs.addresses
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.name)
+        hasher.combine(self.type)
+        hasher.combine(self.port)
+        hasher.combine(self.addresses)
     }
 
 }

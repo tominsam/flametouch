@@ -215,7 +215,7 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
             let copyAddressAction = UIAction(title: "Copy IP Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                 UIPasteboard.general.string = row.address
             }
-            return UIMenu(title: row.name, children: [copyNameAction, copyAddressAction])
+            return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
         }
     }
 
