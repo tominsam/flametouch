@@ -129,7 +129,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
 extension ServiceBrowser: NetServiceDelegate {
 
     func netServiceDidResolveAddress(_ service: NetService) {
-        ELog("🟢 resolved \(service.type) \(service.name) as \(service.stringAddresses)")
+        ELog("🟢 resolved \(service.type) \(service.name) \(service.domain) as \(service.stringAddresses)")
         broadcast()
     }
 

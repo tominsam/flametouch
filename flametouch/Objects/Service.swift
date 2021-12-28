@@ -7,6 +7,7 @@ struct Service {
     // From the service itself
     let name: String
     let type: String
+    let domain: String?
     let hostname: String?
     let addresses: Set<String>
     let port: Int
@@ -17,7 +18,7 @@ struct Service {
     var alive: Bool
 
     func matches(_ filter: String) -> Bool {
-        if ([name, type, String(port), hostname ?? ""] + addresses).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
+        if ([name, type, domain ?? "", String(port), hostname ?? ""] + addresses).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
             return true
         }
         for (key, value) in data {
@@ -67,6 +68,14 @@ struct Service {
         }
     }
 
+    var typeWithDomain: String {
+        if let domain = domain {
+            return "\(type) (\(domain))"
+        } else {
+            return type
+        }
+    }
+
 }
 
 // Services are equivalent if they have the same name, type, port, and addresses
@@ -78,6 +87,7 @@ extension Service: Equatable, Hashable {
     static func == (lhs: Service, rhs: Service) -> Bool {
         return lhs.name == rhs.name
         && lhs.type == rhs.type
+        && lhs.domain == rhs.domain
         && lhs.port == rhs.port
         && lhs.addresses == rhs.addresses
     }
@@ -85,6 +95,7 @@ extension Service: Equatable, Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(self.name)
         hasher.combine(self.type)
+        hasher.combine(self.domain)
         hasher.combine(self.port)
         hasher.combine(self.addresses)
     }

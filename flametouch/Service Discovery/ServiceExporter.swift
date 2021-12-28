@@ -26,6 +26,7 @@ class ServiceExporter {
                 serviceJson["name"] = service.name
                 serviceJson["port"] = service.port
                 serviceJson["type"] = service.type
+                serviceJson["domain"] = service.domain
                 var addressesJson: [String] = []
                 for address in service.displayAddresses {
                     addressesJson.append(address)

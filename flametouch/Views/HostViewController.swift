@@ -92,7 +92,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
             let service = host.displayServices[indexPath.row]
             cell.title = service.name
-            cell.subtitle = service.type
+            cell.subtitle = service.typeWithDomain
             cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .default
             cell.contentView.alpha = alive ? 1 : 0.5

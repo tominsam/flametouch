@@ -32,7 +32,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     func build() {
-        title = service.type
+        title = service.typeWithDomain
 
         core.removeAll()
         core.append((
@@ -43,6 +43,12 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
             key: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"),
             value: service.type
         ))
+        if let domain = service.domain {
+            core.append((
+                key: NSLocalizedString("Domain", comment: "Label for the domain of the service (when not local)"),
+                value: domain
+            ))
+        }
         for hostname in service.displayAddresses {
             core.append((
                 key: NSLocalizedString("Address", comment: "Label for the network address of the service"),

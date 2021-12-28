@@ -82,6 +82,7 @@ extension ServiceController: ServiceBrowserDelegate {
             return Service(
                 name: ns.name,
                 type: ns.type,
+                domain: ns.domain == "local." ? nil : ns.domain,
                 hostname: ns.hostName,
                 addresses: ns.stringAddresses,
                 port: ns.port,
