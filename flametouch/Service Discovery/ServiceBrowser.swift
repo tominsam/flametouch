@@ -9,16 +9,23 @@ protocol ServiceBrowserDelegate: NSObjectProtocol {
 
 class ServiceBrowser: NSObject {
 
+    // Includes bluetooth, wifi direct, other domains, etc.
+    // This currently has all sorts of tricky behavior with my Thread routers,
+    // because all the thread bridges advertise everything on multiple domains,
+    // so services show up more than once. I don't know if that's the right
+    // behvavior right now.
+    static let includePeerToPeer = false
+    static let defaultDomain = includePeerToPeer ? "" : "local."
+
     weak var delegate: ServiceBrowserDelegate?
 
     /// meta-service browser, discovers more services
     private let metaServiceBrowser = configure(NetServiceBrowser()) {
-        // Don't look for bluetooth connections, never seen it work
-        $0.includesPeerToPeer = true
+        $0.includesPeerToPeer = includePeerToPeer
     }
 
     /// broadcast a service from the local device
-    private let flameService = NetService(domain: "", type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
+    private let flameService = NetService(domain: ServiceBrowser.defaultDomain, type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
 
     /// lookup of service type to browser for this service type.
     private var netServiceBrowsers = [String: NetServiceBrowser]()
@@ -42,9 +49,9 @@ class ServiceBrowser: NSObject {
 
         flameService.publish()
 
-        metaServiceBrowser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: "")
+        metaServiceBrowser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: ServiceBrowser.defaultDomain)
         for (serviceType, netServiceBrowser) in netServiceBrowsers {
-            netServiceBrowser.searchForServices(ofType: serviceType, inDomain: "")
+            netServiceBrowser.searchForServices(ofType: serviceType, inDomain: ServiceBrowser.defaultDomain)
         }
         broadcast()
     }
@@ -86,7 +93,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
 
             let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self
-            newBrowser.searchForServices(ofType: serviceType, inDomain: "")
+            newBrowser.searchForServices(ofType: serviceType, inDomain: ServiceBrowser.defaultDomain)
             netServiceBrowsers[serviceType] = newBrowser
 
         } else {
