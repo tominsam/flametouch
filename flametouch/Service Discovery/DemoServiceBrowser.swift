@@ -25,10 +25,13 @@ private extension Service {
 }
 
 // Demo data for screenshots so I don't need to stress about leaking things about my house
-class ServiceControllerDemo: ServiceController {
-    var hosts = [Host]()
-    init() {
-        hosts = groupServices([
+class DemoServiceBrowser: NSObject, ServiceBrowser {
+
+    weak var delegate: ServiceBrowserDelegate?
+
+    let services: Set<Service>
+    override init() {
+        services = [
             .init(
                 domain: nil,
                 hostname: "Tv.local.",
@@ -516,16 +519,20 @@ class ServiceControllerDemo: ServiceController {
                 ],
                 type: "_hap._tcp."
             )
-        ])
+        ]
+        super.init()
     }
+
     func start() {
+        delegate?.serviceBrowser(self, didChangeServices: services)
     }
+
     func stop() {
+        delegate?.serviceBrowser(self, didChangeServices: [])
     }
-    func restart() {
+
+    func reset() {
+        delegate?.serviceBrowser(self, didChangeServices: services)
     }
-    func observeServiceChanges(_ block: @escaping ([Host]) -> Void) -> ServiceControllerObserver {
-        block(self.hosts)
-        return ServiceControllerObserver(block: block)
-    }
+
 }

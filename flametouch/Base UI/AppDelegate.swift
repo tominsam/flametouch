@@ -6,7 +6,7 @@ import SafariServices
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    let serviceController: ServiceController = ServiceControllerImpl()
+    let serviceController: ServiceController = ServiceController()
     var serviceControllerRefCount: Int = 0
     var serviceRefreshTimer: Timer?
 
