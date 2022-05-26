@@ -2,10 +2,6 @@
 name: Flame
 options:
   bundleIdPrefix: org.jerakeen
-packages:
-  aiReachability:
-    url: https://github.com/aiFigueiredo/aiReachability.git
-    revision: 4e33ca7bd44f01743eb7aab3437d96c1614e24af
 targets:
   Flame:
     name: Flame
@@ -36,8 +32,6 @@ targets:
         buildPhase: none
       - path: ".swiftlint.yml"
         buildPhase: none
-    dependencies:
-      - package: aiReachability
     info:
       path: Info.plist
       properties:

@@ -8,7 +8,8 @@ extension UITableView {
         rowHeight = UITableView.automaticDimension
         cellLayoutMarginsFollowReadableWidth = true
         // catalyst keyboard focus fix
-        selectionFollowsFocus = true
+        // selectionFollowsFocus = true
+        remembersLastFocusedIndexPath = true
         // Fixes a background color overscroll bug
         backgroundView = UIView()
         layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)

@@ -46,8 +46,6 @@ class BrowseViewController: UIViewController {
         $0.searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 2, vertical: 0)
     }
 
-    let wirelessDetect = WirelessDetect()
-
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
         super.init(nibName: nil, bundle: nil)
@@ -106,13 +104,17 @@ class BrowseViewController: UIViewController {
         // Try to explain what's going on if there's no wifi. This
         // isn't currently very reliable.
         networkOverlay.isHidden = true
-        wirelessDetect.callback = { [weak self] wifi in
+        NetworkMonitor.shared.addListener(sender: self) { [weak self] networkMonitor in
             guard let self = self else { return }
-            let nowifi = !wifi
+            let nowifi = networkMonitor.currentConnectionType != .wifi
             let noservices = self.serviceController.hosts.isEmpty
             let showOverlay = nowifi && noservices
             self.networkOverlay.isHidden = !showOverlay
         }
+    }
+
+    deinit {
+        NetworkMonitor.shared.removeListener(sender: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -120,6 +122,10 @@ class BrowseViewController: UIViewController {
         if let selected = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selected, animated: true)
         }
+    }
+
+    override var preferredFocusEnvironments: [UIFocusEnvironment] {
+        return [tableView]
     }
 
     @objc
@@ -153,6 +159,11 @@ class BrowseViewController: UIViewController {
         let indexPath = tableView.indexPathForSelectedRow
         let oldHost = indexPath.map { filteredHosts[$0.row] }
 
+        var focusedHost: IndexPath?
+        if let focusedCell = tableView.visibleCells.first(where: { $0.isFocused }) {
+            focusedHost = tableView.indexPath(for: focusedCell)
+        }
+
         if let filter = self.filter {
             filteredHosts = serviceController.hosts.filter { $0.matches(filter) }
         } else {
@@ -166,6 +177,10 @@ class BrowseViewController: UIViewController {
             if let oldSelection = filteredHosts.firstIndex(where: { $0.hasAnyAddress(oldHost.addresses) }) {
                 tableView.selectRow(at: IndexPath(row: oldSelection, section: 0), animated: false, scrollPosition: .none)
             }
+        }
+        if let focusedHost = focusedHost {
+            // TODO
+            tableView.cellForRow(at: focusedHost)?.becomeFirstResponder()
         }
     }
 

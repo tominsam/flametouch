@@ -1,5 +1,8 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
+// Whole file is wip
+// swiftlint:disable all
+
 import Foundation
 import UIKit
 import Network
@@ -176,3 +179,5 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
 //    }
 //
 //}
+
+// swiftlint:enable all
