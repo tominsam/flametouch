@@ -1,11 +1,13 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import UIKit
 import RxSwift
+import ServiceDiscovery
+import UIKit
+import Utils
+import Views
 
 /// View of a single host - lists the services of that host
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
     let serviceController: ServiceController
     let disposeBag = DisposeBag()
 
@@ -22,23 +24,23 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     required init(serviceController: ServiceController, host: Host) {
         self.serviceController = serviceController
         self.host = host
-        self.alive = true
+        alive = true
         super.init(nibName: nil, bundle: nil)
         title = host.name
-
-        serviceController.services.subscribe { [weak self] hosts in
-            self?.hostsChanged()
-        }.disposed(by: disposeBag)
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError()
     }
 
     override func viewDidLoad() {
         view.addSubview(tableView)
         tableView.pinEdgesTo(view: view)
+
+        serviceController.services.subscribe { [weak self] hosts in
+            self?.hostsChanged(hosts: hosts)
+        }.disposed(by: disposeBag)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -48,8 +50,8 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
-    func hostsChanged() {
-        if let found = serviceController.hostFor(addresses: host.addresses) {
+    func hostsChanged(hosts: [Host]) {
+        if let found = hosts.matching(addresses: host.addresses) {
             host = found
             alive = true
         } else {
@@ -60,11 +62,11 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.reloadData()
     }
 
-    func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in _: UITableView) -> Int {
         return 2
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == 0 {
             return host.displayAddresses.count
         } else {
@@ -72,7 +74,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
             return host.displayAddresses.count > 1 ? "Addresses" : "Address"
         } else {
@@ -111,8 +113,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         if indexPath.section == 0 { // Hostname + Address rows
             // capture asap in case the tableview moves under us
             let value = host.displayAddresses[indexPath.row]
@@ -124,7 +125,6 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
             }
 
         } else { // Service rows
-
             let service = host.displayServices[indexPath.row]
 
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
@@ -145,7 +145,5 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 return UIMenu(title: "", children: actions)
             }
         }
-
     }
-
 }

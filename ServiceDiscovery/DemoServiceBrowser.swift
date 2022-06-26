@@ -19,14 +19,13 @@ private extension Service {
         self.addresses = addresses
         self.port = port
         self.data = data
-        self.lastSeen = Date()
-        self.alive = true
+        lastSeen = Date()
+        alive = true
     }
 }
 
 // Demo data for screenshots so I don't need to stress about leaking things about my house
 class DemoServiceBrowser: NSObject, ServiceBrowser {
-
     weak var delegate: ServiceBrowserDelegate?
 
     let services: Set<Service>
@@ -50,7 +49,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "osvers": "15.1.1",
                     "protovers": "1.1",
                     "srcvers": "595.15.41",
-                    "vv": "2"
+                    "vv": "2",
                 ],
                 type: "_airplay._tcp."
             ),
@@ -70,7 +69,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "rpMac": "2",
                     "rpMd": "AppleTV11,1",
                     "rpMRtID": "F702BEA9-4EA6-4FDD-ACC3-C150AB10269D",
-                    "rpVr": "310.7"
+                    "rpVr": "310.7",
                 ],
                 type: "_companion-link._tcp."
             ),
@@ -81,7 +80,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 name: "46107942-AE96-58E8-BE72-B46A5F0C07A9",
                 port: 65439,
                 data: [
-                    "si": "5F4302ED-0AA5-4391-A99B-59EA291711C7"
+                    "si": "5F4302ED-0AA5-4391-A99B-59EA291711C7",
                 ],
                 type: "_homekit._tcp."
             ),
@@ -98,7 +97,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "tv": "1.2.0",
                     "vn": "Apple Inc.",
                     "xa": "AAD6B41C6DB109E8",
-                    "xp": "6F07D1E49D904395"
+                    "xp": "6F07D1E49D904395",
                 ],
                 type: "_meshcop._udp."
             ),
@@ -121,7 +120,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "tp": "UDP",
                     "vn": "65537",
                     "vs": "595.15.41",
-                    "vv": "2"
+                    "vv": "2",
                 ],
                 type: "_raop._tcp."
             ),
@@ -142,7 +141,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 port: 853,
                 data: [
                     "domain": "openthread.thread.home.arpa.",
-                    "server-id": "9092e054e3ad3482"
+                    "server-id": "9092e054e3ad3482",
                 ],
                 type: "_srpl-tls._tcp."
             ),
@@ -178,7 +177,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "txtvers": "1",
                     "ty": "Brother HL-2270DW series",
                     "usb_MDL": "HL-2270DW series",
-                    "usb_MFG": "Brother"
+                    "usb_MFG": "Brother",
                 ],
                 type: "_ipp._tcp."
             ),
@@ -204,7 +203,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "txtvers": "1",
                     "ty": "Brother HL-2270DW series",
                     "usb_MDL": "HL-2270DW series",
-                    "usb_MFG": "Brother"
+                    "usb_MFG": "Brother",
                 ],
                 type: "_pdl-datastream._tcp."
             ),
@@ -231,7 +230,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "txtvers": "1",
                     "ty": "Brother HL-2270DW series",
                     "usb_MDL": "HL-2270DW series",
-                    "usb_MFG": "Brother"
+                    "usb_MFG": "Brother",
                 ],
                 type: "_printer._tcp."
             ),
@@ -242,7 +241,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 name: "455_E6B-US-NCA1952A",
                 port: 1883,
                 data: [
-                    "Service for E6B-US-NCA1952A": ""
+                    "Service for E6B-US-NCA1952A": "",
                 ],
                 type: "_dyson_mqtt._tcp."
             ),
@@ -272,7 +271,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "srcvers": "600.8.41",
                     "tsid": "74F90143-03B1-5656-A7C7-9E1E5230FE13",
                     "tsm": "0",
-                    "vv": "2"
+                    "vv": "2",
                 ],
                 type: "_airplay._tcp."
             ),
@@ -291,7 +290,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "rpHN": "61e34c44b463",
                     "rpMac": "2",
                     "rpMd": "AudioAccessory1,1",
-                    "rpVr": "320.2"
+                    "rpVr": "320.2",
                 ],
                 type: "_companion-link._tcp."
             ),
@@ -302,7 +301,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 name: "07ECBF16-867A-5F4C-BA86-286ED78DDE3A",
                 port: 58779,
                 data: [
-                    "si": "C612333E-2CA4-48DE-BD5C-2DFA626DA330"
+                    "si": "C612333E-2CA4-48DE-BD5C-2DFA626DA330",
                 ],
                 type: "_homekit._tcp."
             ),
@@ -314,7 +313,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 port: 319,
                 data: [
                     "did": "C3E72D96-F32A-4F3E-BFDD-EB5E3A89CB21",
-                    "tsid": "74F90143-03B1-5656-A7C7-9E1E5230FE13"
+                    "tsid": "74F90143-03B1-5656-A7C7-9E1E5230FE13",
                 ],
                 type: "_ieee1588._udp."
             ),
@@ -337,7 +336,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "tp": "UDP",
                     "vn": "65537",
                     "vs": "600.8.41",
-                    "vv": "2"
+                    "vv": "2",
                 ],
                 type: "_raop._tcp."
             ),
@@ -368,7 +367,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "rm": "B14BF278BCE57559",
                     "rs": "",
                     "st": "0",
-                    "ve": "05"
+                    "ve": "05",
                 ],
                 type: "_googlecast._tcp."
             ),
@@ -393,7 +392,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "protovers": "1.1",
                     "rsf": "0x0",
                     "serialNumber": "78-28-CA-83-1A-30:G",
-                    "srcvers": "366.0"
+                    "srcvers": "366.0",
                 ],
                 type: "_airplay._tcp."
             ),
@@ -415,7 +414,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "sf": "0x4",
                     "tp": "UDP",
                     "vn": "65537",
-                    "vs": "366.0"
+                    "vs": "366.0",
                 ],
                 type: "_raop._tcp."
             ),
@@ -436,7 +435,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "protovers": "1.26.3",
                     "sslport": "1443",
                     "variant": "0",
-                    "vers": "3"
+                    "vers": "3",
                 ],
                 type: "_sonos._tcp."
             ),
@@ -448,7 +447,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 port: 1400,
                 data: [
                     "CPath": "/spotifyzc",
-                    "VERSION": "1"
+                    "VERSION": "1",
                 ],
                 type: "_spotify-connect._tcp."
             ),
@@ -485,7 +484,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "pv": "1.1",
                     "s#": "7",
                     "sf": "0",
-                    "sh": "S0Celw=="
+                    "sh": "S0Celw==",
                 ],
                 type: "_hap._tcp."
             ),
@@ -496,7 +495,7 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                 name: "\"OpenWrt SSH\" (2)",
                 port: 22,
                 data: [
-                    "": "OpenWrt SSH server"
+                    "": "OpenWrt SSH server",
                 ],
                 type: "_ssh._tcp."
             ),
@@ -515,10 +514,10 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
                     "pv": "1.1",
                     "s#": "1",
                     "sf": "0",
-                    "sh": "Lm8SIw=="
+                    "sh": "Lm8SIw==",
                 ],
                 type: "_hap._tcp."
-            )
+            ),
         ]
         super.init()
     }
@@ -534,5 +533,4 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
     func reset() {
         delegate?.serviceBrowser(self, didChangeServices: services)
     }
-
 }

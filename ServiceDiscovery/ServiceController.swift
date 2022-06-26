@@ -2,29 +2,42 @@
 
 import Foundation
 import RxSwift
+import Utils
 
-class ServiceController: NSObject {
-#if DEBUG
-    private static let maxStopTime: TimeInterval = 10
-#else
-    private static let maxStopTime: TimeInterval = 180
-#endif
+public protocol ServiceController {
+    var hosts: [Host] { get }
+    var services: Observable<[Host]> { get }
+    func start()
+    func restart()
+    func stop()
+}
 
-    public var hosts = [Host]()
+public class ServiceControllerImpl: NSObject, ServiceController {
+    #if DEBUG
+        private static let maxStopTime: TimeInterval = 10
+    #else
+        private static let maxStopTime: TimeInterval = 180
+    #endif
+
+    public var services: Observable<[Host]> { servicesSubject.asObservable().distinctUntilChanged() }
+    public var hosts = [Host]() {
+        didSet {
+            servicesSubject.onNext(hosts)
+        }
+    }
 
     private let browser: ServiceBrowser
+    private let servicesSubject = PublishSubject<[Host]>()
+
     private var stoppedDate: Date? = Date()
 
-    private let servicesSubject = PublishSubject<[Host]>()
-    var services: Observable<[Host]> { servicesSubject.asObservable() }
-
-    override init() {
+    override public init() {
         browser = DeprecatedServiceBrowser()
         super.init()
         browser.delegate = self
     }
 
-    func start() {
+    public func start() {
         // nil stoped date means we're running
         guard let stoppedDate = stoppedDate else { return }
 
@@ -32,8 +45,8 @@ class ServiceController: NSObject {
         // otherwise we'll allow the old services list to persist
         // even though we restarted the browser
         let stoppedTime: TimeInterval = -stoppedDate.timeIntervalSinceNow
-        ELog("Stopped for \(stoppedTime) (compared to \(ServiceController.maxStopTime))")
-        if stoppedTime > ServiceController.maxStopTime {
+        ELog("Stopped for \(stoppedTime) (compared to \(ServiceControllerImpl.maxStopTime))")
+        if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
             browser.reset()
         }
@@ -41,25 +54,17 @@ class ServiceController: NSObject {
         self.stoppedDate = nil
     }
 
-    func stop() {
+    public func stop() {
         browser.stop()
         stoppedDate = Date()
     }
 
-    func restart() {
+    public func restart() {
         stop()
         browser.reset()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.start()
         }
-    }
-    func hostFor(addresses: Set<String>) -> Host? {
-        return hosts.first { $0.hasAnyAddress(addresses) }
-    }
-
-    func serviceFor(addresses: Set<String>, type: String, name: String) -> Service? {
-        guard let host = hostFor(addresses: addresses) else { return nil }
-        return host.services.first { $0.type == type && $0.name == name }
     }
 
     func groupServices(_ services: Set<Service>) -> [Host] {
@@ -83,14 +88,10 @@ class ServiceController: NSObject {
 
         return hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
     }
-
 }
 
-extension ServiceController: ServiceBrowserDelegate {
-
-    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) {
+extension ServiceControllerImpl: ServiceBrowserDelegate {
+    func serviceBrowser(_: ServiceBrowser, didChangeServices services: Set<Service>) {
         hosts = groupServices(services)
-        servicesSubject.onNext(hosts)
     }
-
 }

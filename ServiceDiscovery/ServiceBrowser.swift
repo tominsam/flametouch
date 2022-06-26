@@ -8,11 +8,9 @@ protocol ServiceBrowserDelegate: NSObjectProtocol {
 }
 
 protocol ServiceBrowser: NSObjectProtocol {
-
     var delegate: ServiceBrowserDelegate? { get set }
 
     func start()
     func stop()
     func reset()
-
 }

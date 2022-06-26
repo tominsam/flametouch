@@ -2,11 +2,11 @@
 
 import Foundation
 import UIKit
+import Utils
 
 /// An implementation of ServiceBrowser that uses the deprecated NSNetService APIs
 /// to discover and browse services.
 class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
-
     // Includes bluetooth, wifi direct, other domains, etc.
     // This currently has all sorts of tricky behavior with my Thread routers,
     // because all the thread bridges advertise everything on multiple domains,
@@ -91,15 +91,16 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),
-                alive: true)
+                alive: true
+            )
         })
     }
 }
 
 // MARK: NetServiceBrowserDelegate
-extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
+extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
+    func netServiceBrowser(_: NetServiceBrowser, didFind service: NetService, moreComing _: Bool) {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             // meta-browser found something new. Create a new service browser for it.
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
@@ -127,7 +128,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
         }
     }
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool) {
+    func netServiceBrowser(_: NetServiceBrowser, didRemove service: NetService, moreComing _: Bool) {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             ELog("🅾️ removed type \(name)")
@@ -149,30 +150,29 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
         broadcast()
     }
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
+    func netServiceBrowser(_: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
         ELog("Did not search: \(errorDict)")
     }
 }
 
 // MARK: NetServiceDelegate
-extension DeprecatedServiceBrowser: NetServiceDelegate {
 
+extension DeprecatedServiceBrowser: NetServiceDelegate {
     func netServiceDidResolveAddress(_ service: NetService) {
         ELog("🟢 resolved \(service.type) \(service.name) \(service.domain) as \(service.stringAddresses)")
         broadcast()
     }
 
-    func netService(_ service: NetService, didUpdateTXTRecord data: Data) {
+    func netService(_ service: NetService, didUpdateTXTRecord _: Data) {
         ELog("❕ New data for \(service.type) \(service.name)")
         broadcast()
     }
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didFindDomain domainString: String, moreComing: Bool) {
+    func netServiceBrowser(_: NetServiceBrowser, didFindDomain domainString: String, moreComing _: Bool) {
         ELog("found domain \(domainString)")
     }
 
-    func netServiceBrowser(_ browser: NetServiceBrowser, didRemoveDomain domainString: String, moreComing: Bool) {
+    func netServiceBrowser(_: NetServiceBrowser, didRemoveDomain domainString: String, moreComing _: Bool) {
         ELog("lost domain \(domainString)")
     }
-
 }

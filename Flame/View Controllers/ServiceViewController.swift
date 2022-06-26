@@ -1,11 +1,13 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import UIKit
 import RxSwift
+import ServiceDiscovery
+import UIKit
+import Utils
+import Views
 
 /// Shows the details of a particular service on a particular host
 class ServiceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
     let serviceController: ServiceController
     let disposeBag = DisposeBag()
 
@@ -27,9 +29,6 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         self.service = service
         super.init(nibName: nil, bundle: nil)
         build()
-        serviceController.services.subscribe { [weak self] hosts in
-            self?.hostsChanged()
-        }.disposed(by: disposeBag)
     }
 
     func build() {
@@ -65,13 +64,16 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError()
     }
 
     override func viewDidLoad() {
         view.addSubview(tableView)
         tableView.pinEdgesTo(view: view)
+        serviceController.services.subscribe { [weak self] hosts in
+            self?.hostsChanged(hosts: hosts)
+        }.disposed(by: disposeBag)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -81,7 +83,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
 
-    func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in _: UITableView) -> Int {
         if txtData.isEmpty {
             return 1
         } else {
@@ -89,7 +91,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
             return NSLocalizedString("Core", comment: "Header label for a list of core service settings")
@@ -100,7 +102,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return core.count
@@ -145,11 +147,11 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         // capture asap in case the tableview moves under us
         if indexPath.section == 0 {
-            let row = self.core[indexPath.row]
-            let url = self.urlFor(indexPath: indexPath)
+            let row = core[indexPath.row]
+            let url = urlFor(indexPath: indexPath)
 
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
                 guard let self = self else { return nil }
@@ -157,7 +159,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                 var actions = [
                     UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                         UIPasteboard.general.string = row.value
-                    }
+                    },
                 ]
 
                 if let url = url {
@@ -170,8 +172,8 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                 return UIMenu(title: "", children: actions)
             }
         } else {
-            let row = self.txtData[indexPath.row]
-            let url = self.urlFor(indexPath: indexPath)
+            let row = txtData[indexPath.row]
+            let url = urlFor(indexPath: indexPath)
 
             return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
                 guard let self = self else { return nil }
@@ -182,7 +184,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
                     },
                     UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
                         UIPasteboard.general.string = row.value
-                    }
+                    },
                 ]
 
                 if let url = url {
@@ -214,8 +216,8 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         return nil
     }
 
-    func hostsChanged() {
-        if let found = serviceController.serviceFor(addresses: service.addresses, type: service.type, name: service.name) {
+    func hostsChanged(hosts: [Host]) {
+        if let found = hosts.matching(addresses: service.addresses)?.services.matching(service: service) {
             service = found
             alive = true
         } else {
@@ -224,12 +226,5 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         build()
         tableView.reloadData()
-    }
-
-}
-
-extension Data {
-    var hex: String {
-        return self.map { byte in String(format: "%02X", byte) }.joined()
     }
 }

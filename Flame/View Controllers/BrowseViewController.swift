@@ -1,7 +1,10 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
-import UIKit
 import RxSwift
+import ServiceDiscovery
+import UIKit
+import Utils
+import Views
 
 /// Root view of the app, renders a list of hosts on the local network
 class BrowseViewController: UIViewController {
@@ -15,9 +18,9 @@ class BrowseViewController: UIViewController {
     lazy var tableView = configure(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
         tableView.setupForAutolayout()
         #if !targetEnvironment(macCatalyst)
-        tableView.refreshControl = configure(UIRefreshControl()) { refresh in
-            refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
-        }
+            tableView.refreshControl = configure(UIRefreshControl()) { refresh in
+                refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
+            }
         #endif
     }
 
@@ -50,21 +53,18 @@ class BrowseViewController: UIViewController {
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
         super.init(nibName: nil, bundle: nil)
-        serviceController.services.subscribe { [weak self] hosts in
-            self?.hostsChanged()
-        }.disposed(by: disposeBag)
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
         #if targetEnvironment(macCatalyst)
-        title = NSLocalizedString("Hosts", comment: "Title for a list of hosts (computers on the network)")
+            title = NSLocalizedString("Hosts", comment: "Title for a list of hosts (computers on the network)")
         #else
-        title = NSLocalizedString("Flame", comment: "The name of the application")
+            title = NSLocalizedString("Flame", comment: "The name of the application")
         #endif
 
         // This causes the search controller to treat _this_ view as the "presentation context"
@@ -84,23 +84,26 @@ class BrowseViewController: UIViewController {
         // Suppress info button on mac because there's an about menu, but catalyst
         // does want an explicit refresh button.
         #if targetEnvironment(macCatalyst)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .refresh,
-            target: self,
-            action: #selector(handleTableRefresh(sender:)))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                barButtonSystemItem: .refresh,
+                target: self,
+                action: #selector(handleTableRefresh(sender:))
+            )
         #else
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIButton(type: .infoLight).image(for: .normal),
-            style: .plain,
-            target: self,
-            action: #selector(aboutPressed))
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                image: UIButton(type: .infoLight).image(for: .normal),
+                style: .plain,
+                target: self,
+                action: #selector(aboutPressed)
+            )
         #endif
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(named: "Export"),
             style: .plain,
             target: self,
-            action: #selector(exportData))
+            action: #selector(exportData)
+        )
 
         // Try to explain what's going on if there's no wifi. This
         // isn't currently very reliable.
@@ -114,6 +117,9 @@ class BrowseViewController: UIViewController {
             self.networkOverlay.isHidden = !showOverlay
         }.disposed(by: disposeBag)
 
+        serviceController.services.subscribe { [weak self] _ in
+            self?.hostsChanged()
+        }.disposed(by: disposeBag)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -130,16 +136,15 @@ class BrowseViewController: UIViewController {
     @objc
     func aboutPressed() {
         #if targetEnvironment(macCatalyst)
-        // About screen gets a dedicated window
-        let userActivity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
-        UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil, errorHandler: nil)
+            // About screen gets a dedicated window
+            let userActivity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
+            UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil, errorHandler: nil)
         #else
-        // About screen gets a modal
-        let about = AboutViewController()
-        about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
-        let vc = UINavigationController(rootViewController: about)
-        vc.theme()
-        present(vc, animated: true, completion: nil)
+            // About screen gets a modal
+            let about = AboutViewController()
+            about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
+            let vc = UINavigationController(rootViewController: about)
+            present(vc, animated: true, completion: nil)
         #endif
     }
 
@@ -163,14 +168,14 @@ class BrowseViewController: UIViewController {
             focusedHost = tableView.indexPath(for: focusedCell)
         }
 
-        if let filter = self.filter {
+        if let filter = filter {
             filteredHosts = serviceController.hosts.filter { $0.matches(filter) }
         } else {
             filteredHosts = serviceController.hosts
         }
         tableView.reloadData()
         if !serviceController.hosts.isEmpty {
-            self.networkOverlay.isHidden = true
+            networkOverlay.isHidden = true
         }
         if let oldHost = oldHost {
             if let oldSelection = filteredHosts.firstIndex(where: { $0.hasAnyAddress(oldHost.addresses) }) {
@@ -178,7 +183,7 @@ class BrowseViewController: UIViewController {
             }
         }
         if let focusedHost = focusedHost {
-            // TODO
+            // TODO:
             tableView.cellForRow(at: focusedHost)?.becomeFirstResponder()
         }
     }
@@ -198,8 +203,7 @@ class BrowseViewController: UIViewController {
 }
 
 extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         return filteredHosts.count
     }
 
@@ -213,14 +217,14 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = HostViewController(serviceController: serviceController, host: filteredHosts[indexPath.row])
         show(vc, sender: self)
     }
 
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         // capture asap in case the tableview moves under us
-        let row = self.filteredHosts[indexPath.row]
+        let row = filteredHosts[indexPath.row]
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
             let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
@@ -233,7 +237,7 @@ extension BrowseViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
 
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(_: UITableView, viewForHeaderInSection _: Int) -> UIView? {
         // returning any view at all here means there'll be space between the first cell
         // and the search bar.
         return UIView()

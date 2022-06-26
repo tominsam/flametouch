@@ -6,13 +6,13 @@ import RxSwift
 
 // https://digitalbunker.dev/native-network-monitoring-in-swift/
 
-extension NWInterface.InterfaceType: CaseIterable {
-    public static var allCases: [NWInterface.InterfaceType] = [
+extension NWInterface.InterfaceType {
+    static var allCases: [NWInterface.InterfaceType] = [
         .other,
         .wifi,
         .cellular,
         .loopback,
-        .wiredEthernet
+        .wiredEthernet,
     ]
 }
 
@@ -20,9 +20,9 @@ final class NetworkMonitor {
     static let shared = NetworkMonitor()
 
     struct NetworkState {
-        let hasResponse : Bool
-        let isConnected : Bool
-        let isExpensive : Bool
+        let hasResponse: Bool
+        let isConnected: Bool
+        let isExpensive: Bool
         let currentConnectionType: NWInterface.InterfaceType?
 
         var supportsDiscovery: Bool {
@@ -34,8 +34,7 @@ final class NetworkMonitor {
 
     var state: Observable<NetworkState> { networkEvents.asObservable() }
 
-    private init() {
-    }
+    private init() {}
 
     var networkEvents: AsyncStream<NetworkState> {
         AsyncStream { continuation in
@@ -55,7 +54,5 @@ final class NetworkMonitor {
             }
             monitor.start(queue: queue)
         }
-
     }
-
 }

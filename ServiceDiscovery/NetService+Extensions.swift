@@ -3,9 +3,7 @@
 import UIKit
 
 extension NetService {
-
     private var txtData: [(key: String, value: String)] {
-
         guard let txtRecord = txtRecordData(), !txtRecord.isEmpty else {
             return []
         }
@@ -34,25 +32,24 @@ extension NetService {
     var stringAddresses: Set<String> {
         return Set((addresses ?? []).compactMap { getIFAddress($0) })
     }
-
 }
 
 // Get the local ip addresses used by this node
 private func getIFAddress(_ data: Data) -> String? {
-
     let hostname = UnsafeMutablePointer<Int8>.allocate(capacity: Int(INET6_ADDRSTRLEN))
     defer {
         hostname.deinitialize(count: Int(INET6_ADDRSTRLEN))
     }
 
-    var _ = getnameinfo(
+    _ = getnameinfo(
         (data as NSData).bytes.bindMemory(to: sockaddr.self, capacity: data.count),
         socklen_t(data.count),
         hostname,
         socklen_t(INET6_ADDRSTRLEN),
         nil,
         0,
-        NI_NUMERICHOST)
+        NI_NUMERICHOST
+    )
 
     let string = String(cString: hostname)
 
@@ -62,4 +59,10 @@ private func getIFAddress(_ data: Data) -> String? {
     }
 
     return string
+}
+
+extension Data {
+    var hex: String {
+        return map { byte in String(format: "%02X", byte) }.joined()
+    }
 }

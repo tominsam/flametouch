@@ -2,22 +2,21 @@
 
 import Foundation
 
-struct Service {
-
+public struct Service {
     // From the service itself
-    let name: String
-    let type: String
-    let domain: String?
-    let hostname: String?
-    let addresses: Set<String>
-    let port: Int
-    let data: [String: String]
+    public let name: String
+    public let type: String
+    public let domain: String?
+    public let hostname: String?
+    public let addresses: Set<String>
+    public let port: Int
+    public let data: [String: String]
 
     // tracking data
-    let lastSeen: Date
-    var alive: Bool
+    public let lastSeen: Date
+    public var alive: Bool
 
-    func matches(_ filter: String) -> Bool {
+    public func matches(_ filter: String) -> Bool {
         if ([name, type, domain ?? "", String(port), hostname ?? ""] + addresses).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
             return true
         }
@@ -29,11 +28,11 @@ struct Service {
         return false
     }
 
-    func hasAnyAddress(_ addresses: Set<String>) -> Bool {
+    public func hasAnyAddress(_ addresses: Set<String>) -> Bool {
         return !self.addresses.isDisjoint(with: addresses)
     }
 
-    var displayAddresses: [String] {
+    public var displayAddresses: [String] {
         // Sort service addresses by shortest first, so we prioritize IPv4
         var sortedAddresses = addresses.sorted {
             // Sort by length then alpha
@@ -53,7 +52,7 @@ struct Service {
         return sortedAddresses
     }
 
-    var url: URL? {
+    public var url: URL? {
         switch type.split(separator: ".").first {
         case "_http":
             return URL(string: "http://\(displayAddresses[0]):\(port)/")
@@ -68,14 +67,13 @@ struct Service {
         }
     }
 
-    var typeWithDomain: String {
+    public var typeWithDomain: String {
         if let domain = domain {
             return "\(type) (\(domain))"
         } else {
             return type
         }
     }
-
 }
 
 // Services are equivalent if they have the same name, type, port, and addresses
@@ -83,8 +81,7 @@ struct Service {
 // done instead of implicit struct equality because UDP services (eg thread)
 // tend to resolve more than once.
 extension Service: Equatable, Hashable {
-
-    static func == (lhs: Service, rhs: Service) -> Bool {
+    public static func == (lhs: Service, rhs: Service) -> Bool {
         return lhs.name == rhs.name
             && lhs.type == rhs.type
             && lhs.domain == rhs.domain
@@ -92,12 +89,17 @@ extension Service: Equatable, Hashable {
             && lhs.addresses == rhs.addresses
     }
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(self.name)
-        hasher.combine(self.type)
-        hasher.combine(self.domain)
-        hasher.combine(self.port)
-        hasher.combine(self.addresses)
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(type)
+        hasher.combine(domain)
+        hasher.combine(port)
+        hasher.combine(addresses)
     }
+}
 
+public extension Collection where Element == Service {
+    func matching(service: Service) -> Service? {
+        return first { $0.type == service.type && $0.name == service.name }
+    }
 }

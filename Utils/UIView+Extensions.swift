@@ -3,7 +3,7 @@
 import Foundation
 import UIKit
 
-extension UIView {
+public extension UIView {
     func pinEdgesTo(guide: UILayoutGuide) {
         translatesAutoresizingMaskIntoConstraints = false
         topAnchor.constraint(equalTo: guide.topAnchor).isActive = true

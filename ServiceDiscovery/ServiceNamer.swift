@@ -3,7 +3,6 @@
 import Foundation
 
 class ServiceNamer {
-
     // Ordered list of "important" service names - these will be used to extract the
     // host name preferentially
     enum ImportantServices: String, CaseIterable {
@@ -25,7 +24,6 @@ class ServiceNamer {
         for name in ImportantServices.allCases {
             guard let service = services.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
             switch name {
-
             case .chromecast:
                 let map = service.data
                 if let name = map["fn"] {
@@ -78,7 +76,7 @@ class ServiceNamer {
 
         return [
             service.hostname?.replacingOccurrences(of: ".local.", with: ""),
-            service.name
+            service.name,
         ].compactMap { $0 }.sorted { $0.count < $1.count }.first
     }
 }

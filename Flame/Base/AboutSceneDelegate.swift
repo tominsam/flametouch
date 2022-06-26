@@ -3,10 +3,9 @@
 import UIKit
 
 class AboutSceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
 
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
         NSLog("About Scene started")
         guard let windowScene = scene as? UIWindowScene else { fatalError() }
         windowScene.sizeRestrictions?.minimumSize = CGSize(width: 480, height: 640)
@@ -16,5 +15,4 @@ class AboutSceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = AboutViewController()
         window?.makeKeyAndVisible()
     }
-
 }

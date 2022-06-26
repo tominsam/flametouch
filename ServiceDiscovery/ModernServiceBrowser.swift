@@ -4,13 +4,13 @@
 // swiftlint:disable all
 
 import Foundation
-import UIKit
 import Network
+import UIKit
+import Utils
 
 /// An implementation of ServiceBrowser that uses (in theory) the modern, non-deprecated
 /// NWBrowser APIs. It doesn't work, because NWBrowser can't do meta-discovery. Work in progress.
 class ModernServiceBrowser: NSObject, ServiceBrowser {
-
     // Includes bluetooth, wifi direct, other domains, etc.
     // This currently has all sorts of tricky behavior with my Thread routers,
     // because all the thread bridges advertise everything on multiple domains,
@@ -22,7 +22,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
     weak var delegate: ServiceBrowserDelegate?
 
     /// broadcast a service from the local device
-    private let flameService = try? NWListener(using: NWParameters(tls: nil, tcp: configure(NWProtocolTCP.Options()) { options in
+    private let flameService = try? NWListener(using: NWParameters(tls: nil, tcp: configure(NWProtocolTCP.Options()) { _ in
 
     }))
 
@@ -34,7 +34,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
 
     override init() {
         super.init()
-        //flameService.delegate = self
+        // flameService.delegate = self
     }
 
     private func broadcast() {
@@ -51,9 +51,10 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
         parameters.includePeerToPeer = ModernServiceBrowser.includePeerToPeer
         metaServiceBrowser = NWBrowser(
             for: .bonjourWithTXTRecord(type: "_services._dns-sd._udp.", domain: ModernServiceBrowser.defaultDomain),
-               using: parameters)
+            using: parameters
+        )
 
-        metaServiceBrowser?.browseResultsChangedHandler = { results, changes in
+        metaServiceBrowser?.browseResultsChangedHandler = { results, _ in
             ELog("results are \(results)")
         }
 
@@ -94,13 +95,15 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),
-                alive: true)
+                alive: true
+            )
         })
     }
 }
+
 //
 //// MARK: NetServiceBrowserDelegate
-//extension ModernServiceBrowser: NetServiceBrowserDelegate {
+// extension ModernServiceBrowser: NetServiceBrowserDelegate {
 //
 //    func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
 //        if service.type == "_tcp.local." || service.type == "_udp.local." {
@@ -155,10 +158,10 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
 //    func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
 //        ELog("Did not search: \(errorDict)")
 //    }
-//}
+// }
 //
 //// MARK: NetServiceDelegate
-//extension ModernServiceBrowser: NetServiceDelegate {
+// extension ModernServiceBrowser: NetServiceDelegate {
 //
 //    func netServiceDidResolveAddress(_ service: NetService) {
 //        ELog("🟢 resolved \(service.type) \(service.name) \(service.domain) as \(service.stringAddresses)")
@@ -178,6 +181,6 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
 //        ELog("lost domain \(domainString)")
 //    }
 //
-//}
+// }
 
 // swiftlint:enable all

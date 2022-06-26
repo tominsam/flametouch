@@ -2,19 +2,18 @@
 
 import Foundation
 
-struct Host: Equatable, Hashable {
+public struct Host: Equatable, Hashable {
+    public let services: Set<Service>
 
-    let services: Set<Service>
-
-    var address: String {
+    public var address: String {
         return displayAddresses.first ?? "."
     }
 
-    var name: String {
+    public var name: String {
         return ServiceNamer.nameForServices(services) ?? "Host"
     }
 
-    var subtitle: String {
+    public var subtitle: String {
         if services.count > 1 {
             return "\(address) (\(services.count) services)"
         } else {
@@ -28,7 +27,7 @@ struct Host: Equatable, Hashable {
         }
     }
 
-    var displayAddresses: [String] {
+    public var displayAddresses: [String] {
         var addresses = Set<String>()
         var hostnames = Set<String>()
         for service in services {
@@ -57,7 +56,7 @@ struct Host: Equatable, Hashable {
         return sortedAddresses
     }
 
-    var displayServices: [Service] {
+    public var displayServices: [Service] {
         return services.sorted {
             if $0.type != $1.type {
                 return $0.type < $1.type
@@ -69,9 +68,8 @@ struct Host: Equatable, Hashable {
         }
     }
 
-    func matches(_ filter: String) -> Bool {
-
-        if ([name]).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
+    public func matches(_ filter: String) -> Bool {
+        if [name].contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
             return true
         }
         for service in services {
@@ -82,7 +80,13 @@ struct Host: Equatable, Hashable {
         return false
     }
 
-    func hasAnyAddress(_ addresses: Set<String>) -> Bool {
+    public func hasAnyAddress(_ addresses: Set<String>) -> Bool {
         return services.contains { $0.hasAnyAddress(addresses) }
+    }
+}
+
+public extension Collection where Element == Host {
+    func matching(addresses: Set<String>) -> Host? {
+        return first { $0.hasAnyAddress(addresses) }
     }
 }

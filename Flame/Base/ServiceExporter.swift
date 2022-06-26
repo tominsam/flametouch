@@ -1,11 +1,10 @@
 // Copyright 2021 Thomas Insam. All rights reserved.
 
 import Foundation
+import ServiceDiscovery
 
 class ServiceExporter {
-
     static func export(hosts: [Host]) -> URL? {
-
         var groupsJson: [Any] = []
         var hostCount = 0
         var serviceCount = 0
@@ -59,5 +58,4 @@ class ServiceExporter {
 
         return path
     }
-
 }

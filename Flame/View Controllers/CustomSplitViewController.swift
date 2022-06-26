@@ -1,19 +1,19 @@
 // Copyright 2019 Thomas Insam. All rights reserved.
 
+import ServiceDiscovery
 import UIKit
+import Utils
 
 class CustomSplitViewController: UISplitViewController {
-
     let serviceController: ServiceController
 
-    public lazy var master = configure(StaticNavigationController()) {
-        $0.theme()
+    lazy var master = configure(StaticNavigationController()) {
         // Base nav VC is for iPad, then the split view is immediately
         // collapsed for phones. Collapsing unsets prefersLargeTitles.
         $0.navigationBar.prefersLargeTitles = true
     }
 
-    private lazy var emptyViewController = configure(UIViewController()) {
+    lazy var emptyViewController = configure(UIViewController()) {
         $0.view.backgroundColor = .systemGroupedBackground
     }
 
@@ -31,7 +31,7 @@ class CustomSplitViewController: UISplitViewController {
     }
 
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -42,20 +42,19 @@ class CustomSplitViewController: UISplitViewController {
     }
 
     // set view for left pane
-    public func setMasterViewController(_ viewController: UIViewController) {
+    func setMasterViewController(_ viewController: UIViewController) {
         master.viewControllers = [viewController]
         // master on left, empty nav on right
-        self.viewControllers = [master, makeNav()]
+        viewControllers = [master, makeNav()]
     }
 
-    public func clearDetailViewController() {
-        self.viewControllers = [viewControllers[0], makeNav()]
+    func clearDetailViewController() {
+        viewControllers = [viewControllers[0], makeNav()]
     }
 
     // if the list is empty it'll contain the empty vc by default to control the background color
     private func makeNav(_ viewControllers: [UIViewController] = []) -> UINavigationController {
         let vc = UINavigationController()
-        vc.theme()
         vc.viewControllers = viewControllers.isEmpty ? [emptyViewController] : viewControllers
         return vc
     }
@@ -68,17 +67,16 @@ class CustomSplitViewController: UISplitViewController {
         let controller = UIDocumentPickerViewController(forExporting: [url])
         present(controller, animated: true)
     }
-
 }
 
 // MARK: - UISplitViewControllerDelegate
-extension CustomSplitViewController: UISplitViewControllerDelegate {
 
+extension CustomSplitViewController: UISplitViewControllerDelegate {
     func splitViewController(_ splitViewController: UISplitViewController, show vc: UIViewController, sender: Any?) -> Bool {
         return self.splitViewController(splitViewController, showDetail: vc, sender: sender)
     }
 
-    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: Any?) -> Bool {
+    func splitViewController(_: UISplitViewController, showDetail vc: UIViewController, sender _: Any?) -> Bool {
         guard let master = viewControllers.first as? UINavigationController else {
             return false
         }
@@ -94,7 +92,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
     }
 
     // When we collapse from 2 panes to 1 pane, we move all the views onto the new master view controller
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
+    func splitViewController(_: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
         guard let master = primaryViewController as? UINavigationController, let detail = secondaryViewController as? UINavigationController else {
             return true
         }
@@ -108,7 +106,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
 
     // When we expand from 1 pane to 2 panes, pull all but the first view from the primary and return
     // a new navigation view controller as secondary that contains the rest of the stack.
-    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+    func splitViewController(_: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
         guard let master = primaryViewController as? UINavigationController, let top = master.viewControllers.first else {
             return makeNav()
         }

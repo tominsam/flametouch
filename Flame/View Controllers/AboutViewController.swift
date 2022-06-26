@@ -1,11 +1,10 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import UIKit
 import SafariServices
+import UIKit
 import WebKit
 
 class AboutViewController: UIViewController, WKNavigationDelegate {
-
     override func viewDidLoad() {
         let webView = WKWebView()
         webView.navigationDelegate = self
@@ -20,7 +19,7 @@ class AboutViewController: UIViewController, WKNavigationDelegate {
         webView.pinEdgesTo(view: view)
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(_: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if navigationAction.navigationType == .linkActivated {
             UIApplication.shared.open(navigationAction.request.url!, options: [:], completionHandler: nil)
             decisionHandler(.cancel)
@@ -32,5 +31,4 @@ class AboutViewController: UIViewController, WKNavigationDelegate {
     @objc func done() {
         dismiss(animated: true, completion: nil)
     }
-
 }

@@ -1,12 +1,13 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
-import UIKit
 import SafariServices
+import ServiceDiscovery
+import UIKit
+import Utils
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-    let serviceController: ServiceController = ServiceController()
+    let serviceController: ServiceController = ServiceControllerImpl()
     var serviceControllerRefCount: Int = 0
     var serviceRefreshTimer: Timer?
 
@@ -16,14 +17,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+        _: UIApplication,
+        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         return true
     }
 
     func application(
-        _ application: UIApplication,
+        _: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
@@ -42,14 +43,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             action: #selector(CustomSplitViewController.saveExportedData),
             input: "E",
             modifierFlags: .command,
-            propertyList: nil)
+            propertyList: nil
+        )
 
         let exportMenu = UIMenu(
             title: "",
             image: nil,
             identifier: UIMenu.Identifier("org.jerakeen.flametouch.menus.export"),
             options: .displayInline,
-            children: [exportCommand])
+            children: [exportCommand]
+        )
 
         builder.insertChild(exportMenu, atStartOfMenu: .file)
 
@@ -64,15 +67,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case "http", "https":
             // If there's a universal link handler for this URL, use that for preference
             #if targetEnvironment(macCatalyst)
-            UIApplication.shared.open(url)
+                UIApplication.shared.open(url)
             #else
-            UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-                if !result {
-                    let vc = SFSafariViewController(url: url)
-                    vc.preferredControlTintColor = .systemRed
-                    presentingViewController.present(vc, animated: true)
+                UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
+                    if !result {
+                        let vc = SFSafariViewController(url: url)
+                        vc.preferredControlTintColor = .systemRed
+                        presentingViewController.present(vc, animated: true)
+                    }
                 }
-            }
             #endif
         default:
             UIApplication.shared.open(url, options: [:]) { result in
@@ -85,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func sceneDelegateWillEnterForeground(_ sceneDelegate: SceneDelegate) {
+    func sceneDelegateWillEnterForeground(_: SceneDelegate) {
         serviceController.start()
         if serviceRefreshTimer == nil {
             serviceRefreshTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
@@ -96,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func sceneDelegateDidEnterBackground(_ sceneDelegate: SceneDelegate) {
+    func sceneDelegateDidEnterBackground(_: SceneDelegate) {
         // If there are no more forground scenes, stop the service browser
         for scene in UIApplication.shared.connectedScenes {
             ELog("State is \(scene.activationState.rawValue)")
@@ -116,5 +119,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         serviceRefreshTimer = nil
         serviceController.stop()
     }
-
 }
