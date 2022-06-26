@@ -18,7 +18,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     weak var delegate: ServiceBrowserDelegate?
 
     /// meta-service browser, discovers more services
-    private let metaServiceBrowser = configure(NetServiceBrowser()) {
+    private let metaServiceBrowser = with(NetServiceBrowser()) {
         $0.includesPeerToPeer = includePeerToPeer
     }
 

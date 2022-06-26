@@ -7,36 +7,36 @@ import Utils
 public class SimpleCell: UITableViewCell, Reusable {
     public static var reuseId: String = "SimpleCell"
 
-    lazy var titleView = configure(UILabel()) {
+    lazy var titleView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .label
     }
 
-    lazy var subtitleView = configure(UILabel()) {
+    lazy var subtitleView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
         $0.highlightedTextColor = .label
     }
 
-    lazy var titleStack = configure(UIStackView(arrangedSubviews: [titleView, subtitleView])) {
+    lazy var titleStack = with(UIStackView(arrangedSubviews: [titleView, subtitleView])) {
         $0.axis = .vertical
         $0.alignment = .fill
         $0.spacing = 8
     }
 
-    public lazy var iconView = configure(UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))) {
+    public lazy var iconView = with(UIImageView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))) {
         $0.contentMode = .scaleAspectFit
         $0.image = nil
         $0.tintColor = .label
     }
 
-    public lazy var rightView = configure(UILabel()) {
+    public lazy var rightView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
         $0.highlightedTextColor = .label
     }
 
-    lazy var outerStack = configure(UIStackView(arrangedSubviews: [iconView, titleStack, rightView])) {
+    lazy var outerStack = with(UIStackView(arrangedSubviews: [iconView, titleStack, rightView])) {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.distribution = .fill

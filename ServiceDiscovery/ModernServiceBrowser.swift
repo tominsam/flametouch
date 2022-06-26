@@ -22,7 +22,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
     weak var delegate: ServiceBrowserDelegate?
 
     /// broadcast a service from the local device
-    private let flameService = try? NWListener(using: NWParameters(tls: nil, tcp: configure(NWProtocolTCP.Options()) { _ in
+    private let flameService = try? NWListener(using: NWParameters(tls: nil, tcp: with(NWProtocolTCP.Options()) { _ in
 
     }))
 

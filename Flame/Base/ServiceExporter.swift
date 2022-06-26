@@ -50,7 +50,7 @@ class ServiceExporter {
             return nil
         }
 
-        NSLog("path is %@", path.path)
+        ELog("path is %@", path.path)
         let output = OutputStream(toFileAtPath: path.path, append: false)!
         output.open()
         JSONSerialization.writeJSONObject(groupsJson, to: output, options: [.prettyPrinted, .sortedKeys], error: nil)

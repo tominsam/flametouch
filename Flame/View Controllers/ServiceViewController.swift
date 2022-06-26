@@ -16,7 +16,7 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     var txtData = [(key: String, value: String)]()
     var alive = true
 
-    lazy var tableView = configure(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
+    lazy var tableView = with(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
         tableView.dataSource = self
         tableView.delegate = self
         tableView.setupForAutolayout()

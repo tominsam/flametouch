@@ -15,10 +15,10 @@ class BrowseViewController: UIViewController {
     var filteredHosts = [Host]()
     var filter: String?
 
-    lazy var tableView = configure(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
+    lazy var tableView = with(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
         tableView.setupForAutolayout()
         #if !targetEnvironment(macCatalyst)
-            tableView.refreshControl = configure(UIRefreshControl()) { refresh in
+            tableView.refreshControl = with(UIRefreshControl()) { refresh in
                 refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
             }
         #endif
@@ -26,7 +26,7 @@ class BrowseViewController: UIViewController {
 
     let networkOverlay = WifiView()
 
-    lazy var searchController = configure(UISearchController()) {
+    lazy var searchController = with(UISearchController()) {
         $0.delegate = self
         $0.searchResultsUpdater = self
         // Don't move the search bar over the navigation what searching

@@ -7,7 +7,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
 
     func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
-        NSLog("Scene started")
+        ELog("Scene started")
         guard let windowScene = scene as? UIWindowScene else { fatalError() }
 
         #if targetEnvironment(macCatalyst)
@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let serviceController = AppDelegate.instance.serviceController
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = configure(CustomSplitViewController(serviceController: serviceController)) {
+        window?.rootViewController = with(CustomSplitViewController(serviceController: serviceController)) {
             $0.maximumPrimaryColumnWidth = 640
             $0.minimumPrimaryColumnWidth = 320
             $0.preferredPrimaryColumnWidthFraction = 0.35

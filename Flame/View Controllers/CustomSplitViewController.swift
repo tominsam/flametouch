@@ -7,13 +7,13 @@ import Utils
 class CustomSplitViewController: UISplitViewController {
     let serviceController: ServiceController
 
-    lazy var master = configure(StaticNavigationController()) {
+    lazy var master = with(StaticNavigationController()) {
         // Base nav VC is for iPad, then the split view is immediately
         // collapsed for phones. Collapsing unsets prefersLargeTitles.
         $0.navigationBar.prefersLargeTitles = true
     }
 
-    lazy var emptyViewController = configure(UIViewController()) {
+    lazy var emptyViewController = with(UIViewController()) {
         $0.view.backgroundColor = .systemGroupedBackground
     }
 

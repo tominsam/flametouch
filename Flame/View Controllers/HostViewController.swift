@@ -14,7 +14,7 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
     var host: Host
     var alive: Bool
 
-    lazy var tableView = configure(UITableView(frame: CGRect.zero, style: .insetGrouped)) { tableView in
+    lazy var tableView = with(UITableView(frame: CGRect.zero, style: .insetGrouped)) { tableView in
         tableView.dataSource = self
         tableView.delegate = self
         tableView.setupForAutolayout()
