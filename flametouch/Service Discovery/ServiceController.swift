@@ -1,44 +1,24 @@
 // Copyright 2021 Thomas Insam <tom@movieos.org>
 
 import Foundation
-
-// Callers can observe changes. We hold them responsible for retaining
-// the callback block, so it'll auto-cleanup. This is the observer object.
-class ServiceControllerObserver: NSObject {
-    let block: ([Host]) -> Void
-    init(block : @escaping ([Host]) -> Void) {
-        self.block = block
-        super.init()
-    }
-}
-
-// Wrap the observer weakly so that we don't retain anything.
-private struct WeakObserver {
-    weak var observer: ServiceControllerObserver?
-}
-
-// Remove all released observers
-private extension Array where Element == WeakObserver {
-    mutating func reap () {
-        self = self.filter { nil != $0.observer }
-    }
-}
+import RxSwift
 
 class ServiceController: NSObject {
-    #if DEBUG
+#if DEBUG
     private static let maxStopTime: TimeInterval = 10
-    #else
+#else
     private static let maxStopTime: TimeInterval = 180
-    #endif
+#endif
 
     public var hosts = [Host]()
 
-    private var observers = [WeakObserver]()
     private let browser: ServiceBrowser
     private var stoppedDate: Date? = Date()
 
+    private let servicesSubject = PublishSubject<[Host]>()
+    var services: Observable<[Host]> { servicesSubject.asObservable() }
+
     override init() {
-        //        browser = DemoServiceBrowser()
         browser = DeprecatedServiceBrowser()
         super.init()
         browser.delegate = self
@@ -104,24 +84,13 @@ class ServiceController: NSObject {
         return hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
     }
 
-    func observeServiceChanges(_ block: @escaping ([Host]) -> Void) -> ServiceControllerObserver {
-        let observer = ServiceControllerObserver(block: block)
-        let weakRef = WeakObserver(observer: observer)
-        observers.append(weakRef)
-        block(self.hosts)
-        return observer
-    }
-
 }
 
 extension ServiceController: ServiceBrowserDelegate {
 
     func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) {
         hosts = groupServices(services)
-        observers.reap()
-        for weakObserver in observers {
-            weakObserver.observer?.block(self.hosts)
-        }
+        servicesSubject.onNext(hosts)
     }
 
 }

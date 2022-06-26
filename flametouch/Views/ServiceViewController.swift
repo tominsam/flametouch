@@ -1,12 +1,13 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
 import UIKit
+import RxSwift
 
 /// Shows the details of a particular service on a particular host
 class ServiceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let serviceController: ServiceController
-    var serviceControllerObserver: ServiceControllerObserver?
+    let disposeBag = DisposeBag()
 
     var service: Service
     var core = [(key: String, value: String)]()
@@ -26,9 +27,9 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         self.service = service
         super.init(nibName: nil, bundle: nil)
         build()
-        serviceControllerObserver = serviceController.observeServiceChanges { [weak self] _ in
+        serviceController.services.subscribe { [weak self] hosts in
             self?.hostsChanged()
-        }
+        }.disposed(by: disposeBag)
     }
 
     func build() {

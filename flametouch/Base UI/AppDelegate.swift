@@ -86,7 +86,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func sceneDelegateWillEnterForeground(_ sceneDelegate: SceneDelegate) {
-        NetworkMonitor.shared.startMonitoring()
         serviceController.start()
         if serviceRefreshTimer == nil {
             serviceRefreshTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
@@ -116,7 +115,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         serviceRefreshTimer?.invalidate()
         serviceRefreshTimer = nil
         serviceController.stop()
-        NetworkMonitor.shared.stopMonitoring()
     }
 
 }

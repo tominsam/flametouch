@@ -1,12 +1,13 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
 import UIKit
+import RxSwift
 
 /// Root view of the app, renders a list of hosts on the local network
 class BrowseViewController: UIViewController {
+    let disposeBag = DisposeBag()
 
     let serviceController: ServiceController
-    var serviceControllerObserver: ServiceControllerObserver?
 
     var filteredHosts = [Host]()
     var filter: String?
@@ -49,9 +50,9 @@ class BrowseViewController: UIViewController {
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
         super.init(nibName: nil, bundle: nil)
-        serviceControllerObserver = serviceController.observeServiceChanges { [weak self] _ in
+        serviceController.services.subscribe { [weak self] hosts in
             self?.hostsChanged()
-        }
+        }.disposed(by: disposeBag)
     }
 
     @available(*, unavailable)
@@ -104,17 +105,15 @@ class BrowseViewController: UIViewController {
         // Try to explain what's going on if there's no wifi. This
         // isn't currently very reliable.
         networkOverlay.isHidden = true
-        NetworkMonitor.shared.addListener(sender: self) { [weak self] networkMonitor in
-            guard let self = self else { return }
-            let nowifi = networkMonitor.currentConnectionType != .wifi
+
+        NetworkMonitor.shared.state.subscribe { [weak self] state in
+            guard let self else { return }
+            let nowifi = state.currentConnectionType != .wifi
             let noservices = self.serviceController.hosts.isEmpty
             let showOverlay = nowifi && noservices
             self.networkOverlay.isHidden = !showOverlay
-        }
-    }
+        }.disposed(by: disposeBag)
 
-    deinit {
-        NetworkMonitor.shared.removeListener(sender: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {

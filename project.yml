@@ -2,6 +2,10 @@
 name: Flame
 options:
   bundleIdPrefix: org.jerakeen
+packages:
+  RxSwift:
+    url: https://github.com/ReactiveX/RxSwift.git
+    from: 6.5.0
 targets:
   Flame:
     name: Flame
@@ -23,7 +27,6 @@ targets:
     sources:
       - path: "flametouch"
         name: "Code"
-        compilerFlags: "-Xfrontend -warn-concurrency -Xfrontend -enable-actor-data-race-checks"
       - path: "README.md"
         buildPhase: none
       - path: "CHANGELOG.md"
@@ -32,6 +35,8 @@ targets:
         buildPhase: none
       - path: ".swiftlint.yml"
         buildPhase: none
+    dependencies:
+      - package: RxSwift
     info:
       path: Info.plist
       properties:
@@ -72,3 +77,4 @@ targets:
     postCompileScripts:
       - script: /opt/homebrew/bin/swiftlint
         name: Run SwiftLint
+        basedOnDependencyAnalysis: false

@@ -2,6 +2,7 @@
 
 import Foundation
 import Network
+import RxSwift
 
 // https://digitalbunker.dev/native-network-monitoring-in-swift/
 
@@ -18,53 +19,43 @@ extension NWInterface.InterfaceType: CaseIterable {
 final class NetworkMonitor {
     static let shared = NetworkMonitor()
 
-    typealias Callback = ((NetworkMonitor) -> Void)
-    private var callbacks: [NSObject: Callback] = [:]
+    struct NetworkState {
+        let hasResponse : Bool
+        let isConnected : Bool
+        let isExpensive : Bool
+        let currentConnectionType: NWInterface.InterfaceType?
+
+        var supportsDiscovery: Bool {
+            return currentConnectionType == .wifi || currentConnectionType == .wiredEthernet || currentConnectionType == .other
+        }
+    }
 
     private let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
-    private let monitor: NWPathMonitor
 
-    private(set) var hasResponse = false
-    private(set) var isConnected = false
-    private(set) var isExpensive = false
-    private(set) var currentConnectionType: NWInterface.InterfaceType?
+    var state: Observable<NetworkState> { networkEvents.asObservable() }
 
     private init() {
-        monitor = NWPathMonitor()
     }
 
-    func startMonitoring() {
-        monitor.pathUpdateHandler = { [weak self] path in
-            self?.hasResponse = true
-            self?.isConnected = path.status != .unsatisfied
-            self?.isExpensive = path.isExpensive
-            self?.currentConnectionType = NWInterface.InterfaceType.allCases.filter { path.usesInterfaceType($0) }.first
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                for callback in self.callbacks {
-                    callback.value(self)
-                }
+    var networkEvents: AsyncStream<NetworkState> {
+        AsyncStream { continuation in
+            let monitor = NWPathMonitor()
+
+            monitor.pathUpdateHandler = { path in
+                let state = NetworkState(
+                    hasResponse: true,
+                    isConnected: path.status != .unsatisfied,
+                    isExpensive: path.isExpensive,
+                    currentConnectionType: NWInterface.InterfaceType.allCases.filter { path.usesInterfaceType($0) }.first
+                )
+                continuation.yield(state)
             }
+            continuation.onTermination = { _ in
+                monitor.cancel()
+            }
+            monitor.start(queue: queue)
         }
-        monitor.start(queue: queue)
+
     }
 
-    func stopMonitoring() {
-        monitor.cancel()
-    }
-
-    var supportsDiscovery: Bool {
-        return currentConnectionType == .wifi || currentConnectionType == .wiredEthernet || currentConnectionType == .other
-    }
-
-    func addListener(sender: NSObject, callback: @escaping Callback) {
-        callbacks[sender] = callback
-        if hasResponse {
-            callback(self)
-        }
-    }
-
-    func removeListener(sender: NSObject) {
-        callbacks.removeValue(forKey: sender)
-    }
 }

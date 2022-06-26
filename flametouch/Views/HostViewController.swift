@@ -1,12 +1,13 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
 import UIKit
+import RxSwift
 
 /// View of a single host - lists the services of that host
 class HostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let serviceController: ServiceController
-    var serviceControllerObserver: ServiceControllerObserver?
+    let disposeBag = DisposeBag()
 
     var host: Host
     var alive: Bool
@@ -25,9 +26,9 @@ class HostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         super.init(nibName: nil, bundle: nil)
         title = host.name
 
-        serviceControllerObserver = serviceController.observeServiceChanges { [weak self] _ in
+        serviceController.services.subscribe { [weak self] hosts in
             self?.hostsChanged()
-        }
+        }.disposed(by: disposeBag)
     }
 
     @available(*, unavailable)
