@@ -5,11 +5,12 @@ import RxSwift
 import Utils
 
 public protocol ServiceController {
-    var hosts: [Host] { get }
-    var services: Observable<[Host]> { get }
+    var services: BehaviorSubject<[Host]> { get }
     func start()
     func restart()
     func stop()
+
+    func host(for addressCluster: AddressCluster) -> Host?
 }
 
 public class ServiceControllerImpl: NSObject, ServiceController {
@@ -19,15 +20,9 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         private static let maxStopTime: TimeInterval = 180
     #endif
 
-    public var services: Observable<[Host]> { servicesSubject.asObservable().distinctUntilChanged() }
-    public var hosts = [Host]() {
-        didSet {
-            servicesSubject.onNext(hosts)
-        }
-    }
+    public var services = BehaviorSubject<[Host]>(value: [])
 
     private let browser: ServiceBrowser
-    private let servicesSubject = PublishSubject<[Host]>()
 
     private var stoppedDate: Date? = Date()
 
@@ -67,31 +62,39 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         }
     }
 
-    func groupServices(_ services: Set<Service>) -> [Host] {
-        // Group the services by IP address - all services that share any address
-        // are in a group, and a group is a "host".
-        var groups = [Set<String>: Set<Service>]()
-
-        for service in services {
-            // If any address of this service is already in a group,
-            // merge the service into the group, otherwise it's a new group
-            if let element = groups.first(where: { service.hasAnyAddress($0.key) }) {
-                let addresses = element.key.union(service.addresses)
-                groups.removeValue(forKey: element.key)
-                groups[addresses] = element.value.union([service])
-            } else {
-                groups[service.addresses] = [service]
-            }
-        }
-
-        let hosts = groups.map { Host(services: $0.value) }
-
-        return hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
+    public func host(for addressCluster: AddressCluster) -> Host? {
+        return (try? services.value())?.first { $0.addressCluster == addressCluster }
     }
+
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
     func serviceBrowser(_: ServiceBrowser, didChangeServices services: Set<Service>) {
-        hosts = groupServices(services)
+        self.services.onNext(groupServices(services))
     }
+
+    func groupServices(_ services: Set<Service>) -> [Host] {
+        let oldServices = ((try? self.services.value()) ?? [])
+            .flatMap { $0.services }
+            .map {
+                var service = $0
+                service.alive = false
+                return service
+            }
+
+        // Collect services into hosts
+        let groups = Dictionary(grouping: services + oldServices, by: { $0.addressCluster })
+        let hosts = groups.map { Host(services: Set($0.value), addressCluster: $0.key) }
+        return hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
+    }
+}
+
+extension ObservableType where Element == [Host] {
+
+    public func host(forAddressCluster addressCluster: AddressCluster) -> Observable<Host> {
+        return self.compactMap { hosts in
+            return hosts.first { $0.addressCluster == addressCluster }
+        }
+    }
+
 }

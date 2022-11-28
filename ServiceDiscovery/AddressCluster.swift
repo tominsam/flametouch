@@ -100,6 +100,10 @@ public class AddressCluster: NSObject {
         return sorted.first ?? "."
     }
 
+    public var displayName: String? {
+        return hostnames.sorted().first?.replacingOccurrences(of: ".local.", with: "")
+    }
+
     public override var debugDescription: String {
         return "<\(type(of: self)) \(addresses.sorted()) / \(hostnames.sorted()))>"
     }

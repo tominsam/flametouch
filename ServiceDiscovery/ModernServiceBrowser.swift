@@ -77,6 +77,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
 
     func reset() {
 //        netServices.removeAll()
+        AddressCluster.flushClusters()
         broadcast()
     }
 
@@ -90,8 +91,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
                 name: ns.name,
                 type: ns.type,
                 domain: ns.domain == "local." ? nil : ns.domain,
-                hostname: ns.hostName,
-                addresses: ns.stringAddresses,
+                addressCluster: AddressCluster.from(addresses: ns.stringAddresses, hostnames: [ns.hostName].compactMap { $0 }),
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),

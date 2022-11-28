@@ -7,8 +7,7 @@ public struct Service {
     public let name: String
     public let type: String
     public let domain: String?
-    public let hostname: String?
-    public let addresses: Set<String>
+    public let addressCluster: AddressCluster
     public let port: Int
     public let data: [String: String]
 
@@ -16,8 +15,8 @@ public struct Service {
     public let lastSeen: Date
     public var alive: Bool
 
-    public func matches(_ filter: String) -> Bool {
-        if ([name, type, domain ?? "", String(port), hostname ?? ""] + addresses).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
+    public func matches(search filter: String) -> Bool {
+        if ([name, type, domain ?? "", String(port)] + addressCluster.sorted).contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
             return true
         }
         for (key, value) in data {
@@ -28,40 +27,16 @@ public struct Service {
         return false
     }
 
-    public func hasAnyAddress(_ addresses: Set<String>) -> Bool {
-        return !self.addresses.isDisjoint(with: addresses)
-    }
-
-    public var displayAddresses: [String] {
-        // Sort service addresses by shortest first, so we prioritize IPv4
-        var sortedAddresses = addresses.sorted {
-            // Sort by length then alpha
-            if $0.count == $1.count {
-                return $0 < $1
-            } else {
-                return $0.count < $1.count
-            }
-        }
-
-        // If the service claims a resolved hostname, include that at the end
-        // (because often the hostname is not interesting as an address)
-        if let hostname = hostname {
-            sortedAddresses.append(hostname)
-        }
-
-        return sortedAddresses
-    }
-
     public var url: URL? {
         switch type.split(separator: ".").first {
         case "_http":
-            return URL(string: "http://\(displayAddresses[0]):\(port)/")
+            return URL(string: "http://\(addressCluster.displayAddress):\(port)/")
         case "_https":
-            return URL(string: "https://\(displayAddresses[0]):\(port)/")
+            return URL(string: "https://\(addressCluster.displayAddress):\(port)/")
         case "_ssh":
-            return URL(string: "ssh://\(displayAddresses[0]):\(port)/")
+            return URL(string: "ssh://\(addressCluster.displayAddress):\(port)/")
         case "_smb":
-            return URL(string: "smb://\(displayAddresses[0]):\(port)/")
+            return URL(string: "smb://\(addressCluster.displayAddress):\(port)/")
         default:
             return nil
         }
@@ -86,7 +61,7 @@ extension Service: Equatable, Hashable {
             && lhs.type == rhs.type
             && lhs.domain == rhs.domain
             && lhs.port == rhs.port
-            && lhs.addresses == rhs.addresses
+            && lhs.addressCluster == rhs.addressCluster
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -94,12 +69,6 @@ extension Service: Equatable, Hashable {
         hasher.combine(type)
         hasher.combine(domain)
         hasher.combine(port)
-        hasher.combine(addresses)
-    }
-}
-
-public extension Collection where Element == Service {
-    func matching(service: Service) -> Service? {
-        return first { $0.type == service.type && $0.name == service.name }
+        hasher.combine(addressCluster)
     }
 }

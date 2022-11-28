@@ -75,7 +75,7 @@ class ServiceNamer {
         guard let service = services.first else { return nil }
 
         return [
-            service.hostname?.replacingOccurrences(of: ".local.", with: ""),
+            service.addressCluster.displayName,
             service.name,
         ].compactMap { $0 }.sorted { $0.count < $1.count }.first
     }

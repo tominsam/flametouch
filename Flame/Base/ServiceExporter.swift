@@ -2,6 +2,7 @@
 
 import Foundation
 import ServiceDiscovery
+import Utils
 
 class ServiceExporter {
     static func export(hosts: [Host]) -> URL? {
@@ -13,7 +14,7 @@ class ServiceExporter {
             var groupJson: [String: Any] = [:]
             groupJson["name"] = host.name
             var addressesJson: [String] = []
-            for address in host.displayAddresses {
+            for address in host.addressCluster.sorted {
                 addressesJson.append(address)
             }
             groupJson["addresses"] = addressesJson
@@ -27,7 +28,7 @@ class ServiceExporter {
                 serviceJson["type"] = service.type
                 serviceJson["domain"] = service.domain
                 var addressesJson: [String] = []
-                for address in service.displayAddresses {
+                for address in service.addressCluster.sorted {
                     addressesJson.append(address)
                 }
                 serviceJson["addresses"] = addressesJson
@@ -50,7 +51,7 @@ class ServiceExporter {
             return nil
         }
 
-        ELog("path is %@", path.path)
+        ELog("path is \(path.path)")
         let output = OutputStream(toFileAtPath: path.path, append: false)!
         output.open()
         JSONSerialization.writeJSONObject(groupsJson, to: output, options: [.prettyPrinted, .sortedKeys], error: nil)

@@ -73,6 +73,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
 
     func reset() {
         netServices.removeAll()
+        AddressCluster.flushClusters()
         broadcast()
     }
 
@@ -86,8 +87,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
                 name: ns.name,
                 type: ns.type,
                 domain: ns.domain == "local." ? nil : ns.domain,
-                hostname: ns.hostName,
-                addresses: ns.stringAddresses,
+                addressCluster: AddressCluster.from(addresses: ns.stringAddresses, hostnames: [ns.hostName].compactMap { $0 }),
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),
@@ -104,7 +104,9 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             // meta-browser found something new. Create a new service browser for it.
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-            ELog("✅ Found type \"\(serviceType)\"")
+            if netServiceBrowsers[serviceType] == nil {
+                ELog("✅ Found type \"\(serviceType)\"")
+            }
             if let found = netServiceBrowsers[serviceType] {
                 ELog("stopping existing browser for \(serviceType)")
                 found.stop()
@@ -117,7 +119,9 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
 
         } else {
             // single-service browser found a new broadcast
-            ELog("🟡 Found service \(service.type)")
+            if !netServices.contains(service) {
+                ELog("🟡 Found service \(service.type)")
+            }
 
             // Services are not always cleaned up - for instance entering airplane mode won't remove services.
             netServices.insert(service)

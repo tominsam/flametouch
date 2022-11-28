@@ -7,21 +7,46 @@ import Utils
 import Views
 
 /// Shows the details of a particular service on a particular host
-class ServiceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ServiceViewController: UIViewController, UITableViewDelegate {
     let serviceController: ServiceController
     let disposeBag = DisposeBag()
 
     var service: Service
-    var core = [(key: String, value: String)]()
-    var txtData = [(key: String, value: String)]()
     var alive = true
 
+    enum Section {
+        case core
+        case data
+    }
+
+    struct Row: Hashable {
+        let name: String
+        let value: String
+    }
+
     lazy var tableView = with(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
-        tableView.dataSource = self
         tableView.delegate = self
         tableView.setupForAutolayout()
         tableView.registerReusableCell(SimpleCell.self)
         tableView.selectionFollowsFocus = true
+    }
+
+    lazy var dataSource = ServiceDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, row in
+        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
+        cell.title = row.name
+        cell.right = row.value
+        cell.contentView.alpha = self?.alive == true ? 1 : 0.3
+
+        if self?.urlFor(indexPath: indexPath) != nil {
+            // cell can be selected
+            cell.selectionStyle = .default
+            cell.rightView.textColor = AppDelegate.tintColor // can't use tintcolor as we're not attached to the table yet
+        } else {
+            cell.selectionStyle = .none
+            cell.rightView.textColor = .secondaryLabel
+        }
+
+        return cell
     }
 
     required init(serviceController: ServiceController, service: Service) {
@@ -33,34 +58,37 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
 
     func build() {
         title = service.typeWithDomain
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Row>()
+        snapshot.appendSections([.core])
 
-        core.removeAll()
-        core.append((
-            key: NSLocalizedString("Name", comment: "Label for the name of the service"),
-            value: service.name
-        ))
-        core.append((
-            key: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"),
-            value: service.type
-        ))
+        snapshot.appendItems([
+            Row(name: NSLocalizedString("Name", comment: "Label for the name of the service"), value: service.name),
+            Row(name: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"), value: service.type)
+        ], toSection: .core)
+
         if let domain = service.domain {
-            core.append((
-                key: NSLocalizedString("Domain", comment: "Label for the domain of the service (when not local)"),
-                value: domain
-            ))
+            snapshot.appendItems([
+                Row(name: NSLocalizedString("Domain", comment: "Label for the domain of the service (when not local)"), value: domain)
+            ], toSection: .core)
         }
-        for hostname in service.displayAddresses {
-            core.append((
-                key: NSLocalizedString("Address", comment: "Label for the network address of the service"),
-                value: hostname
-            ))
-        }
-        core.append((
-            key: NSLocalizedString("Port", comment: "Label for the network port of the service"),
-            value: String(service.port)
-        ))
 
-        txtData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
+        snapshot.appendItems(service.addressCluster.sorted.map { address in
+            Row(name: NSLocalizedString("Address", comment: "Label for the network address of the service"), value: address)
+        })
+
+        snapshot.appendItems([
+            Row(name: NSLocalizedString("Port", comment: "Label for the network port of the service"), value: String(service.port))
+        ])
+
+        if !service.data.isEmpty {
+            snapshot.appendSections([.data])
+            snapshot.appendItems(service.data
+                .sorted { $0.key.lowercased() < $1.key.lowercased() }
+                .map { Row(name: $0.key, value: $0.value) },
+                                 toSection: .data)
+        }
+
+        dataSource.apply(snapshot, animatingDifferences: tableView.window != nil)
     }
 
     @available(*, unavailable)
@@ -71,9 +99,16 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         view.addSubview(tableView)
         tableView.pinEdgesTo(view: view)
-        serviceController.services.subscribe { [weak self] hosts in
-            self?.hostsChanged(hosts: hosts)
-        }.disposed(by: disposeBag)
+        serviceController.services
+            .map { [service] hosts in
+                return hosts.serviceMatching(service: service)
+            }
+            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .subscribe(on: MainScheduler.instance)
+            .subscribe { [weak self] service in
+                self?.serviceChanged(to: service)
+            }
+            .disposed(by: disposeBag)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -81,63 +116,6 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
         if let selected = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selected, animated: true)
         }
-    }
-
-    func numberOfSections(in _: UITableView) -> Int {
-        if txtData.isEmpty {
-            return 1
-        } else {
-            return 2
-        }
-    }
-
-    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case 0:
-            return NSLocalizedString("Core", comment: "Header label for a list of core service settings")
-        case 1:
-            return NSLocalizedString("Data", comment: "Header label for a list of service information from the data record")
-        default:
-            return nil
-        }
-    }
-
-    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return core.count
-        case 1:
-            return txtData.count
-        default:
-            return 0
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-
-        switch indexPath.section {
-        case 0:
-            cell.title = core[indexPath.row].key
-            cell.right = core[indexPath.row].value
-        case 1:
-            cell.title = txtData[indexPath.row].key
-            cell.right = txtData[indexPath.row].value
-        default:
-            break
-        }
-
-        if urlFor(indexPath: indexPath) != nil {
-            // cell can be selected
-            cell.selectionStyle = .default
-            cell.rightView.textColor = .systemRed // can't use tintcolor as we're not attached to the table yet
-        } else {
-            cell.selectionStyle = .none
-            cell.rightView.textColor = .secondaryLabel
-        }
-
-        cell.contentView.alpha = alive ? 1 : 0.3
-        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -148,83 +126,71 @@ class ServiceViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
-        // capture asap in case the tableview moves under us
-        if indexPath.section == 0 {
-            let row = core[indexPath.row]
-            let url = urlFor(indexPath: indexPath)
+        guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        guard let section = dataSource.sectionIdentifier(for: indexPath.section) else { return nil }
+        let url = urlFor(indexPath: indexPath)
 
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-                guard let self = self else { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self = self else { return nil }
 
-                var actions = [
-                    UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                        UIPasteboard.general.string = row.value
-                    },
-                ]
+            var actions = section == .core ? [
+                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = row.value
+                },
+            ] : [
+                UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = row.name
+                },
+                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
+                    UIPasteboard.general.string = row.value
+                },
+            ]
 
-                if let url = url {
-                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
-                        guard let self = self else { return }
-                        AppDelegate.instance.openUrl(url, from: self)
-                    })
-                }
-
-                return UIMenu(title: "", children: actions)
+            if let url = url {
+                actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
+                    guard let self = self else { return }
+                    AppDelegate.instance.openUrl(url, from: self)
+                })
             }
-        } else {
-            let row = txtData[indexPath.row]
-            let url = urlFor(indexPath: indexPath)
 
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-                guard let self = self else { return nil }
-
-                var actions = [
-                    UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                        UIPasteboard.general.string = row.key
-                    },
-                    UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                        UIPasteboard.general.string = row.value
-                    },
-                ]
-
-                if let url = url {
-                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
-                        guard let self = self else { return }
-                        AppDelegate.instance.openUrl(url, from: self)
-                    })
-                }
-
-                return UIMenu(title: "", children: actions)
-            }
+            return UIMenu(title: "", children: actions)
         }
     }
 
     func urlFor(indexPath: IndexPath) -> URL? {
-        switch indexPath.section {
-        case 0:
-            if core[indexPath.row].value == service.type {
-                return service.url
-            }
-        case 1:
-            // return the value if it looks like it parses as a decent url
-            if let url = URL(string: txtData[indexPath.row].value), url.scheme != nil, url.host != nil {
-                return url
-            }
-        default:
-            break
+        guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
+        if row.value == service.type {
+            return service.url
+        }
+        // return the value if it looks like it parses as a decent url
+        if let url = URL(string: row.value), url.scheme != nil, url.host != nil {
+            return url
         }
         return nil
     }
 
-    func hostsChanged(hosts: [Host]) {
-        if let found = hosts.matching(addresses: service.addresses)?.services.matching(service: service) {
-            service = found
-            alive = true
+    func serviceChanged(to service: Service?) {
+        if let found = service {
+            self.service = found
+            alive = found.alive
         } else {
             // this service is gone. Keep the addresses in case it comes back.
             alive = false
         }
         build()
-        tableView.reloadData()
     }
+}
+
+class ServiceDiffableDataSource: UITableViewDiffableDataSource<ServiceViewController.Section, ServiceViewController.Row> {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch self.sectionIdentifier(for: section) {
+        case .core:
+            return "Core"
+        case .data:
+            return "Data"
+        case .none:
+            return nil
+        }
+    }
+
 }
