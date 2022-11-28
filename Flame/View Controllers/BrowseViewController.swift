@@ -99,7 +99,7 @@ class BrowseViewController: UIViewController {
         #endif
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(named: "Export"),
+            image: UIImage(systemName: "square.and.arrow.up"),
             style: .plain,
             target: self,
             action: #selector(exportData)
