@@ -16,6 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return UIApplication.shared.delegate as! AppDelegate
     }
 
+    // Pulled from one of the reds in the app icon, this looks pretty good to me in both themes
+    static let tintColor = UIColor(red: 204.0/255, green: 59.0/255, blue: 72.0/255, alpha: 1)
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -72,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
                     if !result {
                         let vc = SFSafariViewController(url: url)
-                        vc.preferredControlTintColor = .systemRed
+                        vc.preferredControlTintColor = AppDelegate.tintColor
                         presentingViewController.present(vc, animated: true)
                     }
                 }

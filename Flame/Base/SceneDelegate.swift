@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             $0.primaryBackgroundStyle = .none // Or .sidebar but I hate it.
             $0.setMasterViewController(BrowseViewController(serviceController: serviceController))
         }
-        window?.tintColor = .systemRed
+        window?.tintColor = AppDelegate.tintColor
         window?.makeKeyAndVisible()
     }
 
