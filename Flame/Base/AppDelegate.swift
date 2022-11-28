@@ -40,6 +40,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     override func buildMenu(with builder: UIMenuBuilder) {
+        let refreshCommand = UIKeyCommand(
+            title: NSLocalizedString("Refresh", comment: "Menu item to refresh network data"),
+            image: nil,
+            action: #selector(BrowseViewController.handleTableRefresh(sender:)),
+            input: "R",
+            modifierFlags: .command,
+            propertyList: nil
+        )
+
         let exportCommand = UIKeyCommand(
             title: NSLocalizedString("Export…", comment: "Menu item to export network data"),
             image: nil,
@@ -54,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             image: nil,
             identifier: UIMenu.Identifier("org.jerakeen.flametouch.menus.export"),
             options: .displayInline,
-            children: [exportCommand]
+            children: [refreshCommand, exportCommand]
         )
 
         builder.insertChild(exportMenu, atStartOfMenu: .file)
