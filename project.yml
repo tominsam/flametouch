@@ -43,6 +43,18 @@ targets:
       - package: RxSwift
       - target: Utils
 
+  ServiceDiscoveryTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "15.0"
+    transitivelyLinkDependencies: true
+    sources:
+      - ServiceDiscoveryTests
+    dependencies:
+      - target: ServiceDiscovery
+    info:
+      path: Test-Info.plist
+
   Flame:
     name: Flame
     type: application
