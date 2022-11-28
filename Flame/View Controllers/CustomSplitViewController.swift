@@ -5,7 +5,6 @@ import UIKit
 import Utils
 
 class CustomSplitViewController: UISplitViewController {
-    let serviceController: ServiceController
 
     lazy var master = with(StaticNavigationController()) {
         // Base nav VC is for iPad, then the split view is immediately
@@ -22,8 +21,7 @@ class CustomSplitViewController: UISplitViewController {
         set { fatalError(String(describing: newValue)) }
     }
 
-    init(serviceController: ServiceController) {
-        self.serviceController = serviceController
+    init() {
         super.init(nibName: nil, bundle: nil)
         super.delegate = self
         preferredDisplayMode = .oneBesideSecondary
@@ -38,7 +36,6 @@ class CustomSplitViewController: UISplitViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .opaqueSeparator
-        // view.backgroundColor = .systemGroupedBackground
     }
 
     // set view for left pane
@@ -60,12 +57,20 @@ class CustomSplitViewController: UISplitViewController {
     }
 
     // Menu action. It's on the split view controller because that's always
-    // in the responder chain but still has a window/vc to present from.
+    // in the responder chain but still has a window/vc to present from
+    // but the actual exporter is on the browser view controller because that's
+    // where the list of services is
     @objc
     func saveExportedData() {
-        guard let url = ServiceExporter.export(hosts: serviceController.hosts) else { return }
-        let controller = UIDocumentPickerViewController(forExporting: [url])
-        present(controller, animated: true)
+        guard let nav = self.viewControllers.first as? UINavigationController else {
+            assertionFailure()
+            return
+        }
+        guard let browse = nav.viewControllers.first as? BrowseViewController else {
+            assertionFailure()
+            return
+        }
+        browse.exportData()
     }
 }
 

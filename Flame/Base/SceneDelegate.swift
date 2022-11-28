@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let serviceController = AppDelegate.instance.serviceController
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = with(CustomSplitViewController(serviceController: serviceController)) {
+        window?.rootViewController = with(CustomSplitViewController()) {
             $0.maximumPrimaryColumnWidth = 640
             $0.minimumPrimaryColumnWidth = 320
             $0.preferredPrimaryColumnWidthFraction = 0.35
