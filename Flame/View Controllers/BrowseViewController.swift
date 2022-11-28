@@ -220,7 +220,8 @@ class BrowseViewController: UIViewController {
         snapshot.appendItems(hosts.map { $0.addressCluster }, toSection: 0)
         // rebind _everything_, because hosts can change even if the address list did not
         snapshot.reconfigureItems(hosts.map { $0.addressCluster })
-        dataSource.apply(snapshot, animatingDifferences: tableView.window != nil)
+        let animated = tableView.window != nil && !snapshot.itemIdentifiers.isEmpty && !dataSource.snapshot().itemIdentifiers.isEmpty
+        dataSource.apply(snapshot, animatingDifferences: animated)
 
         if let oldAddressCluster, let oldSelection = hosts.firstIndex(where: { $0.addressCluster == oldAddressCluster }) {
             tableView.selectRow(at: IndexPath(row: oldSelection, section: 0), animated: false, scrollPosition: .none)

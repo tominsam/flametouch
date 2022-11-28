@@ -72,6 +72,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     }
 
     func reset() {
+        stop()
         netServices.removeAll()
         AddressCluster.flushClusters()
         broadcast()

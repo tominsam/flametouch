@@ -8,6 +8,8 @@ class ServiceNamer {
     enum ImportantServices: String, CaseIterable {
         case airplay = "_airplay."
         case airport = "_airport."
+        case rdlink = "_rdlink."
+        case companionLink = "_companion-link."
         case sleep = "_sleep-proxy."
         case homeassistant = "_home-assistant."
         case homekit = "_hap."
@@ -39,7 +41,7 @@ class ServiceNamer {
                 }
 
             case .dyson:
-                // In theory I could do serial number previx matching here
+                // In theory I could do serial number prefix matching here
                 // but there's very little else on the record.
                 return "Dyson"
 

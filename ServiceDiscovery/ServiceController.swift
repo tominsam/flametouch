@@ -54,10 +54,12 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         stoppedDate = Date()
     }
 
+    /// Completely restart the controller, clear all caches, start from scratch
     public func restart() {
         stop()
         browser.reset()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        services.onNext([])
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.start()
         }
     }
