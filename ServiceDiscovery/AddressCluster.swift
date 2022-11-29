@@ -10,19 +10,19 @@ import Foundation
 // a host to remain constant in the medium term. (I'm not going to worry about address re-assignment. I'm going to
 // assume that any given IP is only ever going to be associated with a single host for the lifetime of the app)
 
-// TODO: what happens if I roam between networks? Can I detect that? A perfect solution would be.. I guess resetting
+// What happens if you roam between networks? Can I detect that? A perfect solution would be.. I guess resetting
 // the clustering cache if the MAC address of my local network DHCP server changes? But as a fallback, manually
-// refreshing the UI will reset the cluster cache and fix weirdness.
+// refreshing the UI will reset the cluster cache and fix weirdness. (so pull-to-refresh or command-r)
 
 // The absolute simplest reliable way of doing this is to remember every address we've ever seen,
 // so this is a map from "every IP address we know about" to "the addresscluster instance for that IP"
 var globalLookup = [String: AddressCluster]()
 
-// An address cluster is a mutable singleton with a random identifier (for diffing purposes)
-// and a mutable list of addresses and hostnames. The factory method takes a list of addresses,
+// An address cluster is a mutable instance with a random identifier (for diffing purposes)
+// and a list of addresses and hostnames. The factory method takes a list of addresses,
 // and vends the existing cluster that contains any of those addresses, adding them to the cluster,
 // or creates a new cluster with those addresses.
-public class AddressCluster: NSObject {
+public class AddressCluster {
     private var identifier = UUID()
 
     var addresses: Set<String>
@@ -68,7 +68,6 @@ public class AddressCluster: NSObject {
     private init(withAddresses addresses: any Collection<String>, hostnames: any Collection<String>) {
         self.addresses = Set(addresses)
         self.hostnames = Set(hostnames)
-        super.init()
     }
 
     private func add(addresses: any Collection<String>, hostnames: any Collection<String>) {
@@ -103,18 +102,20 @@ public class AddressCluster: NSObject {
     public var displayName: String? {
         return hostnames.sorted().first?.replacingOccurrences(of: ".local.", with: "")
     }
+}
 
-    public override var debugDescription: String {
+extension AddressCluster: CustomDebugStringConvertible {
+    public var debugDescription: String {
         return "<\(type(of: self)) \(addresses.sorted()) / \(hostnames.sorted()))>"
     }
 }
 
-extension AddressCluster {
-    override public func isEqual(_ object: Any?) -> Bool {
-        return self.identifier == (object as? AddressCluster)?.identifier
+extension AddressCluster: Hashable {
+    public static func == (lhs: AddressCluster, rhs: AddressCluster) -> Bool {
+        return lhs.identifier == rhs.identifier
     }
 
-    public override var hash: Int {
-        return identifier.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
 }

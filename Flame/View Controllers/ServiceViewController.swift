@@ -28,7 +28,7 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
         tableView.delegate = self
         tableView.setupForAutolayout()
         tableView.registerReusableCell(SimpleCell.self)
-        tableView.selectionFollowsFocus = true
+        //tableView.selectionFollowsFocus = true
     }
 
     lazy var dataSource = ServiceDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, row in

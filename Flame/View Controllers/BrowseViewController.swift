@@ -167,10 +167,6 @@ class BrowseViewController: UIViewController {
         }
     }
 
-    override var preferredFocusEnvironments: [UIFocusEnvironment] {
-        return [tableView]
-    }
-
     @objc
     func aboutPressed() {
 #if targetEnvironment(macCatalyst)

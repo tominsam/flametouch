@@ -10,12 +10,13 @@ public class SimpleCell: UITableViewCell, Reusable {
     lazy var titleView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .label
+        $0.highlightedTextColor = .white
     }
 
     lazy var subtitleView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
-        $0.highlightedTextColor = .label
+        $0.highlightedTextColor = .white
     }
 
     lazy var titleStack = with(UIStackView(arrangedSubviews: [titleView, subtitleView])) {
@@ -33,7 +34,7 @@ public class SimpleCell: UITableViewCell, Reusable {
     public lazy var rightView = with(UILabel()) {
         $0.font = UIFont.preferredFont(forTextStyle: .body)
         $0.textColor = .secondaryLabel
-        $0.highlightedTextColor = .label
+        $0.highlightedTextColor = .white
     }
 
     lazy var outerStack = with(UIStackView(arrangedSubviews: [iconView, titleStack, rightView])) {
