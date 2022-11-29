@@ -20,13 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let serviceController = AppDelegate.instance.serviceController
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = with(CustomSplitViewController()) {
-            $0.maximumPrimaryColumnWidth = 640
-            $0.minimumPrimaryColumnWidth = 320
-            $0.preferredPrimaryColumnWidthFraction = 0.35
-            $0.primaryBackgroundStyle = .none // Or .sidebar but I hate it.
-            $0.setMasterViewController(BrowseViewController(serviceController: serviceController))
-        }
+        let browseVc = BrowseViewController(serviceController: serviceController)
+        window?.rootViewController = CustomSplitViewController(primaryViewController: browseVc)
         window?.tintColor = AppDelegate.tintColor
         window?.makeKeyAndVisible()
     }

@@ -226,7 +226,7 @@ class BrowseViewController: UIViewController {
         if let oldAddressCluster, let oldSelection = hosts.firstIndex(where: { $0.addressCluster == oldAddressCluster }) {
             tableView.selectRow(at: IndexPath(row: oldSelection, section: 0), animated: false, scrollPosition: .none)
         } else {
-            (splitViewController as? CustomSplitViewController)?.clearDetailViewController()
+            (splitViewController as? CustomSplitViewController)?.clearSecondaryViewController()
         }
         if let focusedHost = focusedHost {
             // TODO:
