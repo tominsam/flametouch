@@ -7,10 +7,11 @@ import Utils
 import Views
 
 /// View of a single host - lists the services of that host
-class HostViewController: UIViewController, UITableViewDelegate {
+class HostViewController: UIViewController, UICollectionViewDelegate {
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<HostViewController.Section, HostViewController.Row>
+
     let serviceController: ServiceController
     let addressCluster: AddressCluster
-
     let disposeBag = DisposeBag()
 
     enum Section {
@@ -23,30 +24,28 @@ class HostViewController: UIViewController, UITableViewDelegate {
         case service(Service)
     }
 
-    lazy var tableView = with(UITableView(frame: CGRect.zero, style: .insetGrouped)) { tableView in
-        tableView.delegate = self
-        tableView.setupForAutolayout()
-        tableView.registerReusableCell(SimpleCell.self)
-    }
+    lazy var collectionView = UICollectionView.createList(withHeaders: true)
 
-    lazy var dataSource = HostDiffableDataSource(tableView: tableView) { tableView, indexPath, row in
-        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-        switch row {
-        case .address(let address, let alive):
-            cell.title = address
-            cell.subtitle = nil
-            cell.accessoryType = .none
-            cell.selectionStyle = .none
-            cell.contentView.alpha = alive ? 1 : 0.3
-        case .service(let service):
-            cell.title = service.name
-            cell.subtitle = service.typeWithDomain
-            cell.accessoryType = .disclosureIndicator
-            cell.selectionStyle = .default
-            cell.contentView.alpha = service.alive ? 1 : 0.3
-        }
-        return cell
-    }
+    lazy var dataSource = DiffableDataSource.create(
+        collectionView: collectionView,
+        cellBinder: { cell, item in
+            switch item {
+            case .address(let address, let alive):
+                cell.configureWithTitle(address, vertical: false)
+                cell.contentView.alpha = alive ? 1 : 0.3
+            case .service(let service):
+                cell.configureWithTitle(service.name, subtitle: service.typeWithDomain, vertical: true)
+                cell.contentView.alpha = service.alive ? 1 : 0.3
+            }
+        }, headerTitleProvider: { section, count in
+            switch section {
+            case .addresses:
+                // TODO proper pluralization!
+                return count > 1 ? "Addresses" : "Address"
+            case .services:
+                return count > 1 ? "Services" : "Service"
+            }
+        })
 
     required init(serviceController: ServiceController, addressCluster: AddressCluster) {
         self.serviceController = serviceController
@@ -60,11 +59,12 @@ class HostViewController: UIViewController, UITableViewDelegate {
     }
 
     override func viewDidLoad() {
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        tableView.dataSource = dataSource
+        collectionView.dataSource = dataSource
+        collectionView.delegate = self
 
         serviceController.services
             .host(forAddressCluster: addressCluster)
@@ -78,38 +78,45 @@ class HostViewController: UIViewController, UITableViewDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let selected = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selected, animated: true)
+        for selected in collectionView.indexPathsForSelectedItems ?? [] {
+            collectionView.deselectItem(at: selected, animated: true)
         }
     }
 
     func updateHost(_ host: Host) {
         self.title = host.name
         var snapshot = NSDiffableDataSourceSnapshot<Section, Row>()
-        snapshot.appendSections([Section.addresses, .services])
-        snapshot.appendItems(addressCluster.sorted.map { .address($0, host.alive) }, toSection: .addresses)
-        snapshot.appendItems(host.displayServices.map { .service($0) }, toSection: .services)
+        snapshot.appendSections([.addresses])
+        snapshot.appendItems(host.addressCluster.sorted.map { .address($0, host.alive) })
+        snapshot.appendSections([.services])
+        snapshot.appendItems(host.displayServices.map { .service($0) })
         snapshot.reconfigureItems(snapshot.itemIdentifiers)
-        dataSource.apply(snapshot, animatingDifferences: tableView.frame.width > 0)
-
-        // This is handling a bug where the cell is binding to the old version of the service
-        // - STR is remove a service from a device, and it's not becoming disabled unless you
-        // manually cause a cell refresh by navigating out and in again.
-        tableView.reloadData()
+        dataSource.apply(snapshot, animatingDifferences: collectionView.frame.width > 0)
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        guard let row = dataSource.itemIdentifier(for: indexPath) else { return false }
+        switch row {
+        case .address:
+            return false
+        case .service:
+            return true
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let row = dataSource.itemIdentifier(for: indexPath) else { return }
         switch row {
         case .address:
-            tableView.deselectRow(at: indexPath, animated: true)
+            assertionFailure()
+            collectionView.deselectItem(at: indexPath, animated: true)
         case .service(let service):
             let serviceController = ServiceViewController(serviceController: serviceController, service: service)
             show(serviceController, sender: self)
         }
     }
 
-    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
+    func collectionView(_: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
         switch row {
         case .address(let address, _):
@@ -139,19 +146,4 @@ class HostViewController: UIViewController, UITableViewDelegate {
             }
         }
     }
-}
-
-class HostDiffableDataSource: UITableViewDiffableDataSource<HostViewController.Section, HostViewController.Row> {
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let count = self.tableView(tableView, numberOfRowsInSection: section)
-        switch self.sectionIdentifier(for: section) {
-        case .addresses:
-            return count > 1 ? "Addresses" : "Address"
-        case .services:
-            return count > 1 ? "Services" : "Service"
-        case .none:
-            return nil
-        }
-    }
-
 }

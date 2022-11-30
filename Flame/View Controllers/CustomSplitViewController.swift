@@ -23,7 +23,7 @@ class CustomSplitViewController: UISplitViewController {
         primaryBackgroundStyle = .none // Or .sidebar but I hate it.
         displayModeButtonVisibility = .never
         setViewController(StaticNavigationController(rootViewController: primaryViewController), for: .primary)
-        setViewController(UINavigationController(), for: .secondary)
+        setViewController(UINavigationController(rootViewController: emptyViewController), for: .secondary)
         primary.navigationBar.prefersLargeTitles = true
     }
 

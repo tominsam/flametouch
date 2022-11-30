@@ -8,7 +8,9 @@ import Views
 import SnapKit
 
 /// Shows the details of a particular service on a particular host
-class ServiceViewController: UIViewController, UITableViewDelegate {
+class ServiceViewController: UIViewController, UICollectionViewDelegate {
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<ServiceViewController.Section, ServiceViewController.Row>
+
     let serviceController: ServiceController
     let disposeBag = DisposeBag()
 
@@ -25,30 +27,21 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
         let value: String
     }
 
-    lazy var tableView = with(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
-        tableView.delegate = self
-        tableView.setupForAutolayout()
-        tableView.registerReusableCell(SimpleCell.self)
-        //tableView.selectionFollowsFocus = true
-    }
+    lazy var collectionView = UICollectionView.createList(withHeaders: true)
 
-    lazy var dataSource = ServiceDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, row in
-        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-        cell.title = row.name
-        cell.right = row.value
-        cell.contentView.alpha = self?.alive == true ? 1 : 0.3
-
-        if self?.urlFor(indexPath: indexPath) != nil {
-            // cell can be selected
-            cell.selectionStyle = .default
-            cell.rightView.textColor = AppDelegate.tintColor // can't use tintcolor as we're not attached to the table yet
-        } else {
-            cell.selectionStyle = .none
-            cell.rightView.textColor = .secondaryLabel
-        }
-
-        return cell
-    }
+    lazy var dataSource = DiffableDataSource.create(
+        collectionView: collectionView,
+        cellBinder: { [weak self] cell, item in
+            cell.configureWithTitle(item.name, subtitle: item.value, vertical: false, highlight: self?.urlFor(item: item) != nil)
+            cell.contentView.alpha = self?.alive == true ? 1 : 0.3
+        }, headerTitleProvider: { section, _ in
+            switch section {
+            case .core:
+                return NSLocalizedString("Core", comment: "Section header for core properties of a service")
+            case .data:
+                return NSLocalizedString("Data", comment: "Section header for data associated with a service")
+            }
+        })
 
     required init(serviceController: ServiceController, service: Service) {
         self.serviceController = serviceController
@@ -65,12 +58,12 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
         snapshot.appendItems([
             Row(name: NSLocalizedString("Name", comment: "Label for the name of the service"), value: service.name),
             Row(name: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"), value: service.type)
-        ], toSection: .core)
+        ])
 
         if let domain = service.domain {
             snapshot.appendItems([
                 Row(name: NSLocalizedString("Domain", comment: "Label for the domain of the service (when not local)"), value: domain)
-            ], toSection: .core)
+            ])
         }
 
         snapshot.appendItems(service.addressCluster.sorted.map { address in
@@ -82,14 +75,12 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
         ])
 
         if !service.data.isEmpty {
+            let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
             snapshot.appendSections([.data])
-            snapshot.appendItems(service.data
-                .sorted { $0.key.lowercased() < $1.key.lowercased() }
-                .map { Row(name: $0.key, value: $0.value) },
-                                 toSection: .data)
+            snapshot.appendItems(sortedData.map { Row(name: $0.key, value: $0.value) })
         }
 
-        dataSource.apply(snapshot, animatingDifferences: tableView.window != nil)
+        dataSource.apply(snapshot, animatingDifferences: collectionView.window != nil)
     }
 
     @available(*, unavailable)
@@ -98,10 +89,13 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
     }
 
     override func viewDidLoad() {
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        collectionView.dataSource = dataSource
+        collectionView.delegate = self
+
         serviceController.services
             .map { [service] hosts in
                 return hosts.serviceMatching(service: service)
@@ -116,19 +110,23 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let selected = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selected, animated: true)
+        for selected in collectionView.indexPathsForSelectedItems ?? [] {
+            collectionView.deselectItem(at: selected, animated: true)
         }
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return urlFor(indexPath: indexPath) != nil
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let url = urlFor(indexPath: indexPath) {
             AppDelegate.instance.openUrl(url, from: self)
         }
-        tableView.deselectRow(at: indexPath, animated: true)
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
 
-    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
+    func collectionView(_: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
         guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
         guard let section = dataSource.sectionIdentifier(for: indexPath.section) else { return nil }
         let url = urlFor(indexPath: indexPath)
@@ -162,11 +160,15 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
 
     func urlFor(indexPath: IndexPath) -> URL? {
         guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        if row.value == service.type {
+        return urlFor(item: row)
+    }
+
+    func urlFor(item: Row) -> URL? {
+        if item.value == service.type {
             return service.url
         }
         // return the value if it looks like it parses as a decent url
-        if let url = URL(string: row.value), url.scheme != nil, url.host != nil {
+        if let url = URL(string: item.value), url.scheme != nil, url.host != nil {
             return url
         }
         return nil
@@ -182,18 +184,4 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
         }
         build()
     }
-}
-
-class ServiceDiffableDataSource: UITableViewDiffableDataSource<ServiceViewController.Section, ServiceViewController.Row> {
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch self.sectionIdentifier(for: section) {
-        case .core:
-            return "Core"
-        case .data:
-            return "Data"
-        case .none:
-            return nil
-        }
-    }
-
 }

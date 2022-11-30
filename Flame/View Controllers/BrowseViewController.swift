@@ -9,60 +9,25 @@ import RxCocoa
 
 /// Root view of the app, renders a list of hosts on the local network
 class BrowseViewController: UIViewController {
-    let disposeBag = DisposeBag()
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, AddressCluster>
 
     let serviceController: ServiceController
-    let searchTerm = PublishSubject<String?>()
+    let disposeBag = DisposeBag()
 
-    lazy var tableView = with(UITableView(frame: .zero, style: .insetGrouped)) { tableView in
-        tableView.setupForAutolayout()
+    lazy var collectionView = UICollectionView.createList(withHeaders: false)
 
-#if !targetEnvironment(macCatalyst)
-        tableView.refreshControl = with(UIRefreshControl()) { refresh in
-            refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
-        }
-#endif
-    }
-
-    lazy var dataSource = UITableViewDiffableDataSource<Int, AddressCluster>(tableView: tableView) { [weak self] tableView, indexPath, addressCluster in
-        let cell: SimpleCell = tableView.dequeueReusableCell(for: indexPath)
-        guard let host = self?.serviceController.host(for: addressCluster) else { return cell }
-        cell.title = host.name
-        cell.subtitle = host.subtitle
-        cell.accessoryType = .disclosureIndicator
-        cell.selectionStyle = .default
-        cell.contentView.alpha = host.alive ? 1 : 0.3
-        return cell
-    }
+    lazy var dataSource = DiffableDataSource.create(
+        collectionView: collectionView,
+        cellBinder: { [weak self] cell, item in
+            guard let host = self?.serviceController.host(for: item) else { return }
+            cell.configureWithTitle(host.name, subtitle: host.subtitle)
+        })
 
     let networkOverlay = WifiView()
 
     lazy var searchController = with(UISearchController()) { searchController in
-        // Don't move the search bar over the navigation what searching
+        // Don't move the search bar over the navigation when searching
         searchController.hidesNavigationBarDuringPresentation = false
-        // don't dim when searching
-        searchController.obscuresBackgroundDuringPresentation = false
-        // align with the insetgrouped bubbles
-        searchController.searchBar.layoutMargins = tableView.layoutMargins
-        // don't draw background or borders behind bubbles - fits in with table better
-        searchController.searchBar.searchBarStyle = .default
-        // Both background setters are needed to keep the right color
-        // but also have the bar be opaque when focussed.
-        searchController.searchBar.backgroundColor = .systemGroupedBackground
-        searchController.searchBar.backgroundImage = UIImage()
-        // Match search bar background and corner radius to the cells
-        searchController.searchBar.searchTextField.backgroundColor = .secondarySystemGroupedBackground
-        searchController.searchBar.searchTextField.layer.cornerRadius = 10
-        searchController.searchBar.searchTextField.layer.masksToBounds = true
-        // Align icon to the contents of the cells
-        searchController.searchBar.setPositionAdjustment(UIOffset(horizontal: 6, vertical: 0), for: .search)
-        searchController.searchBar.searchTextPositionAdjustment = UIOffset(horizontal: 2, vertical: 0)
-
-        searchController.searchBar.rx.text
-            .trimmedOrNil
-            .distinctUntilChanged()
-            .subscribe(searchTerm)
-            .disposed(by: disposeBag)
     }
 
     init(serviceController: ServiceController) {
@@ -82,13 +47,8 @@ class BrowseViewController: UIViewController {
         title = NSLocalizedString("Flame", comment: "The name of the application")
 #endif
 
-        // This causes the search controller to treat _this_ view as the "presentation context"
-        // The effective upshot of this is that the search bar is pushed off screen on iPhone when
-        // we tap a row, rather than staying attached to the split view controller.
-        definesPresentationContext = true
-
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { make in
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
         view.addSubview(networkOverlay)
@@ -96,11 +56,16 @@ class BrowseViewController: UIViewController {
             make.edges.equalToSuperview()
         }
 
-        tableView.tableHeaderView = searchController.searchBar
-        tableView.dataSource = dataSource
-        tableView.delegate = self
+        collectionView.dataSource = dataSource
+        collectionView.delegate = self
 
-        tableView.registerReusableCell(SimpleCell.self)
+#if !targetEnvironment(macCatalyst)
+        collectionView.refreshControl = with(UIRefreshControl()) { refresh in
+            refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
+        }
+#endif
+
+        navigationItem.searchController = searchController
 
         // Suppress info button on mac because there's an about menu, but catalyst
         // does want an explicit refresh button.
@@ -143,12 +108,15 @@ class BrowseViewController: UIViewController {
             .bind(to: self.networkOverlay.rx.isHidden)
             .disposed(by: disposeBag)
 
+        // Changing search text searches
+        let searchTerm = searchController.searchBar.rx.text
+            .trimmedOrNil
+            .startWith(nil)
+            .distinctUntilChanged()
+
         // Update the diffable datasource with the latest services, filtering by search term
         Observable
-            .combineLatest(
-                serviceController.services,
-                searchTerm.startWith(nil)
-            )
+            .combineLatest(serviceController.services, searchTerm)
             .map { (hosts, searchTerm) in
                 if let searchTerm {
                     return hosts.filter { $0.matches(search: searchTerm) }
@@ -157,7 +125,7 @@ class BrowseViewController: UIViewController {
                 }
             }
             .observe(on: MainScheduler.instance)
-            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
+            .debounce(.milliseconds(250), scheduler: MainScheduler.instance)
             .subscribe { [weak self] hosts in
                 self?.hostsChanged(to: hosts)
             }
@@ -166,24 +134,17 @@ class BrowseViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if let selected = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: selected, animated: true)
+        for selected in collectionView.indexPathsForSelectedItems ?? [] {
+            collectionView.deselectItem(at: selected, animated: true)
         }
     }
 
     @objc
     func aboutPressed() {
-#if targetEnvironment(macCatalyst)
-        // About screen gets a dedicated window
-        let userActivity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
-        UIApplication.shared.requestSceneSessionActivation(nil, userActivity: userActivity, options: nil, errorHandler: nil)
-#else
-        // About screen gets a modal
         let about = AboutViewController()
         about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
         let vc = UINavigationController(rootViewController: about)
         present(vc, animated: true, completion: nil)
-#endif
     }
 
     @objc
@@ -202,42 +163,22 @@ class BrowseViewController: UIViewController {
     }
 
     func hostsChanged(to hosts: [Host]) {
-        // preserve current selection if any
-        let oldAddressCluster: AddressCluster?
-        if let indexPath = tableView.indexPathForSelectedRow {
-            oldAddressCluster = dataSource.itemIdentifier(for: indexPath)
-        } else {
-            oldAddressCluster = nil
-        }
-
-        var focusedHost: IndexPath?
-        if let focusedCell = tableView.visibleCells.first(where: { $0.isFocused }) {
-            focusedHost = tableView.indexPath(for: focusedCell)
-        }
-
         var snapshot = NSDiffableDataSourceSnapshot<Int, AddressCluster>()
         snapshot.appendSections([0])
-        snapshot.appendItems(hosts.map { $0.addressCluster }, toSection: 0)
+        snapshot.appendItems(hosts.map { $0.addressCluster })
         // rebind _everything_, because hosts can change even if the address list did not
-        snapshot.reconfigureItems(hosts.map { $0.addressCluster })
-        let animated = tableView.window != nil && !snapshot.itemIdentifiers.isEmpty && !dataSource.snapshot().itemIdentifiers.isEmpty
+        snapshot.reconfigureItems(snapshot.itemIdentifiers)
+        // Don't animate if we're not attached to a window (not laid out) and don't
+        // animate the transition to and from empty (because refresh looks bad)
+        let animated = collectionView.window != nil && !snapshot.itemIdentifiers.isEmpty && !dataSource.snapshot().itemIdentifiers.isEmpty
         dataSource.apply(snapshot, animatingDifferences: animated)
-
-        if let oldAddressCluster, let oldSelection = hosts.firstIndex(where: { $0.addressCluster == oldAddressCluster }) {
-            tableView.selectRow(at: IndexPath(row: oldSelection, section: 0), animated: false, scrollPosition: .none)
-        } else {
-            (splitViewController as? CustomSplitViewController)?.clearSecondaryViewController()
-        }
-        if let focusedHost = focusedHost {
-            // TODO:
-            tableView.cellForRow(at: focusedHost)?.becomeFirstResponder()
-        }
     }
 
     @objc func handleTableRefresh(sender: UIControl) {
         // Fake some delays on this because it looks unnatural if things
         // are instant. Refresh the list, then hide the spinner a second later.
         serviceController.restart()
+        (splitViewController as? CustomSplitViewController)?.clearSecondaryViewController()
         if let refresh = sender as? UIRefreshControl {
             // iOS devices have pull-to-refresh that we need to stop
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -247,16 +188,16 @@ class BrowseViewController: UIViewController {
     }
 }
 
-extension BrowseViewController: UITableViewDelegate {
+extension BrowseViewController: UICollectionViewDelegate {
 
-    func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let addressCluster = dataSource.itemIdentifier(for: indexPath) else { return }
         let vc = HostViewController(serviceController: serviceController, addressCluster: addressCluster)
         show(vc, sender: self)
     }
 
-    func tableView(_: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
-        // capture asap in case the tableview moves under us
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        // capture asap in case the rows move under us
         guard let addressCluster = dataSource.itemIdentifier(for: indexPath) else { return nil }
         guard let host = serviceController.host(for: addressCluster) else { return nil }
 
@@ -269,12 +210,6 @@ extension BrowseViewController: UITableViewDelegate {
             }
             return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
         }
-    }
-
-    func tableView(_: UITableView, viewForHeaderInSection _: Int) -> UIView? {
-        // returning any view at all here means there'll be space between the first cell
-        // and the search bar.
-        return UIView()
     }
 }
 
