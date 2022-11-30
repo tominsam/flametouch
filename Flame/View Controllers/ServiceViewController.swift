@@ -5,6 +5,7 @@ import ServiceDiscovery
 import UIKit
 import Utils
 import Views
+import SnapKit
 
 /// Shows the details of a particular service on a particular host
 class ServiceViewController: UIViewController, UITableViewDelegate {
@@ -98,7 +99,9 @@ class ServiceViewController: UIViewController, UITableViewDelegate {
 
     override func viewDidLoad() {
         view.addSubview(tableView)
-        tableView.pinEdgesTo(view: view)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         serviceController.services
             .map { [service] hosts in
                 return hosts.serviceMatching(service: service)

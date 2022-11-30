@@ -61,7 +61,9 @@ class HostViewController: UIViewController, UITableViewDelegate {
 
     override func viewDidLoad() {
         view.addSubview(tableView)
-        tableView.pinEdgesTo(view: view)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         tableView.dataSource = dataSource
 
         serviceController.services

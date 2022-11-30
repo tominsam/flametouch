@@ -1,6 +1,7 @@
 // Copyright 2019 Thomas Insam. All rights reserved.
 
 import UIKit
+import SnapKit
 
 /// Renders the "connect to wifi" messag
 public class WifiView: UIView {
@@ -22,16 +23,16 @@ public class WifiView: UIView {
         subtitleView.text = NSLocalizedString("Connect to a WiFi network to see local services.", comment: "Subtitle for a screen displayed when there is no WiFi network")
 
         let guide = readableContentGuide
-        addSubviewWithConstraints(titleView, [
-            titleView.topAnchor.constraint(equalTo: guide.topAnchor, constant: 180),
-            titleView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-            titleView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-        ])
-        addSubviewWithConstraints(subtitleView, [
-            subtitleView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 40),
-            subtitleView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-            subtitleView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-        ])
+        addSubview(titleView)
+        titleView.snp.makeConstraints { make in
+            make.top.equalTo(guide).inset(180)
+            make.leading.trailing.equalTo(guide)
+        }
+        addSubview(subtitleView)
+        subtitleView.snp.makeConstraints { make in
+            make.top.equalTo(titleView.snp.bottom).offset(40)
+            make.leading.trailing.equalTo(guide)
+        }
     }
 
     @available(*, unavailable)

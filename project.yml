@@ -6,6 +6,9 @@ packages:
   RxSwift:
     url: https://github.com/ReactiveX/RxSwift.git
     from: 6.5.0
+  SnapKit:
+    url: https://github.com/SnapKit/SnapKit.git
+    from: 5.0.1
 
 targets:
 
@@ -88,6 +91,7 @@ targets:
       - path: ".swiftlint.yml"
         buildPhase: none
     dependencies:
+      - package: SnapKit
       - package: RxSwift
       - package: RxSwift
         product: RxCocoa

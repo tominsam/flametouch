@@ -87,8 +87,14 @@ class BrowseViewController: UIViewController {
         // we tap a row, rather than staying attached to the split view controller.
         definesPresentationContext = true
 
-        view.addSubviewWithInsets(tableView)
-        view.addSubviewWithInsets(networkOverlay)
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        view.addSubview(networkOverlay)
+        networkOverlay.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         tableView.tableHeaderView = searchController.searchBar
         tableView.dataSource = dataSource
@@ -131,12 +137,10 @@ class BrowseViewController: UIViewController {
             .map { (state, noservices) in
                 let nowifi = state.currentConnectionType != .wifi
                 let showOverlay = nowifi && noservices
-                return showOverlay
+                return !showOverlay
             }
             .observe(on: MainScheduler.instance)
-            .subscribe { [weak self] showOverlay in
-                self?.networkOverlay.isHidden = !showOverlay
-            }
+            .bind(to: self.networkOverlay.rx.isHidden)
             .disposed(by: disposeBag)
 
         // Update the diffable datasource with the latest services, filtering by search term

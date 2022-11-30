@@ -3,6 +3,7 @@
 import SafariServices
 import UIKit
 import WebKit
+import SnapKit
 
 class AboutViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
@@ -16,7 +17,9 @@ class AboutViewController: UIViewController, WKNavigationDelegate {
         webView.backgroundColor = .systemBackground
 
         view.addSubview(webView)
-        webView.pinEdgesTo(view: view)
+        webView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
 
     func webView(_: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
