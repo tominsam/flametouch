@@ -1,6 +1,7 @@
 // Copyright 2020 Thomas Insam. All rights reserved.
 
 import UIKit
+import Utils
 
 extension NetService {
     private var txtData: [(key: String, value: String)] {
@@ -35,25 +36,50 @@ extension NetService {
 }
 
 // Get the local ip addresses used by this node
+// "The NSData object [..] contains an appropriate sockaddr structure that you can
+// use to connect to the socket. The exact type of this structure depends on the
+// service to which you are connecting."
 private func getIFAddress(_ data: Data) -> String? {
-    let hostname = UnsafeMutablePointer<Int8>.allocate(capacity: Int(INET6_ADDRSTRLEN))
-    defer {
-        hostname.deinitialize(count: Int(INET6_ADDRSTRLEN))
+    let string = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> String? in
+        let family = bytes.withMemoryRebound(to: sockaddr.self) { (sa) -> Int32 in
+            return Int32(sa.first?.sa_family ?? -0)
+        }
+        switch family {
+        case AF_INET:
+            return bytes.withMemoryRebound(to: sockaddr_in.self) { (sa) -> String? in
+                guard var addr = sa.first?.sin_addr else { return nil }
+                let size = Int(INET_ADDRSTRLEN)
+                let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
+                defer { buffer.deallocate() }
+                if let cString = inet_ntop(family, &addr, buffer, socklen_t(size)) {
+                    return String(cString: cString)
+                } else {
+                    ELog("inet_ntop errno \(errno) from \(data)")
+                    return nil
+                }
+            }
+        case AF_INET6:
+            return bytes.withMemoryRebound(to: sockaddr_in6.self) { (sa) -> String? in
+                guard var addr = sa.first?.sin6_addr else { return nil }
+                let size = Int(INET6_ADDRSTRLEN)
+                let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
+                defer { buffer.deallocate() }
+                if let cString = inet_ntop(family, &addr, buffer, socklen_t(size)) {
+                    return String(cString: cString)
+                } else {
+                    ELog("inet_ntop errno \(errno) from \(data)")
+                    return nil
+                }
+            }
+        default:
+            ELog("unknown family \(family)")
+            return nil
+        }
     }
 
-    _ = getnameinfo(
-        (data as NSData).bytes.bindMemory(to: sockaddr.self, capacity: data.count),
-        socklen_t(data.count),
-        hostname,
-        socklen_t(INET6_ADDRSTRLEN),
-        nil,
-        0,
-        NI_NUMERICHOST
-    )
+    guard let string else { return nil }
 
-    let string = String(cString: hostname)
-
-    // link local addresses don't cound
+    // link local addresses don't count
     if string.hasPrefix("fe80:") || string.hasPrefix("127.") || string == "::1" {
         return nil
     }
