@@ -107,8 +107,9 @@ targets:
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
-        CFBundleShortVersionString: "80"
-        CFBundleVersion: "3.0.0"
+        # I fucked up and got these backwards once and now every version must be >80
+        CFBundleShortVersionString: "103.1.0"
+        CFBundleVersion: "90"
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
         UIViewControllerBasedStatusBarAppearance: true
