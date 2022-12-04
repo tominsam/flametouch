@@ -23,7 +23,7 @@ var globalLookup = [String: AddressCluster]()
 // and vends the existing cluster that contains any of those addresses, adding them to the cluster,
 // or creates a new cluster with those addresses.
 public class AddressCluster {
-    private var identifier = UUID()
+    var identifier = UUID()
 
     var addresses: Set<String>
     var hostnames: Set<String>

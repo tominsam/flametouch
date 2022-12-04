@@ -44,6 +44,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
             browser.reset()
+            services.onNext([])
         }
         browser.start()
         self.stoppedDate = nil
@@ -87,7 +88,9 @@ extension ServiceControllerImpl: ServiceBrowserDelegate {
         // Collect services into hosts
         let groups = Dictionary(grouping: services + oldServices, by: { $0.addressCluster })
         let hosts = groups.map { Host(services: Set($0.value), addressCluster: $0.key) }
-        return hosts.sorted { $0.name.lowercased() < $1.name.lowercased() }
+        return hosts.sorted {
+            ($0.name.lowercased(), $0.addressCluster.identifier.uuidString) < ($1.name.lowercased(), $1.addressCluster.identifier.uuidString)
+        }
     }
 }
 
