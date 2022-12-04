@@ -6,16 +6,31 @@ import Utils
 
 extension UICollectionViewListCell {
 
+    static func font(legible: Bool) -> UIFont {
+        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
+        if legible {
+            descriptor = descriptor.addingAttributes([
+                .featureSettings: [[
+                    UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
+                    UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
+                ]]
+            ])
+        }
+        return UIFont(descriptor: descriptor, size: 0)
+    }
+
     public func configureWithTitle(_ title: String?, subtitle: String? = nil, vertical: Bool = true, highlight: Bool = false) {
         configurationUpdateHandler = { cell, state in
             guard let cell = cell as? UICollectionViewListCell else { return }
             var config = cell.defaultContentConfiguration()
 
-            config.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
+            // Use more legible font glyphs if we're an address cell
+            config.textProperties.font = Self.font(legible: subtitle == nil)
             config.textProperties.color = .label
             config.textProperties.numberOfLines = 1
 
-            config.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .body)
+            // Value is _always_ more legible, because it generally is more machine-readable
+            config.secondaryTextProperties.font = Self.font(legible: true)
             config.secondaryTextProperties.color = highlight ? cell.tintColor : .secondaryLabel
             config.secondaryTextProperties.numberOfLines = 1
 
