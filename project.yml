@@ -90,6 +90,8 @@ targets:
         buildPhase: none
       - path: ".swiftlint.yml"
         buildPhase: none
+      - path: "Flame.entitlements"
+        buildPhase: none
     dependencies:
       - package: SnapKit
       - package: RxSwift
@@ -108,8 +110,8 @@ targets:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
         # I fucked up and got these backwards once and now every version must be >80
-        CFBundleShortVersionString: "103.1.0"
-        CFBundleVersion: "90"
+        CFBundleShortVersionString: "103.1.1"
+        CFBundleVersion: "91"
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
         UIViewControllerBasedStatusBarAppearance: true

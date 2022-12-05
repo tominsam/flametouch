@@ -31,7 +31,7 @@ public class AddressCluster {
     /// Return a new or existing address cluster for a given set of IP addresses. Any cluster that
     /// contains any of the provided addresses will be extended to contain all of the provided addresses
     /// (and hostnames) and returned, otherwise we'll create a new cluster.
-    public static func from(addresses: any Collection<String>, hostnames: any Collection<String>) -> AddressCluster {
+    public static func from(addresses: Set<String>, hostnames: Set<String>) -> AddressCluster {
         // Look up the address in the global map
         var existing = Set(addresses.compactMap({ globalLookup[$0] }))
         if existing.isEmpty {
@@ -46,7 +46,7 @@ public class AddressCluster {
         let primary = existing.first! // safe because we inserted a new cluster in this case
 
         for cluster in existing {
-            cluster.add(addresses: allAddresses, hostnames: allHosts)
+            cluster.add(addresses: Set(allAddresses), hostnames: Set(allHosts))
             cluster.identifier = primary.identifier
         }
 
@@ -65,12 +65,12 @@ public class AddressCluster {
         globalLookup.removeAll()
     }
 
-    private init(withAddresses addresses: any Collection<String>, hostnames: any Collection<String>) {
+    private init(withAddresses addresses: Set<String>, hostnames: Set<String>) {
         self.addresses = Set(addresses)
         self.hostnames = Set(hostnames)
     }
 
-    private func add(addresses: any Collection<String>, hostnames: any Collection<String>) {
+    private func add(addresses: Set<String>, hostnames: Set<String>) {
         self.addresses.formUnion(addresses)
         self.hostnames.formUnion(hostnames)
     }
