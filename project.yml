@@ -82,6 +82,7 @@ targets:
       release:
     sources:
       - path: "Flame"
+      - path: "Translation"
       - path: "README.md"
         buildPhase: none
       - path: "CHANGELOG.md"

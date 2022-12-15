@@ -2,6 +2,7 @@ Pods
 Carthage
 xcuserdata
 DerivedData
+build
 
 fastlane/report.xml
 fastlane/Preview.html
