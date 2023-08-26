@@ -1,0 +1,85 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%lld Addresses" : {
+      "comment" : "Title of section containing addresses",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Address"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld Addresses"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld Services" : {
+      "comment" : "Title of section containing services",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Service"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld Services"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Address" : {
+      "comment" : "Label for the network address of the service"
+    },
+    "Core" : {
+      "comment" : "Section header for core properties of a service"
+    },
+    "Data" : {
+      "comment" : "Section header for data associated with a service"
+    },
+    "Domain" : {
+      "comment" : "Label for the domain of the service (when not local)"
+    },
+    "Export…" : {
+      "comment" : "Menu item to export network data"
+    },
+    "Flame" : {
+      "comment" : "The name of the application"
+    },
+    "Hosts" : {
+      "comment" : "Title for a list of hosts (computers on the network)"
+    },
+    "Name" : {
+      "comment" : "Label for the name of the service"
+    },
+    "Port" : {
+      "comment" : "Label for the network port of the service"
+    },
+    "Refresh" : {
+      "comment" : "Menu item to refresh network data"
+    },
+    "Type" : {
+      "comment" : "Label for the type of the service (eg _http._tcp)"
+    }
+  },
+  "version" : "1.0"
+}

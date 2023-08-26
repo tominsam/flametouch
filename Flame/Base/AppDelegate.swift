@@ -41,7 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     override func buildMenu(with builder: UIMenuBuilder) {
         let refreshCommand = UIKeyCommand(
-            title: NSLocalizedString("Refresh", comment: "Menu item to refresh network data"),
+            title: String(localized: "Refresh", comment: "Menu item to refresh network data"),
             image: nil,
             action: #selector(BrowseViewController.handleTableRefresh(sender:)),
             input: "R",
@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
 
         let exportCommand = UIKeyCommand(
-            title: NSLocalizedString("Export…", comment: "Menu item to export network data"),
+            title: String(localized: "Export…", comment: "Menu item to export network data"),
             image: nil,
             action: #selector(CustomSplitViewController.saveExportedData),
             input: "E",

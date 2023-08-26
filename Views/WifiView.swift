@@ -15,15 +15,15 @@ public class WifiView: UIView {
         titleView.font = UIFont.preferredFont(forTextStyle: .title1)
         titleView.textAlignment = .center
         titleView.numberOfLines = 0
-        titleView.text = NSLocalizedString("No wireless network found", comment: "Title for a screen displayed when there is no WiFi network")
+        titleView.text = String(localized: "No wireless network found", comment: "Title for a screen displayed when there is no WiFi network")
 
         subtitleView.textAlignment = .center
         subtitleView.numberOfLines = 0
         subtitleView.font = UIFont.preferredFont(forTextStyle: .title2)
 #if targetEnvironment(macCatalyst)
-        subtitleView.text = NSLocalizedString("Connect to a WiFi network to see local services.", comment: "Subtitle for a screen displayed when there is no WiFi network")
+        subtitleView.text = String(localized: "Connect to a WiFi network to see local services.", comment: "Subtitle for a screen displayed when there is no WiFi network")
 #else
-        subtitleView.text = NSLocalizedString("Connect to a WiFi or Wired network to see local services.", comment: "Subtitle for a screen displayed when there is no local network")
+        subtitleView.text = String(localized: "Connect to a WiFi or Wired network to see local services.", comment: "Subtitle for a screen displayed when there is no local network")
 #endif
         let guide = readableContentGuide
         addSubview(titleView)

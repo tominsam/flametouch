@@ -1,4 +1,0 @@
-#!/bin/bash -ex
-rm -rf Translation/en.lproj
-mkdir -p Translation/en.lproj
-find . -name '*.swift' -print0 | xargs -0 genstrings -o Translation/en.lproj

@@ -43,9 +43,9 @@ class BrowseViewController: UIViewController {
 
     override func viewDidLoad() {
 #if targetEnvironment(macCatalyst)
-        title = NSLocalizedString("Hosts", comment: "Title for a list of hosts (computers on the network)")
+        title = String(localized: "Hosts", comment: "Title for a list of hosts (computers on the network)")
 #else
-        title = NSLocalizedString("Flame", comment: "The name of the application")
+        title = String(localized: "Flame", comment: "The name of the application")
 #endif
 
         view.addSubview(collectionView)

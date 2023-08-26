@@ -40,10 +40,9 @@ class HostViewController: UIViewController, UICollectionViewDelegate {
         }, headerTitleProvider: { section, count in
             switch section {
             case .addresses:
-                // TODO proper pluralization!
-                return count > 1 ? "Addresses" : "Address"
+                return String(localized: "\(count) Addresses", comment: "Title of section containing addresses")
             case .services:
-                return count > 1 ? "Services" : "Service"
+                return String(localized: "\(count) Services", comment: "Title of section containing services")
             }
         })
 

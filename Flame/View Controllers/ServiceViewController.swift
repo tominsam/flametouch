@@ -38,9 +38,9 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
         }, headerTitleProvider: { section, _ in
             switch section {
             case .core:
-                return NSLocalizedString("Core", comment: "Section header for core properties of a service")
+                return String(localized: "Core", comment: "Section header for core properties of a service")
             case .data:
-                return NSLocalizedString("Data", comment: "Section header for data associated with a service")
+                return String(localized: "Data", comment: "Section header for data associated with a service")
             }
         })
 
@@ -57,22 +57,22 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
         snapshot.appendSections([.core])
 
         snapshot.appendItems([
-            Row(name: NSLocalizedString("Name", comment: "Label for the name of the service"), value: service.name),
-            Row(name: NSLocalizedString("Type", comment: "Label for the type of the service (eg _http._tcp)"), value: service.type)
+            Row(name: String(localized: "Name", comment: "Label for the name of the service"), value: service.name),
+            Row(name: String(localized: "Type", comment: "Label for the type of the service (eg _http._tcp)"), value: service.type)
         ])
 
         if let domain = service.domain {
             snapshot.appendItems([
-                Row(name: NSLocalizedString("Domain", comment: "Label for the domain of the service (when not local)"), value: domain)
+                Row(name: String(localized: "Domain", comment: "Label for the domain of the service (when not local)"), value: domain)
             ])
         }
 
         snapshot.appendItems(service.addressCluster.sorted.map { address in
-            Row(name: NSLocalizedString("Address", comment: "Label for the network address of the service"), value: address)
+            Row(name: String(localized: "Address", comment: "Label for the network address of the service"), value: address)
         })
 
         snapshot.appendItems([
-            Row(name: NSLocalizedString("Port", comment: "Label for the network port of the service"), value: String(service.port))
+            Row(name: String(localized: "Port", comment: "Label for the network port of the service"), value: String(service.port))
         ])
 
         if !service.data.isEmpty {
