@@ -32,8 +32,9 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
     lazy var dataSource = DiffableDataSource.create(
         collectionView: collectionView,
         cellBinder: { [weak self] cell, item in
-            cell.configureWithTitle(item.name, subtitle: item.value, vertical: false, highlight: self?.urlFor(item: item) != nil)
-            cell.contentView.alpha = self?.alive == true ? 1 : 0.3
+            guard let self else { return }
+            cell.configureWithTitle(item.name, subtitle: item.value, vertical: false, highlight: urlFor(item: item) != nil)
+            cell.contentView.alpha = alive == true ? 1 : 0.3
         }, headerTitleProvider: { section, _ in
             switch section {
             case .core:
@@ -103,7 +104,8 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
             .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(on: MainScheduler.instance)
             .subscribe { [weak self] service in
-                self?.serviceChanged(to: service)
+                guard let self else { return }
+                serviceChanged(to: service)
             }
             .disposed(by: disposeBag)
     }
@@ -132,7 +134,6 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
         let url = urlFor(indexPath: indexPath)
 
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self = self else { return nil }
 
             var actions = section == .core ? [
                 UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in

@@ -71,7 +71,8 @@ class HostViewController: UIViewController, UICollectionViewDelegate {
             .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
             .observe(on: MainScheduler.instance)
             .subscribe { [weak self] host in
-                self?.updateHost(host)
+                guard let self else { return }
+                updateHost(host)
             }
             .disposed(by: disposeBag)
     }
@@ -84,7 +85,7 @@ class HostViewController: UIViewController, UICollectionViewDelegate {
     }
 
     func updateHost(_ host: Host) {
-        self.title = host.name
+        title = host.name
         var snapshot = NSDiffableDataSourceSnapshot<Section, Row>()
         snapshot.appendSections([.addresses])
         snapshot.appendItems(host.addressCluster.sorted.map { .address($0, host.alive) })

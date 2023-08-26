@@ -19,7 +19,8 @@ class BrowseViewController: UIViewController {
     lazy var dataSource = DiffableDataSource.create(
         collectionView: collectionView,
         cellBinder: { [weak self] cell, item in
-            guard let host = self?.serviceController.host(for: item) else { return }
+            guard let self else { return }
+            guard let host = serviceController.host(for: item) else { return }
             cell.configureWithTitle(host.name, subtitle: host.subtitle)
         })
 
@@ -94,7 +95,7 @@ class BrowseViewController: UIViewController {
         // Watch network state and show information about needing wifi when
         // we're not on wifi and there are no services.
         networkOverlay.isHidden = true
-        Observable
+        RxSwift.Observable
             .combineLatest(
                 NetworkMonitor.shared.state,
                 serviceController.services.map { $0.isEmpty }
@@ -105,7 +106,7 @@ class BrowseViewController: UIViewController {
                 return !showOverlay
             }
             .observe(on: MainScheduler.instance)
-            .bind(to: self.networkOverlay.rx.isHidden)
+            .bind(to: networkOverlay.rx.isHidden)
             .disposed(by: disposeBag)
 
         // Changing search text searches
@@ -115,7 +116,7 @@ class BrowseViewController: UIViewController {
             .distinctUntilChanged()
 
         // Update the diffable datasource with the latest services, filtering by search term
-        Observable
+        RxSwift.Observable
             .combineLatest(serviceController.services, searchTerm)
             .map { (hosts, searchTerm) in
                 if let searchTerm {
@@ -127,7 +128,8 @@ class BrowseViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .debounce(.milliseconds(250), scheduler: MainScheduler.instance)
             .subscribe { [weak self] hosts in
-                self?.hostsChanged(to: hosts)
+                guard let self else { return }
+                hostsChanged(to: hosts)
             }
             .disposed(by: disposeBag)
     }
@@ -214,8 +216,8 @@ extension BrowseViewController: UICollectionViewDelegate {
 }
 
 extension ObservableType where Element == String? {
-    var trimmedOrNil: Observable<String?> {
-        return self.map { (text: String?) -> String? in
+    var trimmedOrNil: RxSwift.Observable<String?> {
+        return map { (text: String?) -> String? in
             let t = text?.trimmingCharacters(in: .whitespacesAndNewlines)
             return t?.isEmpty == false ? t : nil
         }

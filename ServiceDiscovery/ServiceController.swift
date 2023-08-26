@@ -60,8 +60,8 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         stop()
         browser.reset()
         services.onNext([])
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            self?.start()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
+            start()
         }
     }
 

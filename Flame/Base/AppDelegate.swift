@@ -105,8 +105,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if serviceRefreshTimer == nil {
             serviceRefreshTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
                 ELog("tick")
-                self?.serviceController.stop()
-                self?.serviceController.start()
+                guard let self else { return }
+                serviceController.stop()
+                serviceController.start()
             }
         }
     }
