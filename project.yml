@@ -28,6 +28,7 @@ targets:
         name: "Views"
     dependencies:
       - target: Utils
+      - package: SnapKit
 
   ServiceDiscovery:
     name: ServiceDiscovery
