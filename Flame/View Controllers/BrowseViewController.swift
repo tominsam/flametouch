@@ -54,7 +54,7 @@ class BrowseViewController: UIViewController {
         }
         view.addSubview(networkOverlay)
         networkOverlay.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.edges.equalTo(view.layoutMarginsGuide)
         }
 
         collectionView.dataSource = dataSource
