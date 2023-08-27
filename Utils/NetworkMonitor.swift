@@ -2,7 +2,7 @@
 
 import Foundation
 import Network
-import RxSwift
+import Combine
 
 // https://digitalbunker.dev/native-network-monitoring-in-swift/
 
@@ -44,7 +44,7 @@ public final class NetworkMonitor {
 
     public static let shared = NetworkMonitor()
 
-    public lazy var state: Observable<NetworkState> = networkEvents.asObservable()
+    public lazy var state = PassthroughSubject.emittingValues(from: networkEvents).eraseToAnyPublisher()
 
     // MARK: - Private
 

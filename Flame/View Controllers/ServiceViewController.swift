@@ -1,18 +1,18 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import RxSwift
 import ServiceDiscovery
 import UIKit
 import Utils
 import Views
 import SnapKit
+import Combine
 
 /// Shows the details of a particular service on a particular host
 class ServiceViewController: UIViewController, UICollectionViewDelegate {
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<ServiceViewController.Section, ServiceViewController.Row>
 
     let serviceController: ServiceController
-    let disposeBag = DisposeBag()
+    var cancellables = Set<AnyCancellable>()
 
     var service: Service
     var alive = true
@@ -97,17 +97,17 @@ class ServiceViewController: UIViewController, UICollectionViewDelegate {
         collectionView.dataSource = dataSource
         collectionView.delegate = self
 
-        serviceController.services
+        serviceController.clusters
             .map { [service] hosts in
                 return hosts.serviceMatching(service: service)
             }
-            .throttle(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(on: MainScheduler.instance)
-            .subscribe { [weak self] service in
+            .throttle(for: 0.300, scheduler: DispatchQueue.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] service in
                 guard let self else { return }
                 serviceChanged(to: service)
             }
-            .disposed(by: disposeBag)
+            .store(in: &cancellables)
     }
 
     override func viewDidAppear(_ animated: Bool) {

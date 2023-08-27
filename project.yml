@@ -3,9 +3,6 @@ name: Flame
 options:
   bundleIdPrefix: org.jerakeen
 packages:
-  RxSwift:
-    url: https://github.com/ReactiveX/RxSwift.git
-    from: 6.5.0
   SnapKit:
     url: https://github.com/SnapKit/SnapKit.git
     from: 5.0.1
@@ -20,8 +17,6 @@ targets:
     sources:
       - path: "Utils"
         name: "Utils"
-    dependencies:
-      - package: RxSwift
 
   Views:
     name: Views
@@ -33,9 +28,6 @@ targets:
         name: "Views"
     dependencies:
       - target: Utils
-      - package: RxSwift
-      - package: RxSwift
-        product: RxCocoa
 
   ServiceDiscovery:
     name: ServiceDiscovery
@@ -46,7 +38,6 @@ targets:
       - path: "ServiceDiscovery"
         name: "ServiceDiscovery"
     dependencies:
-      - package: RxSwift
       - target: Utils
 
   ServiceDiscoveryTests:
@@ -95,9 +86,6 @@ targets:
         buildPhase: none
     dependencies:
       - package: SnapKit
-      - package: RxSwift
-      - package: RxSwift
-        product: RxCocoa
       - target: ServiceDiscovery
       - target: Utils
       - target: Views

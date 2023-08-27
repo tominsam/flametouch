@@ -1,11 +1,11 @@
 // Copyright 2021 Thomas Insam <tom@movieos.org>
 
 import Foundation
-import RxSwift
 import Utils
+import Combine
 
 public protocol ServiceController {
-    var services: BehaviorSubject<[Host]> { get }
+    var clusters: CurrentValueSubject<[Host], Never> { get }
     func start()
     func restart()
     func stop()
@@ -20,7 +20,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         private static let maxStopTime: TimeInterval = 180
     #endif
 
-    public var services = BehaviorSubject<[Host]>(value: [])
+    public var clusters = CurrentValueSubject<[Host], Never>([])
 
     private let browser: ServiceBrowser
 
@@ -44,7 +44,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
             browser.reset()
-            services.onNext([])
+            clusters.value = []
         }
         browser.start()
         self.stoppedDate = nil
@@ -59,25 +59,26 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     public func restart() {
         stop()
         browser.reset()
-        services.onNext([])
+        clusters.value = []
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
             start()
         }
     }
 
     public func host(for addressCluster: AddressCluster) -> Host? {
-        return (try? services.value())?.first { $0.addressCluster == addressCluster }
+        return clusters.value.first { $0.addressCluster == addressCluster }
     }
 
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
     func serviceBrowser(_: ServiceBrowser, didChangeServices services: Set<Service>) {
-        self.services.onNext(groupServices(services))
+        let hosts = groupServices(services)
+        self.clusters.value = hosts
     }
 
     func groupServices(_ services: Set<Service>) -> [Host] {
-        let oldServices = ((try? self.services.value()) ?? [])
+        let oldClusters = self.clusters.value
             .flatMap { $0.services }
             .map {
                 var service = $0
@@ -86,7 +87,7 @@ extension ServiceControllerImpl: ServiceBrowserDelegate {
             }
 
         // Collect services into hosts
-        let groups = Dictionary(grouping: services + oldServices, by: { $0.addressCluster })
+        let groups = Dictionary(grouping: services + oldClusters, by: { $0.addressCluster })
         let hosts = groups.map { Host(services: Set($0.value), addressCluster: $0.key) }
         return hosts.sorted {
             ($0.name.lowercased(), $0.addressCluster.identifier.uuidString) < ($1.name.lowercased(), $1.addressCluster.identifier.uuidString)
@@ -94,12 +95,12 @@ extension ServiceControllerImpl: ServiceBrowserDelegate {
     }
 }
 
-extension ObservableType where Element == [Host] {
+extension Publisher where Output == [Host] {
 
-    public func host(forAddressCluster addressCluster: AddressCluster) -> Observable<Host> {
+    public func host(forAddressCluster addressCluster: AddressCluster) -> AnyPublisher<Host, Failure> {
         return self.compactMap { hosts in
             return hosts.first { $0.addressCluster == addressCluster }
-        }
+        }.eraseToAnyPublisher()
     }
 
 }

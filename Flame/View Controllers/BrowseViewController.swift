@@ -1,18 +1,17 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
-import RxSwift
 import ServiceDiscovery
 import UIKit
 import Utils
 import Views
-import RxCocoa
+import Combine
 
 /// Root view of the app, renders a list of hosts on the local network
 class BrowseViewController: UIViewController {
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, AddressCluster>
 
     let serviceController: ServiceController
-    let disposeBag = DisposeBag()
+    var cancellables = Set<AnyCancellable>()
 
     lazy var collectionView = UICollectionView.createList(withHeaders: false)
 
@@ -95,29 +94,28 @@ class BrowseViewController: UIViewController {
         // Watch network state and show information about needing wifi when
         // we're not on wifi and there are no services.
         networkOverlay.isHidden = true
-        RxSwift.Observable
-            .combineLatest(
+        Publishers
+            .CombineLatest(
                 NetworkMonitor.shared.state,
-                serviceController.services.map { $0.isEmpty }
+                serviceController.clusters.map { $0.isEmpty }
             )
-            .map { (state, noservices) in
+            .map { state, noservices in
                 let nowifi = state.currentConnectionType != .wifi
                 let showOverlay = nowifi && noservices
                 return !showOverlay
             }
-            .observe(on: MainScheduler.instance)
-            .bind(to: networkOverlay.rx.isHidden)
-            .disposed(by: disposeBag)
+            .receive(on: DispatchQueue.main)
+            .assign(to: \.isHidden, on: networkOverlay)
+            .store(in: &cancellables)
 
         // Changing search text searches
-        let searchTerm = searchController.searchBar.rx.text
+        let searchTerm = searchController.searchBar.publisher(for: \.text)
             .trimmedOrNil
-            .startWith(nil)
-            .distinctUntilChanged()
+            .prepend(nil)
+            .removeDuplicates()
 
         // Update the diffable datasource with the latest services, filtering by search term
-        RxSwift.Observable
-            .combineLatest(serviceController.services, searchTerm)
+        Publishers.CombineLatest(serviceController.clusters, searchTerm)
             .map { (hosts, searchTerm) in
                 if let searchTerm {
                     return hosts.filter { $0.matches(search: searchTerm) }
@@ -125,13 +123,13 @@ class BrowseViewController: UIViewController {
                     return hosts
                 }
             }
-            .observe(on: MainScheduler.instance)
-            .debounce(.milliseconds(250), scheduler: MainScheduler.instance)
-            .subscribe { [weak self] hosts in
+            .receive(on: DispatchQueue.main)
+            .debounce(for: 0.250, scheduler: DispatchQueue.main)
+            .sink { [weak self] hosts in
                 guard let self else { return }
                 hostsChanged(to: hosts)
             }
-            .disposed(by: disposeBag)
+            .store(in: &cancellables)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -151,7 +149,7 @@ class BrowseViewController: UIViewController {
 
     @objc
     func exportData() {
-        guard let hosts = try? serviceController.services.value() else { return }
+        let hosts = serviceController.clusters.value
         guard let url = ServiceExporter.export(hosts: hosts) else { return }
 #if targetEnvironment(macCatalyst)
         let controller = UIDocumentPickerViewController(forExporting: [url])
@@ -215,11 +213,11 @@ extension BrowseViewController: UICollectionViewDelegate {
     }
 }
 
-extension ObservableType where Element == String? {
-    var trimmedOrNil: RxSwift.Observable<String?> {
+extension Publisher where Output == String? {
+    var trimmedOrNil: AnyPublisher<Output, Failure> {
         return map { (text: String?) -> String? in
             let t = text?.trimmingCharacters(in: .whitespacesAndNewlines)
             return t?.isEmpty == false ? t : nil
-        }
+        }.eraseToAnyPublisher()
     }
 }

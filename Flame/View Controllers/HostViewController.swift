@@ -1,10 +1,10 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import RxSwift
 import ServiceDiscovery
 import UIKit
 import Utils
 import Views
+import Combine
 
 /// View of a single host - lists the services of that host
 class HostViewController: UIViewController, UICollectionViewDelegate {
@@ -12,7 +12,7 @@ class HostViewController: UIViewController, UICollectionViewDelegate {
 
     let serviceController: ServiceController
     let addressCluster: AddressCluster
-    let disposeBag = DisposeBag()
+    var cancellables = Set<AnyCancellable>()
 
     enum Section {
         case addresses
@@ -65,15 +65,15 @@ class HostViewController: UIViewController, UICollectionViewDelegate {
         collectionView.dataSource = dataSource
         collectionView.delegate = self
 
-        serviceController.services
+        serviceController.clusters
             .host(forAddressCluster: addressCluster)
-            .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
-            .observe(on: MainScheduler.instance)
-            .subscribe { [weak self] host in
+            .throttle(for: 0.200, scheduler: DispatchQueue.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] host in
                 guard let self else { return }
                 updateHost(host)
             }
-            .disposed(by: disposeBag)
+            .store(in: &cancellables)
     }
 
     override func viewDidAppear(_ animated: Bool) {
