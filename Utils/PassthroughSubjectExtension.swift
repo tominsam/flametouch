@@ -1,7 +1,7 @@
-// Copyright 2023 Thomas Insam. All rights reserved.
-
 import Foundation
 import Combine
+
+// this one from https://www.swiftbysundell.com/articles/creating-combine-compatible-versions-of-async-await-apis/
 
 extension PassthroughSubject where Failure == Error {
     static func emittingValues<T: AsyncSequence>(from sequence: T) -> Self where T.Element == Output {
@@ -19,6 +19,8 @@ extension PassthroughSubject where Failure == Error {
         return subject
     }
 }
+
+// this one is the obvious extension of that
 
 extension PassthroughSubject where Failure == Never {
     static func emittingValues(from sequence: AsyncStream<Output>) -> Self {
