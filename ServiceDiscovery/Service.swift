@@ -37,6 +37,8 @@ public struct Service {
             return URL(string: "ssh://\(addressCluster.displayAddress):\(port)/")
         case "_smb":
             return URL(string: "smb://\(addressCluster.displayAddress):\(port)/")
+        case "_sonos":
+            return URL(string: "http://\(addressCluster.displayAddress):1400/support/review")
         default:
             return nil
         }

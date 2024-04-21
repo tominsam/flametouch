@@ -84,6 +84,11 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
                 // not resolved yet
                 return nil
             }
+            if ns.hostName == "000000000000.local." {
+                // All the eeros on my local network claim this address and
+                // it's causing them to be clustered together.
+                return nil
+            }
             return Service(
                 name: ns.name,
                 type: ns.type,

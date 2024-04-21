@@ -20,6 +20,8 @@ class ServiceNamer {
         case chromecast = "_googlecast."
         case flametouch = "_flametouch."
         case dyson = "_dyson_mqtt."
+        case alexa = "_alexa."
+        case eero = "_eero."
     }
 
     static func nameForServices(_ services: Set<Service>) -> String? {
