@@ -35,6 +35,9 @@ public struct Host: Equatable, Hashable {
     }
 
     public func matches(search filter: String) -> Bool {
+        if filter.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return true
+        }
         if [name].contains(where: { $0.localizedCaseInsensitiveContains(filter) }) {
             return true
         }

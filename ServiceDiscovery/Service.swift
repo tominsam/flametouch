@@ -55,13 +55,13 @@ public struct Service {
 // (more strict than the spec but good enough for our needs.) This needs to be
 // done instead of implicit struct equality because UDP services (eg thread)
 // tend to resolve more than once.
-extension Service: Equatable, Hashable {
+extension Service: Equatable, Hashable, Identifiable {
     public static func == (lhs: Service, rhs: Service) -> Bool {
         return lhs.name == rhs.name
-            && lhs.type == rhs.type
-            && lhs.domain == rhs.domain
-            && lhs.port == rhs.port
-            && lhs.addressCluster == rhs.addressCluster
+        && lhs.type == rhs.type
+        && lhs.domain == rhs.domain
+        && lhs.port == rhs.port
+        && lhs.addressCluster == rhs.addressCluster
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -71,4 +71,9 @@ extension Service: Equatable, Hashable {
         hasher.combine(port)
         hasher.combine(addressCluster)
     }
+
+    public var id: Service {
+        self
+    }
+
 }

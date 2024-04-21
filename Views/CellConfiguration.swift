@@ -3,105 +3,175 @@
 import Foundation
 import UIKit
 import Utils
+import SwiftUI
 
-extension UICollectionViewListCell {
+func bodyFont(legible: Bool) -> Font {
+    var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
+    if legible {
+        descriptor = descriptor.addingAttributes([
+            .featureSettings: [[
+                UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
+                UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
+            ]]
+        ])
+    }
+    let uiFont = UIFont(descriptor: descriptor, size: 0)
+    return Font(uiFont)
+}
 
-    static func font(legible: Bool) -> UIFont {
-        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-        if legible {
-            descriptor = descriptor.addingAttributes([
-                .featureSettings: [[
-                    UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
-                    UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
-                ]]
-            ])
-        }
-        return UIFont(descriptor: descriptor, size: 0)
+public struct ValueCell: View {
+    let title: String
+    let subtitle: String?
+    let url: URL?
+    let tapAction: (URL) -> Void
+
+    public init(
+        title: String,
+        subtitle: String?,
+        url: URL? = nil,
+        tapAction: @escaping (URL) -> Void = { _ in }
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.url = url
+        self.tapAction = tapAction
     }
 
-    public func configureWithTitle(_ title: String?, subtitle: String? = nil, vertical: Bool = true, highlight: Bool = false) {
-        configurationUpdateHandler = { cell, state in
-            guard let cell = cell as? UICollectionViewListCell else { return }
-            var config = cell.defaultContentConfiguration()
-
-            // Use more legible font glyphs if we're an address cell
-            config.textProperties.font = Self.font(legible: subtitle == nil)
-            config.textProperties.color = .label
-            config.textProperties.numberOfLines = 1
-
-            // Value is _always_ more legible, because it generally is more machine-readable
-            config.secondaryTextProperties.font = Self.font(legible: true)
-            config.secondaryTextProperties.color = highlight ? cell.tintColor : .secondaryLabel
-            config.secondaryTextProperties.numberOfLines = 1
-
-            config.textToSecondaryTextVerticalPadding = 8
-
-            if state.isFocused {
-                // red background, fix visibility
-                config.textProperties.color = .white
-                config.secondaryTextProperties.color = .white
+    public var body: some View {
+        HStack(spacing: 8) {
+            Text(title)
+                .font(bodyFont(legible: subtitle == nil))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+            Spacer()
+            if let subtitle {
+                Text(subtitle)
+                    .font(bodyFont(legible: true))
+                    .foregroundColor(url != nil ? .accentColor : .secondary)
+                    .lineLimit(1)
             }
-
-            if vertical {
-                config.directionalLayoutMargins = .init(top: 16, leading: 16, bottom: 16, trailing: 16)
-                config.prefersSideBySideTextAndSecondaryText = false
-                cell.accessories = [.disclosureIndicator()]
-            } else {
-                config.directionalLayoutMargins = .init(top: 24, leading: 16, bottom: 24, trailing: 16)
-                config.prefersSideBySideTextAndSecondaryText = true
-                cell.accessories = []
+        }
+        .padding([.top, .bottom], 8)
+        .frame(minHeight: 44)
+        .contextMenu {
+            if subtitle != nil {
+                Button(action: {
+                    UIPasteboard.general.string = title
+                }, label: {
+                    Label("Copy name", systemImage: "doc.on.clipboard.fill")
+                })
             }
+            Button(action: {
+                UIPasteboard.general.string = subtitle ?? title
+            }, label: {
+                Label("Copy value", systemImage: "doc.on.clipboard")
+            })
+            if let url {
+                Button(action: {
+                    tapAction(url)
+                }, label: {
+                    Label("Open", systemImage: "arrowshape.turn.up.right")
+                })
+            }
+        }
+        .ifNonNil(url) { view, url in
+            view.onTapGesture {
+                tapAction(url)
+            }
+            .accessibilityAddTraits(.isButton)
+            .accessibilityHint("Double tap to open URL")
 
-            config.text = title
-            config.secondaryText = subtitle
-            cell.contentConfiguration = config
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityAction(named: "Copy name") {
+            UIPasteboard.general.string = title
         }
     }
 }
 
-extension UICollectionViewDiffableDataSource {
-    public static func create(
-        collectionView: UICollectionView,
-        cellBinder: @escaping (UICollectionViewListCell, ItemIdentifierType) -> Void,
-        headerTitleProvider: @escaping (SectionIdentifierType, Int) -> String? = { _, _ in nil }
-    ) -> UICollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> {
+public struct DetailCell: View {
+    let title: String
+    let subtitle: String
+    let subtitleType: String
+    let url: URL?
 
-        let cellConfig = UICollectionView.CellRegistration<UICollectionViewListCell, ItemIdentifierType> { cell, _, item in
-            cellBinder(cell, item)
-        }
-
-        let dataSource = UICollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType>(collectionView: collectionView) { collectionView, indexPath, addressCluster in
-            return collectionView.dequeueConfiguredReusableCell(using: cellConfig, for: indexPath, item: addressCluster)
-        }
-
-        let headerConfig = UICollectionView.SupplementaryRegistration<UICollectionViewListCell>(elementKind: UICollectionView.elementKindSectionHeader) { [weak dataSource] (headerView, _, indexPath) -> Void in
-            guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else { return }
-            let count = dataSource?.snapshot().numberOfItems(inSection: section) ?? 0
-            var configuration = headerView.defaultContentConfiguration()
-            configuration.text = headerTitleProvider(section, count)
-            headerView.contentConfiguration = configuration
-        }
-
-        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            if kind == UICollectionView.elementKindSectionHeader {
-                return collectionView.dequeueConfiguredReusableSupplementary(using: headerConfig, for: indexPath)
-            }
-            assertionFailure()
-            return nil
-        }
-
-        return dataSource
+    public init(
+        title: String,
+        subtitle: String,
+        subtitleType: String,
+        url: URL? = nil
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.subtitleType = subtitleType
+        self.url = url
     }
 
+    public var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .font(bodyFont(legible: false))
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                Label(subtitle, systemImage: url == nil ? "" : "globe")
+                    .labelStyle(SmallTrailingIcon())
+                    .font(bodyFont(legible: true))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .accessibilityHidden(true)
+                .foregroundColor(.secondary)
+        }
+        .padding([.top, .bottom], 4)
+        .contextMenu {
+            Button(action: {
+                UIPasteboard.general.string = title
+            }, label: {
+                Label("Copy name", systemImage: "doc.on.clipboard.fill")
+            })
+            Button(action: {
+                UIPasteboard.general.string = subtitle
+            }, label: {
+                Label("Copy \(subtitleType)", systemImage: "doc.on.clipboard")
+            })
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Double tap to open details")
+        .accessibilityAction(named: "Copy name") {
+            UIPasteboard.general.string = title
+        }
+        .accessibilityAction(named: "Copy \(subtitleType)") {
+            UIPasteboard.general.string = subtitle
+        }
+    }
 }
 
-extension UICollectionView {
-    public static func createList(withHeaders: Bool) -> UICollectionView {
-        var configuration = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-        configuration.headerMode = withHeaders ? .supplementary : .none
-        return UICollectionView(
-            frame: .zero,
-            collectionViewLayout: UICollectionViewCompositionalLayout.list(using: configuration)
-        )
+extension View {
+    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder func `ifNonNil`<Content: View, T>(_ value: T?, transform: (Self, T) -> Content) -> some View {
+        if let value {
+            transform(self, value)
+        } else {
+            self
+        }
+    }
+}
+
+struct SmallTrailingIcon: LabelStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.title
+            configuration.icon.imageScale(.small)
+        }
     }
 }

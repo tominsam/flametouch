@@ -5,67 +5,121 @@ import UIKit
 import Utils
 import Views
 import Combine
+import SwiftUI
 
 /// Root view of the app, renders a list of hosts on the local network
-class BrowseViewController: UIViewController {
-    typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, AddressCluster>
 
-    let serviceController: ServiceController
+class BrowseViewModel: ObservableObject {
+    @Published
+    var hosts: [Host] = []
+
+    @Published
+    var selection: Host?
+
+    @Published
+    var noWifi: Bool = false
+
+    var refreshAction: () -> Void = {}
+    var aboutAction: () -> Void = {}
+    var exportAction: () -> Void = {}
+}
+
+struct BrowseView: View {
+    @ObservedObject
+    var viewModel: BrowseViewModel
+
+    @State
+    var searchTerm: String = ""
+
+    var body: some View {
+        if viewModel.noWifi {
+            VStack(alignment: .center, spacing: 20, content: {
+                Text("No services found")
+                    .font(.title)
+#if targetEnvironment(macCatalyst)
+                Text("Connect to a WiFi or Wired network to see local services.")
+#else
+                Text("Connect to a WiFi network to see local services.")
+#endif
+            })
+            .padding()
+            .multilineTextAlignment(.center)
+
+        } else {
+            List(hosts, id: \.self, selection: $viewModel.selection) { host in
+                DetailCell(title: host.name, subtitle: host.subtitle, subtitleType: "address")
+            }
+            .onAppear {
+                viewModel.selection = nil
+            }
+            .refreshable {
+                viewModel.refreshAction()
+            }
+            .searchable(text: $searchTerm)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        viewModel.aboutAction()
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .accessibilityLabel("About")
+                    }
+                }
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button {
+//                        viewModel.exportAction()
+//                    } label: {
+//                        Image(systemName: "square.and.arrow.up")
+//                            .accessibilityLabel("Export")
+//                    }
+//                }
+
+            }
+        }
+    }
+
+    var hosts: [Host] {
+        viewModel.hosts.filter { $0.matches(search: searchTerm) }
+    }
+}
+
+class BrowseViewController: UIHostingController<BrowseView> {
     var cancellables = Set<AnyCancellable>()
 
-    lazy var collectionView = UICollectionView.createList(withHeaders: false)
-
-    lazy var dataSource = DiffableDataSource.create(
-        collectionView: collectionView,
-        cellBinder: { [weak self] cell, item in
-            guard let self else { return }
-            guard let host = serviceController.host(for: item) else { return }
-            cell.configureWithTitle(host.name, subtitle: host.subtitle)
-        })
-
-    let networkOverlay = WifiView()
-
-    lazy var searchController = with(UISearchController()) { searchController in
-        // Don't move the search bar over the navigation when searching
-        searchController.hidesNavigationBarDuringPresentation = false
-    }
+    let serviceController: ServiceController
+    var viewModel = BrowseViewModel()
 
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
-        super.init(nibName: nil, bundle: nil)
-    }
+        super.init(rootView: BrowseView(viewModel: viewModel))
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.backButtonDisplayMode = .minimal
 
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+        viewModel.$selection
+            .sink { [weak self] value in
+                guard let host = value else { return }
+                let vc = HostViewController(serviceController: serviceController, host: host)
+                self?.show(vc, sender: self)
+            }
+            .store(in: &cancellables)
 
-    override func viewDidLoad() {
+        viewModel.refreshAction = { [weak self] in
+            self?.handleTableRefresh(sender: nil)
+        }
+
+        viewModel.aboutAction = { [weak self] in
+            self?.aboutPressed()
+        }
+
+        viewModel.exportAction = { [weak self] in
+            self?.exportData(nil)
+        }
+
 #if targetEnvironment(macCatalyst)
         title = String(localized: "Hosts", comment: "Title for a list of hosts (computers on the network)")
 #else
         title = String(localized: "Flame", comment: "The name of the application")
 #endif
-
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        view.addSubview(networkOverlay)
-        networkOverlay.snp.makeConstraints { make in
-            make.edges.equalTo(view.layoutMarginsGuide)
-        }
-
-        collectionView.dataSource = dataSource
-        collectionView.delegate = self
-
-#if !targetEnvironment(macCatalyst)
-        collectionView.refreshControl = with(UIRefreshControl()) { refresh in
-            refresh.addTarget(self, action: #selector(handleTableRefresh(sender:)), for: .valueChanged)
-        }
-#endif
-
-        navigationItem.searchController = searchController
 
         // Suppress info button on mac because there's an about menu, but catalyst
         // does want an explicit refresh button.
@@ -75,80 +129,66 @@ class BrowseViewController: UIViewController {
             target: self,
             action: #selector(handleTableRefresh(sender:))
         )
-#else
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIButton(type: .infoLight).image(for: .normal),
-            style: .plain,
-            target: self,
-            action: #selector(aboutPressed)
-        )
 #endif
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "square.and.arrow.up"),
             style: .plain,
             target: self,
-            action: #selector(exportData)
+            action: #selector(exportData(_:))
         )
 
         // Watch network state and show information about needing wifi when
         // we're not on wifi and there are no services.
-        networkOverlay.isHidden = true
-        Publishers
-            .CombineLatest(
-                NetworkMonitor.shared.state,
-                serviceController.clusters.map { $0.isEmpty }
-            )
+        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map { $0.isEmpty })
             .map { state, noservices in
                 let nowifi = state.currentConnectionType != .wifi
                 let showOverlay = nowifi && noservices
-                return !showOverlay
+                return showOverlay
             }
-            .receive(on: DispatchQueue.main)
-            .assign(to: \.isHidden, on: networkOverlay)
+            .receive(on: RunLoop.main)
+            .sink { [viewModel] value in
+                viewModel.noWifi = value
+            }
             .store(in: &cancellables)
 
-        // Changing search text searches
-        let searchTerm = searchController.searchBar.publisher(for: \.text)
-            .trimmedOrNil
-            .prepend(nil)
-            .removeDuplicates()
-
-        // Update the diffable datasource with the latest services, filtering by search term
-        Publishers.CombineLatest(serviceController.clusters, searchTerm)
-            .map { (hosts, searchTerm) in
-                if let searchTerm {
-                    return hosts.filter { $0.matches(search: searchTerm) }
-                } else {
-                    return hosts
-                }
-            }
-            .receive(on: DispatchQueue.main)
-            .debounce(for: 0.250, scheduler: DispatchQueue.main)
-            .sink { [weak self] hosts in
-                guard let self else { return }
-                hostsChanged(to: hosts)
+        serviceController.clusters
+            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
+            .receive(on: RunLoop.main)
+            .sink { [viewModel] value in
+                viewModel.hosts = value
             }
             .store(in: &cancellables)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        for selected in collectionView.indexPathsForSelectedItems ?? [] {
-            collectionView.deselectItem(at: selected, animated: true)
-        }
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     @objc
     func aboutPressed() {
+        // Doesn't apply to catalyst, we're using the system about support for that.
+#if os(visionOS)
+        // open about scene in a new window
+        let options = UIWindowScene.ActivationRequestOptions()
+        let activity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
+        UIApplication.shared.requestSceneSessionActivation(
+            nil,
+            userActivity: activity,
+            options: options,
+            errorHandler: nil)
+#else
+        // open about view controller modally
         let about = AboutViewController()
         about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
         let vc = UINavigationController(rootViewController: about)
         present(vc, animated: true, completion: nil)
+#endif
     }
 
     @objc
-    func exportData() {
+    func exportData(_ sender: UIBarButtonItem?) {
         let hosts = serviceController.clusters.value
         guard let url = ServiceExporter.export(hosts: hosts) else { return }
 #if targetEnvironment(macCatalyst)
@@ -157,24 +197,12 @@ class BrowseViewController: UIViewController {
         // show system share dialog for this file
         let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         // on iPad, we attach the share sheet to the button that activated it
-        controller.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        controller.popoverPresentationController?.barButtonItem = sender
 #endif
         present(controller, animated: true, completion: nil)
     }
 
-    func hostsChanged(to hosts: [Host]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Int, AddressCluster>()
-        snapshot.appendSections([0])
-        snapshot.appendItems(hosts.map { $0.addressCluster })
-        // rebind _everything_, because hosts can change even if the address list did not
-        snapshot.reconfigureItems(snapshot.itemIdentifiers)
-        // Don't animate if we're not attached to a window (not laid out) and don't
-        // animate the transition to and from empty (because refresh looks bad)
-        let animated = collectionView.window != nil && !snapshot.itemIdentifiers.isEmpty && !dataSource.snapshot().itemIdentifiers.isEmpty
-        dataSource.apply(snapshot, animatingDifferences: animated)
-    }
-
-    @objc func handleTableRefresh(sender: UIControl) {
+    @objc func handleTableRefresh(sender: UIControl?) {
         // Fake some delays on this because it looks unnatural if things
         // are instant. Refresh the list, then hide the spinner a second later.
         serviceController.restart()
@@ -185,39 +213,5 @@ class BrowseViewController: UIViewController {
                 refresh.endRefreshing()
             }
         }
-    }
-}
-
-extension BrowseViewController: UICollectionViewDelegate {
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let addressCluster = dataSource.itemIdentifier(for: indexPath) else { return }
-        let vc = HostViewController(serviceController: serviceController, addressCluster: addressCluster)
-        show(vc, sender: self)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        // capture asap in case the rows move under us
-        guard let addressCluster = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        guard let host = serviceController.host(for: addressCluster) else { return nil }
-
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let copyNameAction = UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                UIPasteboard.general.string = host.name
-            }
-            let copyAddressAction = UIAction(title: "Copy IP Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                UIPasteboard.general.string = host.addressCluster.displayAddress
-            }
-            return UIMenu(title: "", children: [copyNameAction, copyAddressAction])
-        }
-    }
-}
-
-extension Publisher where Output == String? {
-    var trimmedOrNil: AnyPublisher<Output, Failure> {
-        return map { (text: String?) -> String? in
-            let t = text?.trimmingCharacters(in: .whitespacesAndNewlines)
-            return t?.isEmpty == false ? t : nil
-        }.eraseToAnyPublisher()
     }
 }

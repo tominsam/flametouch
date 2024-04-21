@@ -84,7 +84,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
                     if !result {
                         let vc = SFSafariViewController(url: url)
+                        #if !os(visionOS)
                         vc.preferredControlTintColor = AppDelegate.tintColor
+                        #endif
                         presentingViewController.present(vc, animated: true)
                     }
                 }

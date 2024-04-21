@@ -6,6 +6,7 @@ class ServiceNamer {
     // Ordered list of "important" service names - these will be used to extract the
     // host name preferentially
     enum ImportantServices: String, CaseIterable {
+        // Order here is important
         case airplay = "_airplay."
         case airport = "_airport."
         case rdlink = "_rdlink."
@@ -25,6 +26,7 @@ class ServiceNamer {
         // Look for important names first. The **first** one we find will name the service
         for name in ImportantServices.allCases {
             guard let service = services.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
+            // order here is not important
             switch name {
             case .chromecast:
                 let map = service.data

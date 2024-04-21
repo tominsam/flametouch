@@ -4,185 +4,102 @@ import ServiceDiscovery
 import UIKit
 import Utils
 import Views
-import SnapKit
 import Combine
+import SwiftUI
 
 /// Shows the details of a particular service on a particular host
-class ServiceViewController: UIViewController, UICollectionViewDelegate {
-    typealias DiffableDataSource = UICollectionViewDiffableDataSource<ServiceViewController.Section, ServiceViewController.Row>
 
-    let serviceController: ServiceController
-    var cancellables = Set<AnyCancellable>()
+class ServiceViewModel: ObservableObject {
+    @Published
+    var service: Service?
 
-    var service: Service
+    @Published
     var alive = true
 
-    enum Section {
-        case core
-        case data
-    }
+    @Published
+    var highlight = true
 
-    struct Row: Hashable {
-        let name: String
-        let value: String
-    }
+    var tapAction: (URL) -> Void = { _ in }
+}
 
-    lazy var collectionView = UICollectionView.createList(withHeaders: true)
+struct ServiceView: View {
+    @ObservedObject
+    var viewModel: ServiceViewModel
 
-    lazy var dataSource = DiffableDataSource.create(
-        collectionView: collectionView,
-        cellBinder: { [weak self] cell, item in
-            guard let self else { return }
-            cell.configureWithTitle(item.name, subtitle: item.value, vertical: false, highlight: urlFor(item: item) != nil)
-            cell.contentView.alpha = alive == true ? 1 : 0.3
-        }, headerTitleProvider: { section, _ in
-            switch section {
-            case .core:
-                return String(localized: "Core", comment: "Section header for core properties of a service")
-            case .data:
-                return String(localized: "Data", comment: "Section header for data associated with a service")
+    var body: some View {
+        if let service = viewModel.service {
+            List {
+                Section("Core") {
+                    ValueCell(title: "Name", subtitle: service.name)
+                    ValueCell(title: "Type", subtitle: service.type, url: service.url, tapAction: viewModel.tapAction)
+                    if let domain = service.domain {
+                        ValueCell(title: "Domain", subtitle: domain)
+                    }
+
+                    ForEach(service.addressCluster.sorted, id: \.self) { address in
+                        ValueCell(title: "Address", subtitle: address)
+                    }
+
+                    ValueCell(title: "Port", subtitle: String(service.port))
+                }
+
+                let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
+                if !sortedData.isEmpty {
+                    Section("Data") {
+                        ForEach(sortedData, id: \.key) { data in
+                            ValueCell(title: data.key, subtitle: data.value, url: realUrl(from: data.value), tapAction: viewModel.tapAction)
+                        }
+                    }
+                }
             }
-        })
+            .opacity(viewModel.alive ? 1 : 0.3)
+            .navigationTitle(service.typeWithDomain)
+        } else {
+            EmptyView()
+        }
+    }
+
+    func realUrl(from string: String) -> URL? {
+        if let url = URL(string: string), url.scheme != nil, url.host != nil {
+            return url
+        }
+        return nil
+    }
+}
+
+class ServiceViewController: UIHostingController<ServiceView>, UICollectionViewDelegate {
+    var cancellables = Set<AnyCancellable>()
+    var viewModel = ServiceViewModel()
 
     required init(serviceController: ServiceController, service: Service) {
-        self.serviceController = serviceController
-        self.service = service
-        super.init(nibName: nil, bundle: nil)
-        build()
-    }
-
-    func build() {
-        title = service.typeWithDomain
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Row>()
-        snapshot.appendSections([.core])
-
-        snapshot.appendItems([
-            Row(name: String(localized: "Name", comment: "Label for the name of the service"), value: service.name),
-            Row(name: String(localized: "Type", comment: "Label for the type of the service (eg _http._tcp)"), value: service.type)
-        ])
-
-        if let domain = service.domain {
-            snapshot.appendItems([
-                Row(name: String(localized: "Domain", comment: "Label for the domain of the service (when not local)"), value: domain)
-            ])
-        }
-
-        snapshot.appendItems(service.addressCluster.sorted.map { address in
-            Row(name: String(localized: "Address", comment: "Label for the network address of the service"), value: address)
-        })
-
-        snapshot.appendItems([
-            Row(name: String(localized: "Port", comment: "Label for the network port of the service"), value: String(service.port))
-        ])
-
-        if !service.data.isEmpty {
-            let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
-            snapshot.appendSections([.data])
-            snapshot.appendItems(sortedData.map { Row(name: $0.key, value: $0.value) })
-        }
-
-        dataSource.apply(snapshot, animatingDifferences: collectionView.window != nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError()
-    }
-
-    override func viewDidLoad() {
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        collectionView.dataSource = dataSource
-        collectionView.delegate = self
+        super.init(rootView: ServiceView(viewModel: viewModel))
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.backButtonDisplayMode = .minimal
 
         serviceController.clusters
             .map { [service] hosts in
                 return hosts.serviceMatching(service: service)
             }
-            .throttle(for: 0.300, scheduler: DispatchQueue.main, latest: true)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] service in
-                guard let self else { return }
-                serviceChanged(to: service)
+            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
+            .receive(on: RunLoop.main)
+            .sink { [viewModel] service in
+                if let found = service {
+                    viewModel.service = service
+                    viewModel.alive = found.alive
+                } else {
+                    // this service is gone. Keep the addresses in case it comes back.
+                    viewModel.alive = false
+                }
             }
             .store(in: &cancellables)
-    }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        for selected in collectionView.indexPathsForSelectedItems ?? [] {
-            collectionView.deselectItem(at: selected, animated: true)
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return urlFor(indexPath: indexPath) != nil
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let url = urlFor(indexPath: indexPath) {
+        viewModel.tapAction = { url in
             AppDelegate.instance.openUrl(url, from: self)
         }
-        collectionView.deselectItem(at: indexPath, animated: true)
     }
 
-    func collectionView(_: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
-        guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        guard let section = dataSource.sectionIdentifier(for: indexPath.section) else { return nil }
-        let url = urlFor(indexPath: indexPath)
-
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-
-            var actions = section == .core ? [
-                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row.value
-                },
-            ] : [
-                UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row.name
-                },
-                UIAction(title: "Copy Value", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = row.value
-                },
-            ]
-
-            if let url = url {
-                actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
-                    guard let self = self else { return }
-                    AppDelegate.instance.openUrl(url, from: self)
-                })
-            }
-
-            return UIMenu(title: "", children: actions)
-        }
-    }
-
-    func urlFor(indexPath: IndexPath) -> URL? {
-        guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        return urlFor(item: row)
-    }
-
-    func urlFor(item: Row) -> URL? {
-        if item.value == service.type {
-            return service.url
-        }
-        // return the value if it looks like it parses as a decent url
-        if let url = URL(string: item.value), url.scheme != nil, url.host != nil {
-            return url
-        }
-        return nil
-    }
-
-    func serviceChanged(to service: Service?) {
-        if let found = service {
-            self.service = found
-            alive = found.alive
-        } else {
-            // this service is gone. Keep the addresses in case it comes back.
-            alive = false
-        }
-        build()
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError()
     }
 }

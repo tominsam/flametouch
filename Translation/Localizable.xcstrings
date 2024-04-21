@@ -1,8 +1,15 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "— Henry James, _The Ambassadors_" : {
+
+    },
+    "[Visit web page](https://movieos.org/code/flame/)" : {
+
+    },
     "%lld Addresses" : {
       "comment" : "Title of section containing addresses",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -26,6 +33,7 @@
     },
     "%lld Services" : {
       "comment" : "Title of section containing services",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -47,8 +55,17 @@
         }
       }
     },
+    "A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), [Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)." : {
+
+    },
     "Address" : {
       "comment" : "Label for the network address of the service"
+    },
+    "Connect to a WiFi network to see local services." : {
+
+    },
+    "Connect to a WiFi or Wired network to see local services." : {
+
     },
     "Core" : {
       "comment" : "Section header for core properties of a service"
@@ -70,6 +87,9 @@
     },
     "Name" : {
       "comment" : "Label for the name of the service"
+    },
+    "No services found" : {
+
     },
     "Port" : {
       "comment" : "Label for the network port of the service"

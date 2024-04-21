@@ -5,145 +5,77 @@ import UIKit
 import Utils
 import Views
 import Combine
+import SwiftUI
 
 /// View of a single host - lists the services of that host
-class HostViewController: UIViewController, UICollectionViewDelegate {
-    typealias DiffableDataSource = UICollectionViewDiffableDataSource<HostViewController.Section, HostViewController.Row>
 
-    let serviceController: ServiceController
-    let addressCluster: AddressCluster
+class HostViewModel: ObservableObject {
+    @Published
+    var host: Host?
+
+    @Published
+    var selection: Service?
+}
+
+struct HostView: View {
+    @ObservedObject
+    var viewModel: HostViewModel
+
+    var body: some View {
+        if let host = viewModel.host {
+            List(selection: $viewModel.selection) {
+                Section("\(host.addressCluster.sorted.count) addresses") {
+                    ForEach(host.addressCluster.sorted, id: \.self) { address in
+                        ValueCell(title: address, subtitle: nil)
+                    }
+                }
+                .opacity(host.alive ? 1 : 0.3)
+                Section("\(host.displayServices.count) services") {
+                    ForEach(host.displayServices) { service in
+                        DetailCell(title: service.name, subtitle: service.typeWithDomain, subtitleType: "type", url: service.url)
+                            .opacity(host.alive && service.alive ? 1 : 0.3)
+                    }
+                }
+            }
+            .onAppear {
+                viewModel.selection = nil
+            }
+            .navigationTitle(host.name)
+        } else {
+            EmptyView()
+        }
+    }
+}
+
+class HostViewController: UIHostingController<HostView>, UICollectionViewDelegate {
+    var viewModel = HostViewModel()
     var cancellables = Set<AnyCancellable>()
 
-    enum Section {
-        case addresses
-        case services
-    }
+    required init(serviceController: ServiceController, host: Host) {
+        super.init(rootView: HostView(viewModel: viewModel))
+        navigationItem.largeTitleDisplayMode = .never
+        navigationItem.backButtonDisplayMode = .minimal
 
-    enum Row: Hashable {
-        case address(String, Bool)
-        case service(Service)
-    }
-
-    lazy var collectionView = UICollectionView.createList(withHeaders: true)
-
-    lazy var dataSource = DiffableDataSource.create(
-        collectionView: collectionView,
-        cellBinder: { cell, item in
-            switch item {
-            case .address(let address, let alive):
-                cell.configureWithTitle(address, vertical: false)
-                cell.contentView.alpha = alive ? 1 : 0.3
-            case .service(let service):
-                cell.configureWithTitle(service.name, subtitle: service.typeWithDomain, vertical: true)
-                cell.contentView.alpha = service.alive ? 1 : 0.3
+        serviceController.clusters
+            .host(forAddressCluster: host.addressCluster)
+            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
+            .map { $0 }
+            .sink { [viewModel] value in
+                viewModel.host = value
             }
-        }, headerTitleProvider: { section, count in
-            switch section {
-            case .addresses:
-                return String(localized: "\(count) Addresses", comment: "Title of section containing addresses")
-            case .services:
-                return String(localized: "\(count) Services", comment: "Title of section containing services")
-            }
-        })
+            .store(in: &cancellables)
 
-    required init(serviceController: ServiceController, addressCluster: AddressCluster) {
-        self.serviceController = serviceController
-        self.addressCluster = addressCluster
-        super.init(nibName: nil, bundle: nil)
+        viewModel.$selection
+            .compactMap { $0 }
+            .sink { [weak self] service in
+                let vc = ServiceViewController(serviceController: serviceController, service: service)
+                self?.show(vc, sender: self)
+            }
+            .store(in: &cancellables)
     }
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError()
-    }
-
-    override func viewDidLoad() {
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        collectionView.dataSource = dataSource
-        collectionView.delegate = self
-
-        serviceController.clusters
-            .host(forAddressCluster: addressCluster)
-            .throttle(for: 0.200, scheduler: DispatchQueue.main, latest: true)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] host in
-                guard let self else { return }
-                updateHost(host)
-            }
-            .store(in: &cancellables)
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        for selected in collectionView.indexPathsForSelectedItems ?? [] {
-            collectionView.deselectItem(at: selected, animated: true)
-        }
-    }
-
-    func updateHost(_ host: Host) {
-        title = host.name
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Row>()
-        snapshot.appendSections([.addresses])
-        snapshot.appendItems(host.addressCluster.sorted.map { .address($0, host.alive) })
-        snapshot.appendSections([.services])
-        snapshot.appendItems(host.displayServices.map { .service($0) })
-        snapshot.reconfigureItems(snapshot.itemIdentifiers)
-        dataSource.apply(snapshot, animatingDifferences: collectionView.frame.width > 0)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        guard let row = dataSource.itemIdentifier(for: indexPath) else { return false }
-        switch row {
-        case .address:
-            return false
-        case .service:
-            return true
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let row = dataSource.itemIdentifier(for: indexPath) else { return }
-        switch row {
-        case .address:
-            assertionFailure()
-            collectionView.deselectItem(at: indexPath, animated: true)
-        case .service(let service):
-            let serviceController = ServiceViewController(serviceController: serviceController, service: service)
-            show(serviceController, sender: self)
-        }
-    }
-
-    func collectionView(_: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point _: CGPoint) -> UIContextMenuConfiguration? {
-        guard let row = dataSource.itemIdentifier(for: indexPath) else { return nil }
-        switch row {
-        case .address(let address, _):
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                let copyValueAction = UIAction(title: "Copy Address", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = address
-                }
-                return UIMenu(title: "", children: [copyValueAction])
-            }
-        case .service(let service):
-            return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-                var actions = [UIAction]()
-                actions.append(UIAction(title: "Copy Name", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = service.name
-                })
-                actions.append(UIAction(title: "Copy Type", image: UIImage(systemName: "doc.on.clipboard")) { _ in
-                    UIPasteboard.general.string = service.type
-                })
-                if let url = service.url {
-                    actions.append(UIAction(title: "Open", image: UIImage(systemName: "arrowshape.turn.up.right")) { [weak self] _ in
-                        guard let self = self else { return }
-                        AppDelegate.instance.openUrl(url, from: self)
-                    })
-                }
-
-                return UIMenu(title: "", children: actions)
-            }
-        }
     }
 }

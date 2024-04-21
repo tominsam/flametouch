@@ -21,7 +21,12 @@ class CustomSplitViewController: UISplitViewController {
         minimumPrimaryColumnWidth = 320
         preferredPrimaryColumnWidthFraction = 0.35
         primaryBackgroundStyle = .none // Or .sidebar but I hate it.
+
+        #if !os(visionOS)
+        presentsWithGesture = false
         displayModeButtonVisibility = .never
+        #endif
+
         setViewController(StaticNavigationController(rootViewController: primaryViewController), for: .primary)
         setViewController(UINavigationController(rootViewController: emptyViewController), for: .secondary)
         primary.navigationBar.prefersLargeTitles = true
@@ -62,7 +67,7 @@ class CustomSplitViewController: UISplitViewController {
             assertionFailure()
             return
         }
-        browse.exportData()
+        browse.exportData(nil)
     }
 }
 
@@ -76,7 +81,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
             // only collapse if the right pane _isn't_ the empty state
             primary.viewControllers += secondary.viewControllers
         }
-        primary.navigationBar.prefersLargeTitles = false
+        primary.navigationBar.prefersLargeTitles = true
         secondary.viewControllers = []
         return .primary
     }

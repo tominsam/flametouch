@@ -2,10 +2,6 @@
 name: Flame
 options:
   bundleIdPrefix: org.jerakeen
-packages:
-  SnapKit:
-    url: https://github.com/SnapKit/SnapKit.git
-    from: 5.0.1
 
 targets:
 
@@ -28,7 +24,6 @@ targets:
         name: "Views"
     dependencies:
       - target: Utils
-      - package: SnapKit
 
   ServiceDiscovery:
     name: ServiceDiscovery
@@ -86,7 +81,6 @@ targets:
       - path: "Flame.entitlements"
         buildPhase: none
     dependencies:
-      - package: SnapKit
       - target: ServiceDiscovery
       - target: Utils
       - target: Views
