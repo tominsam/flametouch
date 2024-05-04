@@ -23,13 +23,13 @@ targets:
         - FlameTests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: org.jerakeen.flametouch
+        PRODUCT_BUNDLE_IDENTIFIER: "org.jerakeen.flametouch"
         SUPPORTS_MACCATALYST: YES
         DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
-        DEVELOPMENT_TEAM: 76AFK3W7M9
-        CODE_SIGN_STYLE: Manual
-        PROVISIONING_PROFILE_SPECIFIER: Flametouch dev (with multicast)
-        PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: Flametouch Mac Dev
+        DEVELOPMENT_TEAM: "76AFK3W7M9"
+        CODE_SIGN_STYLE: "Manual"
+        PROVISIONING_PROFILE_SPECIFIER: "Flametouch dev (with multicast)"
+        PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: "Flametouch Mac Dev"
       debug:
       release:
     sources:
@@ -47,14 +47,14 @@ targets:
         buildPhase: none
       - path: ".swiftlint.yml"
         buildPhase: none
-      - path: "Flame.entitlements"
+      - path: "generated/Flame.entitlements"
         buildPhase: none
 
     info:
-      path: Info.plist
+      path: generated/Info.plist
       properties:
-        NSLocalNetworkUsageDescription: Flame lists the local network services to let you browse them
-        LSApplicationCategoryType: public.app-category.developer-tools
+        NSLocalNetworkUsageDescription: "Flame lists the local network services to let you browse them"
+        LSApplicationCategoryType: "public.app-category.developer-tools"
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
@@ -82,7 +82,7 @@ targets:
               - UISceneConfigurationName: About
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).AboutSceneDelegate
     entitlements:
-      path: Flame.entitlements
+      path: generated/Flame.entitlements
       properties:
         com.apple.developer.networking.multicast: true
         com.apple.security.files.user-selected.read-write: true
@@ -106,5 +106,5 @@ targets:
       path: Test-Info.plist
     settings:
       base:
-        DEVELOPMENT_TEAM: 76AFK3W7M9
+        DEVELOPMENT_TEAM: "76AFK3W7M9"
 
