@@ -11,11 +11,8 @@ public struct Host: Equatable, Hashable {
     }
 
     public var subtitle: String {
-        if services.count > 1 {
-            return "\(addressCluster.displayAddress) (\(services.count) services)"
-        } else {
-            return "\(addressCluster.displayAddress) (One service)"
-        }
+        let countString = String(localized: "\(services.count, specifier: "%llu") service(s)")
+        return "\(addressCluster.displayAddress) (\(countString))"
     }
 
     public var displayServices: [Service] {

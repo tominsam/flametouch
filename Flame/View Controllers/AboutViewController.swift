@@ -20,11 +20,13 @@ struct AboutView: View {
 
                     Text(.init(
                         "A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), " +
-                        "built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), " +
-                        "[Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)."
+                            "built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), " +
+                            "[Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)."
                     ))
 
-                    Text("[Visit web page](https://movieos.org/code/flame/)")
+                    if let url = URL(string: "https://movieos.org/code/flame/") {
+                        Link(destination: url, label: { Text("Visit web page") })
+                    }
 
                     Spacer().frame(height: 8)
                     Divider()
@@ -32,17 +34,19 @@ struct AboutView: View {
 
                     Text(verbatim:
                         "She had fortunately always her appetite for news. The pure flame of the " +
-                        "disinterested burned in her cave of treasures as a lamp in a Byzantine vault."
+                            "disinterested burned in her cave of treasures as a lamp in a Byzantine vault."
                     )
                     .italic()
                     .padding([.leading, .trailing], 16)
 
-                    Text(.init("— Henry James, _The Ambassadors_"))
-                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    // Don't want to translate this, gotta jump through these hoops to still get markdown
+                    if let attributed = try? AttributedString(markdown: "— Henry James, _The Ambassadors_") {
+                        Text(attributed)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
 
                     Spacer()
                     Spacer()
-
                 }
                 .lineLimit(nil)
                 .multilineTextAlignment(.center)

@@ -31,20 +31,20 @@ struct BrowseView: View {
     var body: some View {
         if viewModel.noWifi {
             VStack(alignment: .center, spacing: 20, content: {
-                Text("No services found")
+                Text("No services found", comment: "Title of a view shown when there are no local services")
                     .font(.title)
-#if targetEnvironment(macCatalyst)
-                Text("Connect to a WiFi or Wired network to see local services.")
-#else
-                Text("Connect to a WiFi network to see local services.")
-#endif
+                Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
             })
             .padding()
             .multilineTextAlignment(.center)
 
         } else {
             List(hosts, id: \.self, selection: $viewModel.selection) { host in
-                DetailCell(title: host.name, subtitle: host.subtitle, subtitleType: "address")
+                DetailCell(
+                    title: host.name,
+                    subtitle: host.subtitle,
+                    copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard")
+                )
             }
             .onAppear {
                 viewModel.selection = nil
@@ -124,21 +124,10 @@ class BrowseViewController: UIHostingController<BrowseView> {
             self?.exportData(nil)
         }
 
-#if targetEnvironment(macCatalyst)
-        title = String(localized: "Hosts", comment: "Title for a list of hosts (computers on the network)")
-#else
-        title = String(localized: "Flame", comment: "The name of the application")
-#endif
-
-        // Suppress info button on mac because there's an about menu, but catalyst
-        // does want an explicit refresh button.
-#if targetEnvironment(macCatalyst)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .refresh,
-            target: self,
-            action: #selector(handleTableRefresh(sender:))
+        title = String(
+            localized: "Flame",
+            comment: "The name of the application"
         )
-#endif
 
         // TODO: presenting this from swiftui is still a little complicated
         navigationItem.rightBarButtonItem = UIBarButtonItem(

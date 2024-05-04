@@ -1,15 +1,8 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "— Henry James, _The Ambassadors_" : {
-
-    },
-    "[Visit web page](https://movieos.org/code/flame/)" : {
-
-    },
-    "%lld Addresses" : {
-      "comment" : "Title of section containing addresses",
-      "extractionState" : "stale",
+    "%llu address(es)" : {
+      "comment" : "Section header for a list of addresses",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -17,13 +10,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Address"
+                  "value" : "%llu address"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld Addresses"
+                  "state" : "translated",
+                  "value" : "%llu addresses"
                 }
               }
             }
@@ -31,9 +24,8 @@
         }
       }
     },
-    "%lld Services" : {
-      "comment" : "Title of section containing services",
-      "extractionState" : "stale",
+    "%llu service(s)" : {
+      "comment" : "Section header for a list of services",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -41,13 +33,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Service"
+                  "value" : "%llu service"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld Services"
+                  "state" : "translated",
+                  "value" : "%llu services"
                 }
               }
             }
@@ -58,47 +50,34 @@
     "A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), [Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)." : {
 
     },
-    "Address" : {
-      "comment" : "Label for the network address of the service"
-    },
-    "Connect to a WiFi network to see local services." : {
-
-    },
-    "Connect to a WiFi or Wired network to see local services." : {
-
-    },
-    "Core" : {
-      "comment" : "Section header for core properties of a service"
-    },
-    "Data" : {
-      "comment" : "Section header for data associated with a service"
-    },
-    "Domain" : {
-      "comment" : "Label for the domain of the service (when not local)"
-    },
-    "Export…" : {
-      "comment" : "Menu item to export network data"
-    },
-    "Flame" : {
-      "comment" : "The name of the application"
-    },
-    "Hosts" : {
-      "comment" : "Title for a list of hosts (computers on the network)"
-    },
-    "Name" : {
-      "comment" : "Label for the name of the service"
+    "Connect to a WiFi network to see local services" : {
+      "comment" : "Body of a view shown when there are no local services",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "device" : {
+              "mac" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Connect to a WiFi or Wired network to see local services"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Connect to a WiFi network to see local services"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "No services found" : {
+      "comment" : "Title of a view shown when there are no local services"
+    },
+    "Visit web page" : {
 
-    },
-    "Port" : {
-      "comment" : "Label for the network port of the service"
-    },
-    "Refresh" : {
-      "comment" : "Menu item to refresh network data"
-    },
-    "Type" : {
-      "comment" : "Label for the type of the service (eg _http._tcp)"
     }
   },
   "version" : "1.0"

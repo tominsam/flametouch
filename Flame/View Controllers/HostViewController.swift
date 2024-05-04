@@ -21,18 +21,36 @@ struct HostView: View {
     var body: some View {
         if let host = viewModel.host {
             List(selection: $viewModel.selection) {
-                Section("\(host.addressCluster.sorted.count) addresses") {
-                    ForEach(host.addressCluster.sorted, id: \.self) { address in
-                        ValueCell(title: address, subtitle: nil)
+                Section(
+                    header: Text(
+                        "\(host.addressCluster.sorted.count, specifier: "%llu") address(es)",
+                        comment: "Section header for a list of addresses"
+                    ),
+                    content: {
+                        ForEach(host.addressCluster.sorted, id: \.self) { address in
+                            ValueCell(title: address, subtitle: nil)
+                        }
                     }
-                }
+                )
                 .opacity(host.alive ? 1 : 0.3)
-                Section("\(host.displayServices.count) services") {
-                    ForEach(host.displayServices) { service in
-                        DetailCell(title: service.name, subtitle: service.typeWithDomain, subtitleType: "type", url: service.url)
+
+                Section(
+                    header: Text(
+                        "\(host.displayServices.count, specifier: "%llu") service(s)",
+                        comment: "Section header for a list of services"
+                    ),
+                    content: {
+                        ForEach(host.displayServices) { service in
+                            DetailCell(
+                                title: service.name,
+                                subtitle: service.typeWithDomain,
+                                copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),
+                                url: service.url
+                            )
                             .opacity(host.alive && service.alive ? 1 : 0.3)
+                        }
                     }
-                }
+                )
             }
             .onAppear {
                 viewModel.selection = nil
