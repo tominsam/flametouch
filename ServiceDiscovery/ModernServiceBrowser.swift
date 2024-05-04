@@ -6,7 +6,6 @@
 import Foundation
 import Network
 import UIKit
-import Utils
 
 /// An implementation of ServiceBrowser that uses (in theory) the modern, non-deprecated
 /// NWBrowser APIs. It doesn't work, because NWBrowser can't do meta-discovery. Work in progress.
@@ -82,7 +81,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
     }
 
     private func convertToServices(_ netServices: Set<NetService>) -> Set<Service> {
-        return Set(netServices.compactMap { ns -> Service? in
+        Set(netServices.compactMap { ns -> Service? in
             if ns.stringAddresses.isEmpty {
                 // not resolved yet
                 return nil

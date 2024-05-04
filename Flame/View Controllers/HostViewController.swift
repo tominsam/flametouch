@@ -1,11 +1,8 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import ServiceDiscovery
-import UIKit
-import Utils
-import Views
 import Combine
 import SwiftUI
+import UIKit
 
 /// View of a single host - lists the services of that host
 

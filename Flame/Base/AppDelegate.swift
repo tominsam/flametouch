@@ -1,9 +1,7 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
 import SafariServices
-import ServiceDiscovery
 import UIKit
-import Utils
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,17 +11,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     static var instance: AppDelegate {
         // swiftlint:disable:next force_cast
-        return UIApplication.shared.delegate as! AppDelegate
+        UIApplication.shared.delegate as! AppDelegate
     }
 
     // Pulled from one of the reds in the app icon, this looks pretty good to me in both themes
-    static let tintColor = UIColor(red: 204.0/255, green: 59.0/255, blue: 72.0/255, alpha: 1)
+    static let tintColor = UIColor(red: 204.0 / 255, green: 59.0 / 255, blue: 72.0 / 255, alpha: 1)
 
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        return true
+        true
     }
 
     func application(
@@ -41,7 +39,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     override func buildMenu(with builder: UIMenuBuilder) {
         let refreshCommand = UIKeyCommand(
-            title: String(localized: "Refresh", comment: "Menu item to refresh network data"),
+            title: String(
+                localized: "Refresh",
+                comment: "Menu item to refresh network data"
+            ),
             image: nil,
             action: #selector(BrowseViewController.handleTableRefresh(sender:)),
             input: "R",
@@ -85,7 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     if !result {
                         let vc = SFSafariViewController(url: url)
                         #if !os(visionOS)
-                        vc.preferredControlTintColor = AppDelegate.tintColor
+                            vc.preferredControlTintColor = AppDelegate.tintColor
                         #endif
                         presentingViewController.present(vc, animated: true)
                     }

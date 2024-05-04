@@ -1,11 +1,8 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
-import ServiceDiscovery
-import UIKit
-import Utils
-import Views
 import Combine
 import SwiftUI
+import UIKit
 
 /// Root view of the app, renders a list of hosts on the local network
 
@@ -52,19 +49,32 @@ struct BrowseView: View {
             .onAppear {
                 viewModel.selection = nil
             }
-            .refreshable {
-                viewModel.refreshAction()
+            .ifiOS {
+                $0.refreshable {
+                    viewModel.refreshAction()
+                }
             }
             .searchable(text: $searchTerm)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        viewModel.aboutAction()
-                    } label: {
-                        Image(systemName: "info.circle")
-                            .accessibilityLabel("About")
+                #if targetEnvironment(macCatalyst)
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            viewModel.refreshAction()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .accessibilityLabel("About")
+                        }
                     }
-                }
+                #else
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            viewModel.aboutAction()
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .accessibilityLabel("About")
+                        }
+                    }
+                #endif
 //                ToolbarItem(placement: .navigationBarTrailing) {
 //                    Button {
 //                        viewModel.exportAction()
@@ -73,7 +83,6 @@ struct BrowseView: View {
 //                            .accessibilityLabel("Export")
 //                    }
 //                }
-
             }
         }
     }
@@ -131,6 +140,7 @@ class BrowseViewController: UIHostingController<BrowseView> {
         )
 #endif
 
+        // TODO: presenting this from swiftui is still a little complicated
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "square.and.arrow.up"),
             style: .plain,
@@ -140,7 +150,7 @@ class BrowseViewController: UIHostingController<BrowseView> {
 
         // Watch network state and show information about needing wifi when
         // we're not on wifi and there are no services.
-        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map { $0.isEmpty })
+        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map(\.isEmpty))
             .map { state, noservices in
                 let nowifi = state.currentConnectionType != .wifi
                 let showOverlay = nowifi && noservices
@@ -169,36 +179,37 @@ class BrowseViewController: UIHostingController<BrowseView> {
     @objc
     func aboutPressed() {
         // Doesn't apply to catalyst, we're using the system about support for that.
-#if os(visionOS)
-        // open about scene in a new window
-        let options = UIWindowScene.ActivationRequestOptions()
-        let activity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
-        UIApplication.shared.requestSceneSessionActivation(
-            nil,
-            userActivity: activity,
-            options: options,
-            errorHandler: nil)
-#else
-        // open about view controller modally
-        let about = AboutViewController()
-        about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
-        let vc = UINavigationController(rootViewController: about)
-        present(vc, animated: true, completion: nil)
-#endif
+        #if os(visionOS)
+            // open about scene in a new window
+            let options = UIWindowScene.ActivationRequestOptions()
+            let activity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
+            UIApplication.shared.requestSceneSessionActivation(
+                nil,
+                userActivity: activity,
+                options: options,
+                errorHandler: nil
+            )
+        #else
+            // open about view controller modally
+            let about = AboutViewController()
+            about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
+            let vc = UINavigationController(rootViewController: about)
+            present(vc, animated: true, completion: nil)
+        #endif
     }
 
     @objc
     func exportData(_ sender: UIBarButtonItem?) {
         let hosts = serviceController.clusters.value
         guard let url = ServiceExporter.export(hosts: hosts) else { return }
-#if targetEnvironment(macCatalyst)
-        let controller = UIDocumentPickerViewController(forExporting: [url])
-#else
-        // show system share dialog for this file
-        let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        // on iPad, we attach the share sheet to the button that activated it
-        controller.popoverPresentationController?.barButtonItem = sender
-#endif
+        #if targetEnvironment(macCatalyst)
+            let controller = UIDocumentPickerViewController(forExporting: [url])
+        #else
+            // show system share dialog for this file
+            let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+            // on iPad, we attach the share sheet to the button that activated it
+            controller.popoverPresentationController?.barButtonItem = sender
+        #endif
         present(controller, animated: true, completion: nil)
     }
 

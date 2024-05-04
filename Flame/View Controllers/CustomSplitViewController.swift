@@ -1,11 +1,8 @@
 // Copyright 2019 Thomas Insam. All rights reserved.
 
-import ServiceDiscovery
 import UIKit
-import Utils
 
 class CustomSplitViewController: UISplitViewController {
-
     // rendered in the secondary vc when we don't have anything else to put there
     private lazy var emptyViewController = with(UIViewController()) {
         $0.view.backgroundColor = .systemGroupedBackground
@@ -23,8 +20,8 @@ class CustomSplitViewController: UISplitViewController {
         primaryBackgroundStyle = .none // Or .sidebar but I hate it.
 
         #if !os(visionOS)
-        presentsWithGesture = false
-        displayModeButtonVisibility = .never
+            presentsWithGesture = false
+            displayModeButtonVisibility = .never
         #endif
 
         setViewController(StaticNavigationController(rootViewController: primaryViewController), for: .primary)
@@ -45,12 +42,12 @@ class CustomSplitViewController: UISplitViewController {
 
     fileprivate var primary: UINavigationController {
         // swiftlint:disable:next force_cast
-        return viewController(for: .primary) as! UINavigationController
+        viewController(for: .primary) as! UINavigationController
     }
 
     fileprivate var secondary: UINavigationController {
         // swiftlint:disable:next force_cast
-        return viewController(for: .secondary) as! UINavigationController
+        viewController(for: .secondary) as! UINavigationController
     }
 
     public func clearSecondaryViewController() {
@@ -74,9 +71,8 @@ class CustomSplitViewController: UISplitViewController {
 // MARK: - UISplitViewControllerDelegate
 
 extension CustomSplitViewController: UISplitViewControllerDelegate {
-
     // Collapse all the view controllers onto the primary stack
-    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+    func splitViewController(_: UISplitViewController, topColumnForCollapsingToProposedTopColumn _: UISplitViewController.Column) -> UISplitViewController.Column {
         if secondary.viewControllers != [emptyViewController] {
             // only collapse if the right pane _isn't_ the empty state
             primary.viewControllers += secondary.viewControllers
@@ -87,7 +83,7 @@ extension CustomSplitViewController: UISplitViewControllerDelegate {
     }
 
     // leave only the first view controller in the primary column
-    func splitViewController(_ svc: UISplitViewController, displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode) -> UISplitViewController.DisplayMode {
+    func splitViewController(_: UISplitViewController, displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode) -> UISplitViewController.DisplayMode {
         guard let top = primary.viewControllers.first else {
             assertionFailure()
             return proposedDisplayMode

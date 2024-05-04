@@ -1,7 +1,6 @@
 // Copyright 2019 Thomas Insam. All rights reserved.
 
 import UIKit
-import Utils
 
 class AboutSceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?

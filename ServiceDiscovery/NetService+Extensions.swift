@@ -1,7 +1,6 @@
 // Copyright 2020 Thomas Insam. All rights reserved.
 
 import UIKit
-import Utils
 
 extension NetService {
     private var txtData: [(key: String, value: String)] {
@@ -31,7 +30,7 @@ extension NetService {
 
     /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
     var stringAddresses: Set<String> {
-        return Set((addresses ?? []).compactMap { getIFAddress($0) })
+        Set((addresses ?? []).compactMap { getIFAddress($0) })
     }
 }
 
@@ -41,12 +40,12 @@ extension NetService {
 // service to which you are connecting."
 private func getIFAddress(_ data: Data) -> String? {
     let string = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> String? in
-        let family = bytes.withMemoryRebound(to: sockaddr.self) { (sa) -> Int32 in
-            return Int32(sa.first?.sa_family ?? -0)
+        let family = bytes.withMemoryRebound(to: sockaddr.self) { sa -> Int32 in
+            Int32(sa.first?.sa_family ?? -0)
         }
         switch family {
         case AF_INET:
-            return bytes.withMemoryRebound(to: sockaddr_in.self) { (sa) -> String? in
+            return bytes.withMemoryRebound(to: sockaddr_in.self) { sa -> String? in
                 guard var addr = sa.first?.sin_addr else { return nil }
                 let size = Int(INET_ADDRSTRLEN)
                 let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
@@ -59,7 +58,7 @@ private func getIFAddress(_ data: Data) -> String? {
                 }
             }
         case AF_INET6:
-            return bytes.withMemoryRebound(to: sockaddr_in6.self) { (sa) -> String? in
+            return bytes.withMemoryRebound(to: sockaddr_in6.self) { sa -> String? in
                 guard var addr = sa.first?.sin6_addr else { return nil }
                 let size = Int(INET6_ADDRSTRLEN)
                 let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
@@ -89,6 +88,6 @@ private func getIFAddress(_ data: Data) -> String? {
 
 extension Data {
     var hex: String {
-        return map { byte in String(format: "%02X", byte) }.joined()
+        map { byte in String(format: "%02X", byte) }.joined()
     }
 }

@@ -2,7 +2,6 @@
 
 import Foundation
 import UIKit
-import Utils
 
 /// An implementation of ServiceBrowser that uses the deprecated NSNetService APIs
 /// to discover and browse services.
@@ -79,7 +78,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     }
 
     private func convertToServices(_ netServices: Set<NetService>) -> Set<Service> {
-        return Set(netServices.compactMap { ns -> Service? in
+        Set(netServices.compactMap { ns -> Service? in
             if ns.stringAddresses.isEmpty {
                 // not resolved yet
                 return nil

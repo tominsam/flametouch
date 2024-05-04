@@ -33,7 +33,7 @@ public class AddressCluster {
     /// (and hostnames) and returned, otherwise we'll create a new cluster.
     public static func from(addresses: Set<String>, hostnames: Set<String>) -> AddressCluster {
         // Look up the address in the global map
-        var existing = Set(addresses.compactMap({ globalLookup[$0] }))
+        var existing = Set(addresses.compactMap { globalLookup[$0] })
         if existing.isEmpty {
             existing.insert(AddressCluster(withAddresses: addresses, hostnames: hostnames))
         }
@@ -41,8 +41,8 @@ public class AddressCluster {
         // in the case where this new set of addresses corresponds to two previously separate clusters,
         // so it's required that we both synchronize all the addresses and hosts, but also the identifiers
         // so that they are considered equal (we want to retain the validity of the instances, though)
-        let allAddresses = existing.flatMap { $0.addresses } + addresses
-        let allHosts = existing.flatMap { $0.hostnames } + hostnames
+        let allAddresses = existing.flatMap(\.addresses) + addresses
+        let allHosts = existing.flatMap(\.hostnames) + hostnames
         let primary = existing.first! // safe because we inserted a new cluster in this case
 
         for cluster in existing {
@@ -96,23 +96,23 @@ public class AddressCluster {
     }
 
     public var displayAddress: String {
-        return sorted.first ?? "."
+        sorted.first ?? "."
     }
 
     public var displayName: String? {
-        return hostnames.sorted().first?.replacingOccurrences(of: ".local.", with: "")
+        hostnames.sorted().first?.replacingOccurrences(of: ".local.", with: "")
     }
 }
 
 extension AddressCluster: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return "<\(type(of: self)) \(addresses.sorted()) / \(hostnames.sorted()))>"
+        "<\(type(of: self)) \(addresses.sorted()) / \(hostnames.sorted()))>"
     }
 }
 
 extension AddressCluster: Hashable {
     public static func == (lhs: AddressCluster, rhs: AddressCluster) -> Bool {
-        return lhs.identifier == rhs.identifier
+        lhs.identifier == rhs.identifier
     }
 
     public func hash(into hasher: inout Hasher) {

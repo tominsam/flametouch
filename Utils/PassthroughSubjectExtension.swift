@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 // this one from https://www.swiftbysundell.com/articles/creating-combine-compatible-versions-of-async-await-apis/
 

@@ -1,17 +1,16 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import UIKit
 import SwiftUI
+import UIKit
 
 struct AboutView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack {
                 VStack(spacing: 16) {
-
                     Spacer()
 
-                    Image("Icon_160", bundle: nil)
+                    Image("Icon_160")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 120)

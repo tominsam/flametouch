@@ -7,7 +7,7 @@ public struct Host: Equatable, Hashable {
     public let addressCluster: AddressCluster
 
     public var name: String {
-        return ServiceNamer.nameForServices(services) ?? "Host"
+        ServiceNamer.nameForServices(services) ?? "Host"
     }
 
     public var subtitle: String {
@@ -19,7 +19,7 @@ public struct Host: Equatable, Hashable {
     }
 
     public var displayServices: [Service] {
-        return services.sorted {
+        services.sorted {
             if $0.type != $1.type {
                 return $0.type < $1.type
             }
@@ -31,7 +31,7 @@ public struct Host: Equatable, Hashable {
     }
 
     public var alive: Bool {
-        return !services.filter { $0.alive }.isEmpty
+        !services.filter(\.alive).isEmpty
     }
 
     public func matches(search filter: String) -> Bool {
@@ -50,14 +50,14 @@ public struct Host: Equatable, Hashable {
     }
 
     public func isSameHost(as host: Host) -> Bool {
-        return addressCluster == host.addressCluster
+        addressCluster == host.addressCluster
     }
 }
 
 public extension Collection where Element == Host {
     /// Returns optional Host object in the collection that is (probably) the same host as the passed host.
     func matching(host: Host) -> Host? {
-        return first { $0.isSameHost(as: host) }
+        first { $0.isSameHost(as: host) }
     }
 
     func serviceMatching(service: Service) -> Service? {

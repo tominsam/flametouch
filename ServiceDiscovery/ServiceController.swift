@@ -1,8 +1,7 @@
 // Copyright 2021 Thomas Insam <tom@movieos.org>
 
-import Foundation
-import Utils
 import Combine
+import Foundation
 
 public protocol ServiceController {
     var clusters: CurrentValueSubject<[Host], Never> { get }
@@ -66,20 +65,19 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     }
 
     public func host(for addressCluster: AddressCluster) -> Host? {
-        return clusters.value.first { $0.addressCluster == addressCluster }
+        clusters.value.first { $0.addressCluster == addressCluster }
     }
-
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
     func serviceBrowser(_: ServiceBrowser, didChangeServices services: Set<Service>) {
         let hosts = groupServices(services)
-        self.clusters.value = hosts
+        clusters.value = hosts
     }
 
     func groupServices(_ services: Set<Service>) -> [Host] {
-        let oldClusters = self.clusters.value
-            .flatMap { $0.services }
+        let oldClusters = clusters.value
+            .flatMap(\.services)
             .map {
                 var service = $0
                 service.alive = false
@@ -95,12 +93,10 @@ extension ServiceControllerImpl: ServiceBrowserDelegate {
     }
 }
 
-extension Publisher where Output == [Host] {
-
-    public func host(forAddressCluster addressCluster: AddressCluster) -> AnyPublisher<Host, Failure> {
-        return self.compactMap { hosts in
-            return hosts.first { $0.addressCluster == addressCluster }
+public extension Publisher where Output == [Host] {
+    func host(forAddressCluster addressCluster: AddressCluster) -> AnyPublisher<Host, Failure> {
+        compactMap { hosts in
+            hosts.first { $0.addressCluster == addressCluster }
         }.eraseToAnyPublisher()
     }
-
 }

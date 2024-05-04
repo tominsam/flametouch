@@ -15,7 +15,7 @@ private extension Service {
         self.name = name
         self.type = type
         self.domain = domain
-        self.addressCluster = AddressCluster.from(addresses: addresses, hostnames: [hostname])
+        addressCluster = AddressCluster.from(addresses: addresses, hostnames: [hostname])
         self.port = port
         self.data = data
         lastSeen = Date()

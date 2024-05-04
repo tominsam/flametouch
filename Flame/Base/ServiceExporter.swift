@@ -1,8 +1,6 @@
 // Copyright 2021 Thomas Insam. All rights reserved.
 
 import Foundation
-import ServiceDiscovery
-import Utils
 
 class ServiceExporter {
     static func export(hosts: [Host]) -> URL? {

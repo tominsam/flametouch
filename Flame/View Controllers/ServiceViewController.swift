@@ -1,11 +1,8 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import ServiceDiscovery
-import UIKit
-import Utils
-import Views
 import Combine
 import SwiftUI
+import UIKit
 
 /// Shows the details of a particular service on a particular host
 
@@ -78,7 +75,7 @@ class ServiceViewController: UIHostingController<ServiceView>, UICollectionViewD
 
         serviceController.clusters
             .map { [service] hosts in
-                return hosts.serviceMatching(service: service)
+                hosts.serviceMatching(service: service)
             }
             .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
             .receive(on: RunLoop.main)

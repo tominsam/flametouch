@@ -5,57 +5,22 @@ options:
 
 targets:
 
-  Utils:
-    name: Utils
-    type: library.static
-    platform: iOS
-    deploymentTarget: "15.0"
-    sources:
-      - path: "Utils"
-        name: "Utils"
-
-  Views:
-    name: Views
-    type: library.static
-    platform: iOS
-    deploymentTarget: "15.0"
-    sources:
-      - path: "Views"
-        name: "Views"
-    dependencies:
-      - target: Utils
-
-  ServiceDiscovery:
-    name: ServiceDiscovery
-    type: library.static
-    platform: iOS
-    deploymentTarget: "15.0"
-    sources:
-      - path: "ServiceDiscovery"
-        name: "ServiceDiscovery"
-    dependencies:
-      - target: Utils
-
-  ServiceDiscoveryTests:
-    type: bundle.unit-test
-    platform: iOS
-    deploymentTarget: "15.0"
-    transitivelyLinkDependencies: true
-    sources:
-      - ServiceDiscoveryTests
-    dependencies:
-      - target: ServiceDiscovery
-    info:
-      path: Test-Info.plist
-
   Flame:
     name: Flame
     type: application
-    platform: iOS
+    #platform:  iOS
+
+    supportedDestinations:
+      - iOS
+      - macOS
+      - tvOS
+      - watchOS
+      - visionOS
+
     deploymentTarget: "15.0"
     scheme:
       testTargets:
-        - ServiceDiscoveryTests
+        - FlameTests
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.jerakeen.flametouch
@@ -69,7 +34,11 @@ targets:
       release:
     sources:
       - path: "Flame"
+      - path: "Utils"
+      - path: "ServiceDiscovery"
+      - path: "Views"
       - path: "Translation"
+
       - path: "README.md"
         buildPhase: none
       - path: "CHANGELOG.md"
@@ -80,10 +49,6 @@ targets:
         buildPhase: none
       - path: "Flame.entitlements"
         buildPhase: none
-    dependencies:
-      - target: ServiceDiscovery
-      - target: Utils
-      - target: Views
 
     info:
       path: Info.plist
@@ -127,3 +92,19 @@ targets:
       - script: /opt/homebrew/bin/swiftlint
         name: Run SwiftLint
         basedOnDependencyAnalysis: false
+
+  FlameTests:
+    type: bundle.unit-test
+    platform: iOS
+    deploymentTarget: "15.0"
+    transitivelyLinkDependencies: true
+    sources:
+      - FlameTests
+    dependencies:
+      - target: Flame
+    info:
+      path: Test-Info.plist
+    settings:
+      base:
+        DEVELOPMENT_TEAM: 76AFK3W7M9
+

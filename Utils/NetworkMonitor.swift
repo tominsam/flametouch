@@ -1,8 +1,8 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
+import Combine
 import Foundation
 import Network
-import Combine
 
 // https://digitalbunker.dev/native-network-monitoring-in-swift/
 
@@ -28,7 +28,6 @@ extension NWInterface.InterfaceType {
 }
 
 public final class NetworkMonitor {
-
     public struct NetworkState {
         public let hasResponse: Bool
         public let isConnected: Bool

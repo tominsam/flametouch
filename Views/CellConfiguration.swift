@@ -1,9 +1,8 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
 import Foundation
-import UIKit
-import Utils
 import SwiftUI
+import UIKit
 
 func bodyFont(legible: Bool) -> Font {
     var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
@@ -12,7 +11,7 @@ func bodyFont(legible: Bool) -> Font {
             .featureSettings: [[
                 UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
                 UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
-            ]]
+            ]],
         ])
     }
     let uiFont = UIFont(descriptor: descriptor, size: 0)
@@ -38,7 +37,7 @@ public struct ValueCell: View {
     }
 
     public var body: some View {
-        HStack(spacing: 8) {
+        HStack {
             Text(title)
                 .font(bodyFont(legible: subtitle == nil))
                 .foregroundColor(.primary)
@@ -52,7 +51,7 @@ public struct ValueCell: View {
             }
         }
         .padding([.top, .bottom], 8)
-        .frame(minHeight: 44)
+        .frame(minHeight: 40)
         .contextMenu {
             if subtitle != nil {
                 Button(action: {
@@ -80,7 +79,6 @@ public struct ValueCell: View {
             }
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Double tap to open URL")
-
         }
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: "Copy name") {
@@ -92,18 +90,18 @@ public struct ValueCell: View {
 public struct DetailCell: View {
     let title: String
     let subtitle: String
-    let subtitleType: String
+    let copyLabel: String
     let url: URL?
 
     public init(
         title: String,
         subtitle: String,
-        subtitleType: String,
+        copyLabel: String,
         url: URL? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
-        self.subtitleType = subtitleType
+        self.copyLabel = copyLabel
         self.url = url
     }
 
@@ -135,7 +133,7 @@ public struct DetailCell: View {
             Button(action: {
                 UIPasteboard.general.string = subtitle
             }, label: {
-                Label("Copy \(subtitleType)", systemImage: "doc.on.clipboard")
+                Label(copyLabel, systemImage: "doc.on.clipboard")
             })
         }
         .accessibilityElement(children: .combine)
@@ -143,27 +141,29 @@ public struct DetailCell: View {
         .accessibilityAction(named: "Copy name") {
             UIPasteboard.general.string = title
         }
-        .accessibilityAction(named: "Copy \(subtitleType)") {
+        .accessibilityAction(named: copyLabel) {
             UIPasteboard.general.string = subtitle
         }
     }
 }
 
-extension View {
-    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder func `ifNonNil`<Content: View, T>(_ value: T?, transform: (Self, T) -> Content) -> some View {
+public extension View {
+    @ViewBuilder
+    func ifNonNil<Content: View, T>(_ value: T?, transform: (Self, T) -> Content) -> some View {
         if let value {
             transform(self, value)
         } else {
             self
         }
+    }
+
+    @ViewBuilder
+    func ifiOS<Content: View>(transform: (Self) -> Content) -> some View {
+        #if targetEnvironment(macCatalyst)
+            self
+        #else
+            transform(self)
+        #endif
     }
 }
 
@@ -174,4 +174,19 @@ struct SmallTrailingIcon: LabelStyle {
             configuration.icon.imageScale(.small)
         }
     }
+}
+
+#Preview {
+    let url = URL(string: "http://foo.com")
+    return List {
+        Section("Value Cell") {
+            ValueCell(title: "Title", subtitle: nil)
+            ValueCell(title: "Title", subtitle: "Subtitle")
+            ValueCell(title: "Title", subtitle: "Subtitle", url: url)
+        }
+        Section("Detail Cell") {
+            DetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test")
+            DetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test", url: url)
+        }
+    }.tint(.red)
 }

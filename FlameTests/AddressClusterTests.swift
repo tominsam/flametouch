@@ -1,9 +1,8 @@
+import Flame
 import Foundation
 import XCTest
-@testable import ServiceDiscovery
 
 class AddressClusterTests: XCTestCase {
-
     override func setUp() {
         AddressCluster.flushClusters()
     }
@@ -40,5 +39,4 @@ class AddressClusterTests: XCTestCase {
         XCTAssertFalse(cluster1 === cluster2) // still different instances
         XCTAssertTrue(cluster1 === cluster3 || cluster2 == cluster3) // new cluster is one of the existing clusters
     }
-
 }

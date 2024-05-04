@@ -1,7 +1,6 @@
 // Copyright 2019 Thomas Insam. All rights reserved.
 
 import UIKit
-import Utils
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -11,6 +10,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { fatalError() }
 
         #if targetEnvironment(macCatalyst)
+            // Hide window titlebar (you can still move window using the navigation bar)
             if let titlebar = windowScene.titlebar {
                 titlebar.titleVisibility = .hidden
                 titlebar.toolbar = nil
