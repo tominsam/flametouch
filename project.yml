@@ -12,10 +12,10 @@ targets:
 
     supportedDestinations:
       - iOS
-      - macOS
-      - tvOS
-      - watchOS
-      - visionOS
+#      - macOS
+#      - tvOS
+#      - watchOS
+#      - visionOS
 
     deploymentTarget: "15.0"
     scheme:
@@ -88,10 +88,10 @@ targets:
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.network.client: true
         com.apple.security.app-sandbox: true
-    postCompileScripts:
-      - script: /opt/homebrew/bin/swiftlint
-        name: Run SwiftLint
-        basedOnDependencyAnalysis: false
+#    postCompileScripts:
+#      - script: /opt/homebrew/bin/swiftlint
+#        name: Run SwiftLint
+#        basedOnDependencyAnalysis: false
 
   FlameTests:
     type: bundle.unit-test
