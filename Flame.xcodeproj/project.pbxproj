@@ -355,7 +355,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
-				INFOPLIST_FILE = "Test-Info.plist";
+				INFOPLIST_FILE = "generated/Test-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -374,7 +374,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
-				INFOPLIST_FILE = "Test-Info.plist";
+				INFOPLIST_FILE = "generated/Test-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -403,6 +403,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 103.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";
@@ -484,6 +485,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 103.3.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";

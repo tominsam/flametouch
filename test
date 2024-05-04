@@ -1,7 +1,0 @@
-#!/bin/bash -ex
-xcodebuild \
-    -project Flame.xcodeproj \
-    -scheme Flame \
-    -sdk iphonesimulator \
-    -destination 'platform=iOS Simulator,name=iPhone 14,OS=16.1' \
-    test

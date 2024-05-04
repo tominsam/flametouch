@@ -3,6 +3,13 @@ name: Flame
 options:
   bundleIdPrefix: org.jerakeen
 
+fileGroups:
+  - "README.md"
+  - "CHANGELOG.md"
+  - "project.yml"
+  - ".swiftlint.yml"
+  - "generated/Flame.entitlements"
+
 targets:
 
   Flame:
@@ -30,6 +37,10 @@ targets:
         CODE_SIGN_STYLE: "Manual"
         PROVISIONING_PROFILE_SPECIFIER: "Flametouch dev (with multicast)"
         PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: "Flametouch Mac Dev"
+        # I messed up and got these backwards once and now every version must be >80.
+        # This is the human-readable version, xcode cloud generates the build number now
+        # so it doesn't need to be in the project
+        MARKETING_VERSION: 103.3.0
       debug:
       release:
     sources:
@@ -39,17 +50,6 @@ targets:
       - path: "Views"
       - path: "Translation"
 
-      - path: "README.md"
-        buildPhase: none
-      - path: "CHANGELOG.md"
-        buildPhase: none
-      - path: "project.yml"
-        buildPhase: none
-      - path: ".swiftlint.yml"
-        buildPhase: none
-      - path: "generated/Flame.entitlements"
-        buildPhase: none
-
     info:
       path: generated/Info.plist
       properties:
@@ -58,9 +58,7 @@ targets:
         UILaunchScreen:
           UIColorName: LaunchBackground
           UIImageName: LaunchIcon
-        # I fucked up and got these backwards once and now every version must be >80
-        CFBundleShortVersionString: "103.1.1"
-        CFBundleVersion: "91"
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         ITSAppUsesNonExemptEncryption: false
         UIStatusBarStyle: UIStatusBarStyleLightContent
         UIViewControllerBasedStatusBarAppearance: true
@@ -103,7 +101,7 @@ targets:
     dependencies:
       - target: Flame
     info:
-      path: Test-Info.plist
+      path: generated/Test-Info.plist
     settings:
       base:
         DEVELOPMENT_TEAM: "76AFK3W7M9"
