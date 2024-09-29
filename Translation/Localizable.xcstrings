@@ -47,9 +47,6 @@
         }
       }
     },
-    "A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), [Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)." : {
-
-    },
     "Connect to a WiFi network to see local services" : {
       "comment" : "Body of a view shown when there are no local services",
       "localizations" : {
