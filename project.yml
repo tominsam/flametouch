@@ -24,7 +24,7 @@ targets:
 #      - watchOS
 #      - visionOS
 
-    deploymentTarget: "15.0"
+    deploymentTarget: "17.0"
     scheme:
       testTargets:
         - FlameTests
@@ -40,7 +40,8 @@ targets:
         # I messed up and got these backwards once and now every version must be >80.
         # This is the human-readable version, xcode cloud generates the build number now
         # so it doesn't need to be in the project
-        MARKETING_VERSION: 103.3.0
+        # YOU MUST REGENERATE AND COMMIT THE XCODE PROJECT TO BUMP THIS
+        MARKETING_VERSION: 104.0.0
       debug:
       release:
     sources:

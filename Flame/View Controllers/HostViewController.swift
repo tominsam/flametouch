@@ -6,16 +6,14 @@ import UIKit
 
 /// View of a single host - lists the services of that host
 
-class HostViewModel: ObservableObject {
-    @Published
+@Observable
+class HostViewModel {
     var host: Host?
-
-    @Published
     var selection: Service?
 }
 
 struct HostView: View {
-    @ObservedObject
+    @Bindable
     var viewModel: HostViewModel
 
     var body: some View {
@@ -80,13 +78,11 @@ class HostViewController: UIHostingController<HostView>, UICollectionViewDelegat
             }
             .store(in: &cancellables)
 
-        viewModel.$selection
-            .compactMap { $0 }
-            .sink { [weak self] service in
-                let vc = ServiceViewController(serviceController: serviceController, service: service)
-                self?.show(vc, sender: self)
-            }
-            .store(in: &cancellables)
+        observeObject(viewModel, keypath: \.selection) { [weak self] service in
+            guard let service else { return }
+            let vc = ServiceViewController(serviceController: serviceController, service: service)
+            self?.show(vc, sender: self)
+        }
     }
 
     @available(*, unavailable)

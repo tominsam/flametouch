@@ -6,21 +6,16 @@ import UIKit
 
 /// Shows the details of a particular service on a particular host
 
-class ServiceViewModel: ObservableObject {
-    @Published
+@Observable
+class ServiceViewModel {
     var service: Service?
-
-    @Published
     var alive = true
-
-    @Published
     var highlight = true
-
     var tapAction: (URL) -> Void = { _ in }
 }
 
 struct ServiceView: View {
-    @ObservedObject
+    @Bindable
     var viewModel: ServiceViewModel
 
     var body: some View {

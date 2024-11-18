@@ -6,14 +6,12 @@ import UIKit
 
 /// Root view of the app, renders a list of hosts on the local network
 
-class BrowseViewModel: ObservableObject {
-    @Published
+@Observable
+final class BrowseViewModel {
     var hosts: [Host] = []
 
-    @Published
     var selection: Host?
 
-    @Published
     var noWifi: Bool = false
 
     var refreshAction: () -> Void = {}
@@ -22,7 +20,7 @@ class BrowseViewModel: ObservableObject {
 }
 
 struct BrowseView: View {
-    @ObservedObject
+    @Bindable
     var viewModel: BrowseViewModel
 
     @State
@@ -104,13 +102,11 @@ class BrowseViewController: UIHostingController<BrowseView> {
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.backButtonDisplayMode = .minimal
 
-        viewModel.$selection
-            .sink { [weak self] value in
-                guard let host = value else { return }
-                let vc = HostViewController(serviceController: serviceController, host: host)
-                self?.show(vc, sender: self)
-            }
-            .store(in: &cancellables)
+        observeObject(viewModel, keypath: \.selection) { [weak self] selection in
+            guard let host = selection else { return }
+            let vc = HostViewController(serviceController: serviceController, host: host)
+            self?.show(vc, sender: self)
+        }
 
         viewModel.refreshAction = { [weak self] in
             self?.handleTableRefresh(sender: nil)

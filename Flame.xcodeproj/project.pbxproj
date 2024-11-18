@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,7 @@
 		57CE3BD3F6B2B4D92F9A6A3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71F556B8DB17A95F449EE581 /* Assets.xcassets */; };
 		6FD6FED5727F258B614E30AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D12D8C1B438C8ED270337D /* SceneDelegate.swift */; };
 		71FE2A8B72FE6D7321886F85 /* CellConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5286FFAD096541FB0D90316A /* CellConfiguration.swift */; };
+		7298F0C22CEB72F300BE2470 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7298F0C12CEB72F300BE2470 /* Observable.swift */; };
 		7FBE0D6360AB8720521C42E0 /* AboutSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E07C6C06E47C6B7C805CF3B /* AboutSceneDelegate.swift */; };
 		846F1E26FF7B62164ECDC99A /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = BD16FB7B7590C4D73E396E5D /* Credits.rtfd */; };
 		9500515369F22DE05EB7E03F /* AddressCluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08AB33DF6763AEB024D41F1B /* AddressCluster.swift */; };
@@ -62,6 +63,7 @@
 		5FDD9841E5D58F80CA615EE0 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		62B50C7FBF75F734ADACEFCE /* AddressClusterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressClusterTests.swift; sourceTree = "<group>"; };
 		71F556B8DB17A95F449EE581 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7298F0C12CEB72F300BE2470 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		7306B00560119DAAE21BEABE /* HostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostViewController.swift; sourceTree = "<group>"; };
 		74127D199BC8E926B7584BD7 /* CustomSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSplitViewController.swift; sourceTree = "<group>"; };
 		78C3E6E9772AEF11D1D06A60 /* Flame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flame.entitlements; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			children = (
 				CFE1C5F919065A3372C3843E /* Configurable.swift */,
 				B54202612EC015AE5196BE21 /* ELog.swift */,
+				7298F0C12CEB72F300BE2470 /* Observable.swift */,
 				4009C2CF71D8CA04BC302DE6 /* NetworkMonitor.swift */,
 				E1A42F35CA11FC87D5EB053E /* PassthroughSubjectExtension.swift */,
 			);
@@ -323,6 +326,7 @@
 				9736F332DE8D96D5C6810657 /* DemoServiceBrowser.swift in Sources */,
 				96E0589895D1A17CEA07D81C /* DeprecatedServiceBrowser.swift in Sources */,
 				D28EBFBE32F3C2EAA2B7A88C /* ELog.swift in Sources */,
+				7298F0C22CEB72F300BE2470 /* Observable.swift in Sources */,
 				B5E165B4C06122538CF0A214 /* Host.swift in Sources */,
 				DC9651F437C519041467ADED /* HostViewController.swift in Sources */,
 				D85733E4D4526FE47C32900E /* ModernServiceBrowser.swift in Sources */,
@@ -398,12 +402,12 @@
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
 				INFOPLIST_FILE = generated/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 103.3.0;
+				MARKETING_VERSION = 104.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";
@@ -480,12 +484,12 @@
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = 76AFK3W7M9;
 				INFOPLIST_FILE = generated/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 103.3.0;
+				MARKETING_VERSION = 104.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";
