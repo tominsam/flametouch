@@ -2,6 +2,9 @@
 
 import UIKit
 
+// bwahahahah so unsafe
+extension NetService: @unchecked @retroactive Sendable {}
+
 extension NetService {
     private var txtData: [(key: String, value: String)] {
         guard let txtRecord = txtRecordData(), !txtRecord.isEmpty else {
@@ -29,8 +32,13 @@ extension NetService {
     }
 
     /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
+    nonisolated
     var stringAddresses: Set<String> {
-        Set((addresses ?? []).compactMap { getIFAddress($0) })
+        get async {
+            // self.addresses is expensive
+            assert(!Thread.isMainThread)
+            return Set((addresses ?? []).compactMap { getIFAddress($0) })
+        }
     }
 }
 
@@ -38,6 +46,7 @@ extension NetService {
 // "The NSData object [..] contains an appropriate sockaddr structure that you can
 // use to connect to the socket. The exact type of this structure depends on the
 // service to which you are connecting."
+nonisolated
 private func getIFAddress(_ data: Data) -> String? {
     let string = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> String? in
         let family = bytes.withMemoryRebound(to: sockaddr.self) { sa -> Int32 in
@@ -48,26 +57,26 @@ private func getIFAddress(_ data: Data) -> String? {
             return bytes.withMemoryRebound(to: sockaddr_in.self) { sa -> String? in
                 guard var addr = sa.first?.sin_addr else { return nil }
                 let size = Int(INET_ADDRSTRLEN)
-                let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
-                defer { buffer.deallocate() }
-                if let cString = inet_ntop(family, &addr, buffer, socklen_t(size)) {
-                    return String(cString: cString)
-                } else {
-                    ELog("inet_ntop errno \(errno) from \(data)")
-                    return nil
+                return withUnsafeTemporaryAllocation(of: Int8.self, capacity: size) { buffer -> String? in
+                    if let cString = inet_ntop(family, &addr, buffer.baseAddress, socklen_t(size)) {
+                        return String(cString: cString)
+                    } else {
+                        ELog("inet_ntop errno \(errno) from \(data)")
+                        return nil
+                    }
                 }
             }
         case AF_INET6:
             return bytes.withMemoryRebound(to: sockaddr_in6.self) { sa -> String? in
                 guard var addr = sa.first?.sin6_addr else { return nil }
                 let size = Int(INET6_ADDRSTRLEN)
-                let buffer = UnsafeMutablePointer<Int8>.allocate(capacity: size)
-                defer { buffer.deallocate() }
-                if let cString = inet_ntop(family, &addr, buffer, socklen_t(size)) {
-                    return String(cString: cString)
-                } else {
-                    ELog("inet_ntop errno \(errno) from \(data)")
-                    return nil
+                return withUnsafeTemporaryAllocation(of: Int8.self, capacity: size) { buffer -> String? in
+                    if let cString = inet_ntop(family, &addr, buffer.baseAddress, socklen_t(size)) {
+                        return String(cString: cString)
+                    } else {
+                        ELog("inet_ntop errno \(errno) from \(data)")
+                        return nil
+                    }
                 }
             }
         default:

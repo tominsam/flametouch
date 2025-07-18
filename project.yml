@@ -10,6 +10,10 @@ fileGroups:
   - ".swiftlint.yml"
   - "generated/Flame.entitlements"
 
+settings:
+  # setting this that the project layer helps the submodules
+  SWIFT_EMIT_LOC_STRINGS: YES
+
 targets:
 
   Flame:
@@ -18,38 +22,50 @@ targets:
     #platform:  iOS
 
     supportedDestinations:
+      # this includes catalyst
       - iOS
-#      - macOS
-#      - tvOS
-#      - watchOS
-#      - visionOS
 
     deploymentTarget: "17.0"
+
     scheme:
       testTargets:
         - FlameTests
+
     settings:
       base:
+        # https://developer.apple.com/documentation/xcode/build-settings-reference
+
         PRODUCT_BUNDLE_IDENTIFIER: "org.jerakeen.flametouch"
         SUPPORTS_MACCATALYST: YES
         DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
         DEVELOPMENT_TEAM: "76AFK3W7M9"
+
+        # We have custom entitlements so we need to use manual code-signing
         CODE_SIGN_STYLE: "Manual"
         PROVISIONING_PROFILE_SPECIFIER: "Flametouch dev (with multicast)"
         PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: "Flametouch Mac Dev"
+
         # I messed up and got these backwards once and now every version must be >80.
         # This is the human-readable version, xcode cloud generates the build number now
         # so it doesn't need to be in the project
         # YOU MUST REGENERATE AND COMMIT THE XCODE PROJECT TO BUMP THIS
         MARKETING_VERSION: 104.0.0
+
+        # Better concurrency defaults
+        SWIFT_APPROACHABLE_CONCURRENCY: YES
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_26
       debug:
       release:
+
     sources:
       - path: "Flame"
       - path: "Utils"
       - path: "ServiceDiscovery"
       - path: "Views"
       - path: "Translation"
+      - path: "Image Resources/AppIcon_26.icon"
 
     info:
       path: generated/Info.plist
@@ -80,6 +96,7 @@ targets:
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).SceneDelegate
               - UISceneConfigurationName: About
                 UISceneDelegateClassName: $(PRODUCT_MODULE_NAME).AboutSceneDelegate
+
     entitlements:
       path: generated/Flame.entitlements
       properties:
@@ -87,6 +104,7 @@ targets:
         com.apple.security.files.user-selected.read-write: true
         com.apple.security.network.client: true
         com.apple.security.app-sandbox: true
+
 #    postCompileScripts:
 #      - script: /opt/homebrew/bin/swiftlint
 #        name: Run SwiftLint

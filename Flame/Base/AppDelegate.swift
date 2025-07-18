@@ -6,8 +6,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     let serviceController: ServiceController = ServiceControllerImpl()
-    var serviceControllerRefCount: Int = 0
-    var serviceRefreshTimer: Timer?
+    var serviceRefreshTask: Task<Void, Never>?
 
     static var instance: AppDelegate {
         // swiftlint:disable:next force_cast
@@ -37,40 +36,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    override func buildMenu(with builder: UIMenuBuilder) {
-        let refreshCommand = UIKeyCommand(
-            title: String(
-                localized: "Refresh",
-                comment: "Menu item to refresh network data"
-            ),
-            image: nil,
-            action: #selector(BrowseViewController.handleTableRefresh(sender:)),
-            input: "R",
-            modifierFlags: .command,
-            propertyList: nil
-        )
-
-        let exportCommand = UIKeyCommand(
-            title: String(localized: "Export…", comment: "Menu item to export network data"),
-            image: nil,
-            action: #selector(CustomSplitViewController.saveExportedData),
-            input: "E",
-            modifierFlags: .command,
-            propertyList: nil
-        )
-
-        let exportMenu = UIMenu(
-            title: "",
-            image: nil,
-            identifier: UIMenu.Identifier("org.jerakeen.flametouch.menus.export"),
-            options: .displayInline,
-            children: [refreshCommand, exportCommand]
-        )
-
-        builder.insertChild(exportMenu, atStartOfMenu: .file)
-
-        builder.remove(menu: .help)
-    }
+//    override func buildMenu(with builder: UIMenuBuilder) {
+//        let refreshCommand = UIKeyCommand(
+//            title: String(
+//                localized: "Refresh",
+//                comment: "Menu item to refresh network data"
+//            ),
+//            image: nil,
+//            action: #selector(BrowseViewController.handleTableRefresh(sender:)),
+//            input: "R",
+//            modifierFlags: .command,
+//            propertyList: nil
+//        )
+//
+//        let exportCommand = UIKeyCommand(
+//            title: String(localized: "Export…", comment: "Menu item to export network data"),
+//            image: nil,
+//            action: #selector(CustomSplitViewController.saveExportedData),
+//            input: "E",
+//            modifierFlags: .command,
+//            propertyList: nil
+//        )
+//
+//        let exportMenu = UIMenu(
+//            title: "",
+//            image: nil,
+//            identifier: UIMenu.Identifier("org.jerakeen.flametouch.menus.export"),
+//            options: .displayInline,
+//            children: [refreshCommand, exportCommand]
+//        )
+//
+//        builder.insertChild(exportMenu, atStartOfMenu: .file)
+//
+//        builder.remove(menu: .help)
+//    }
 
     func openUrl(_ url: URL?, from presentingViewController: UIViewController) {
         guard let url = url, let scheme = url.scheme else {
@@ -95,7 +94,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         default:
             UIApplication.shared.open(url, options: [:]) { result in
                 if !result {
-                    let alertController = UIAlertController(title: "Can't open URL", message: "I couldn't open that URL - maybe you need a particular app installed", preferredStyle: .alert)
+                    let alertController = UIAlertController(
+                        title: "Can't open URL",
+                        message: "I couldn't open that URL - maybe you need a particular app installed",
+                        preferredStyle: .alert
+                    )
                     alertController.addAction(UIAlertAction(title: "OK", style: .default))
                     presentingViewController.present(alertController, animated: true)
                 }
@@ -104,35 +107,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func sceneDelegateWillEnterForeground(_: SceneDelegate) {
-        serviceController.start()
-        if serviceRefreshTimer == nil {
-            serviceRefreshTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] _ in
+        serviceRefreshTask?.cancel()
+        serviceRefreshTask = Task {
+            ELog("Starting heartbeat")
+            await serviceController.start()
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(10))
+                if Task.isCancelled { break }
                 ELog("tick")
-                guard let self else { return }
-                serviceController.stop()
-                serviceController.start()
+                await serviceController.stop()
+                await serviceController.start()
             }
+            ELog("Stopping heartbeat")
+            await serviceController.stop()
         }
     }
 
     func sceneDelegateDidEnterBackground(_: SceneDelegate) {
-        // If there are no more forground scenes, stop the service browser
-        for scene in UIApplication.shared.connectedScenes {
-            ELog("State is \(scene.activationState.rawValue)")
-            switch scene.activationState {
-            case .foregroundActive, .foregroundInactive:
-                // Found a foreground scene
+        Task {
+            // If there are no more foreground scenes, stop the service browser
+            if UIApplication.shared.connectedScenes.map(\.activationState).contains(
+                [.foregroundActive, .foregroundInactive]
+            ) {
                 return
-            case .unattached, .background:
-                // Not a foreground scene
-                break
-            @unknown default:
-                fatalError()
             }
+            serviceRefreshTask?.cancel()
+            serviceRefreshTask = nil
         }
-        ELog("Stopping ServiceController")
-        serviceRefreshTimer?.invalidate()
-        serviceRefreshTimer = nil
-        serviceController.stop()
     }
 }

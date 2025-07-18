@@ -22,7 +22,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     }
 
     /// broadcast a service from the local device
-    private let flameService = NetService(domain: DeprecatedServiceBrowser.defaultDomain, type: "_flametouch._tcp", name: UIDevice.current.name, port: 1812)
+    private var flameService: NetService?
 
     /// lookup of service type to browser for this service type.
     private var netServiceBrowsers = [String: NetServiceBrowser]()
@@ -33,29 +33,35 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     override init() {
         super.init()
         metaServiceBrowser.delegate = self
-        flameService.delegate = self
     }
 
-    private func broadcast() {
-        let services = convertToServices(netServices)
-        delegate?.serviceBrowser(self, didChangeServices: services)
+    private func broadcast() async {
+        let services = await convertToServices(netServices)
+        await delegate?.serviceBrowser(self, didChangeServices: services)
     }
 
     /// start meta-browser and all service browsers
-    func start() {
+    func start() async {
         ELog("Start")
 
-        flameService.publish()
+        flameService = NetService(
+            domain: DeprecatedServiceBrowser.defaultDomain,
+            type: "_flametouch._tcp",
+            name: UIDevice.current.name,
+            port: 1812
+        )
+        flameService?.delegate = self
+        flameService?.publish()
 
         metaServiceBrowser.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: DeprecatedServiceBrowser.defaultDomain)
         for (serviceType, netServiceBrowser) in netServiceBrowsers {
             netServiceBrowser.searchForServices(ofType: serviceType, inDomain: DeprecatedServiceBrowser.defaultDomain)
         }
-        broadcast()
+        await broadcast()
     }
 
     /// stop the metabrowser and all service browsers
-    func stop() {
+    func stop() async {
         ELog("Stop")
         for service in netServices {
             service.stopMonitoring()
@@ -65,45 +71,51 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
             browser.stop()
         }
         metaServiceBrowser.stop()
-        flameService.stop()
+        flameService?.stop()
         netServiceBrowsers.removeAll()
-        broadcast()
+        await broadcast()
     }
 
-    func reset() {
-        stop()
+    func reset() async {
+        await stop()
         netServices.removeAll()
         AddressCluster.flushClusters()
-        broadcast()
+        await broadcast()
     }
 
-    private func convertToServices(_ netServices: Set<NetService>) -> Set<Service> {
-        Set(netServices.compactMap { ns -> Service? in
-            if ns.stringAddresses.isEmpty {
+    private func convertToServices(_ netServices: Set<NetService>) async -> Set<Service> {
+        var services = Set<Service>()
+        for ns in netServices {
+            let addresses = await ns.stringAddresses
+            if addresses.isEmpty {
                 // not resolved yet
-                return nil
+                continue
             }
             if ns.hostName == "000000000000.local." {
                 // All the eeros on my local network claim this address and
                 // it's causing them to be clustered together.
-                return nil
+                continue
             }
-            return Service(
+            let service = Service(
                 name: ns.name,
                 type: ns.type,
                 domain: ns.domain == "local." ? nil : ns.domain,
-                addressCluster: AddressCluster.from(addresses: Set(ns.stringAddresses), hostnames: Set([ns.hostName].compactMap { $0 })),
+                addressCluster: AddressCluster.from(
+                    addresses: Set(addresses),
+                    hostnames: Set([ns.hostName].compactMap { $0 })
+                ),
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),
                 alive: true
             )
-        })
+            services.insert(service)
+        }
+        return services
     }
 }
 
 // MARK: NetServiceBrowserDelegate
-
 extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
     func netServiceBrowser(_: NetServiceBrowser, didFind service: NetService, moreComing _: Bool) {
         if service.type == "_tcp.local." || service.type == "_udp.local." {
@@ -131,9 +143,11 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             // Services are not always cleaned up - for instance entering airplane mode won't remove services.
             netServices.insert(service)
             service.delegate = self
-            service.resolve(withTimeout: 10)
             service.startMonitoring()
-            broadcast()
+            DispatchQueue.global().async {
+                service.resolve(withTimeout: 10)
+            }
+            Task { await self.broadcast() }
         }
     }
 
@@ -156,7 +170,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             service.stopMonitoring()
             netServices.remove(at: index)
         }
-        broadcast()
+        Task { await self.broadcast() }
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
@@ -168,13 +182,13 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
 
 extension DeprecatedServiceBrowser: NetServiceDelegate {
     func netServiceDidResolveAddress(_ service: NetService) {
-        ELog("🟢 resolved \(service.type) \(service.name) \(service.domain) as \(service.stringAddresses)")
-        broadcast()
+        ELog("🟢 resolved \(service.type) \(service.name) \(service.domain)")
+        Task { await self.broadcast() }
     }
 
     func netService(_ service: NetService, didUpdateTXTRecord _: Data) {
         ELog("❕ New data for \(service.type) \(service.name)")
-        broadcast()
+        Task { await self.broadcast() }
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didFindDomain domainString: String, moreComing _: Bool) {

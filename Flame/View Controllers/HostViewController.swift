@@ -10,6 +10,8 @@ import UIKit
 class HostViewModel {
     var host: Host?
     var selection: Service?
+    var tapAction: (URL) -> Void = { _ in }
+    var selectAction: (Service?) -> Void = { _ in }
 }
 
 struct HostView: View {
@@ -21,7 +23,7 @@ struct HostView: View {
             List(selection: $viewModel.selection) {
                 Section(
                     header: Text(
-                        "\(host.addressCluster.sorted.count, specifier: "%llu") address(es)",
+                        "\(host.addressCluster.sorted.count) address(es)",
                         comment: "Section header for a list of addresses"
                     ),
                     content: {
@@ -32,9 +34,20 @@ struct HostView: View {
                 )
                 .opacity(host.alive ? 1 : 0.3)
 
+                if let url = host.url {
+                    Section {
+                        Button(action: {
+                            viewModel.tapAction(url)
+                        }, label: {
+                            Text("Open in browser")
+                                .frame(minHeight: 32)
+                        })
+                    }
+                    .listSectionSpacing(16)
+                }
                 Section(
                     header: Text(
-                        "\(host.displayServices.count, specifier: "%llu") service(s)",
+                        "\(host.displayServices.count) service(s)",
                         comment: "Section header for a list of services"
                     ),
                     content: {
@@ -52,6 +65,9 @@ struct HostView: View {
             }
             .onAppear {
                 viewModel.selection = nil
+            }
+            .onChange(of: viewModel.selection) { _, selection in
+                viewModel.selectAction(selection)
             }
             .navigationTitle(host.name)
         } else {
@@ -78,7 +94,11 @@ class HostViewController: UIHostingController<HostView>, UICollectionViewDelegat
             }
             .store(in: &cancellables)
 
-        observeObject(viewModel, keypath: \.selection) { [weak self] service in
+        viewModel.tapAction = { url in
+            AppDelegate.instance.openUrl(url, from: self)
+        }
+
+        viewModel.selectAction = { [weak self] service in
             guard let service else { return }
             let vc = ServiceViewController(serviceController: serviceController, service: service)
             self?.show(vc, sender: self)

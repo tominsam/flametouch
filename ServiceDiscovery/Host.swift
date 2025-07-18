@@ -11,7 +11,7 @@ public struct Host: Equatable, Hashable {
     }
 
     public var subtitle: String {
-        let countString = String(localized: "\(services.count, specifier: "%llu") service(s)")
+        let countString = String(localized: "\(services.count) service(s)")
         return "\(addressCluster.displayAddress) (\(countString))"
     }
 
@@ -48,6 +48,10 @@ public struct Host: Equatable, Hashable {
 
     public func isSameHost(as host: Host) -> Bool {
         addressCluster == host.addressCluster
+    }
+
+    var url: URL? {
+        services.compactMap(\.url).first
     }
 }
 

@@ -2,6 +2,7 @@
 
 import Foundation
 
+nonisolated
 public func ELog(_ message: String, fileName: String = #file) {
     #if DEBUG
         let file = fileName.split(separator: "/").last?.split(separator: ".").first ?? ""

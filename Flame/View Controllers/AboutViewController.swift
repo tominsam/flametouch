@@ -18,15 +18,11 @@ struct AboutView: View {
 
                     Spacer().frame(height: 8)
 
-                    Text(.init(
-                        "A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), " +
-                            "built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), " +
-                            "[Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/)."
-                    ))
+                    Text("A Bonjour Network Services Browser by [Tom Insam](https://movieos.org), built on previous work by [Sven‑S. Porst](http://earthlingsoft.net/ssp/), [Paul Mison](http://husk.org/) and [Tom Insam](https://movieos.org/).")
 
-                    if let url = URL(string: "https://movieos.org/code/flame/") {
-                        Link(destination: url, label: { Text("Visit web page") })
-                    }
+                    Spacer().frame(height: 4)
+
+                    Link("movieos.org/code/flame", destination: URL(string: "https://movieos.org/code/flame/")!)
 
                     Spacer().frame(height: 8)
                     Divider()
@@ -72,3 +68,4 @@ class AboutViewController: UIHostingController<AboutView> {
         presentingViewController?.dismiss(animated: true, completion: nil)
     }
 }
+

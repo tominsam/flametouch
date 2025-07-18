@@ -14,4 +14,6 @@ To build and run on a physical device you need the `com.apple.developer.networki
 
 * Long domains and service names are clipping and there's no real way of seeing the full thing.
 * Need better way of copying IP and names without relying on users discovering long-press of rows.
+* If a service has an openable action I want to expose that on the list of hosts
+* Networking layer desperately needs to be async not this dispatchqueue nightmare
 

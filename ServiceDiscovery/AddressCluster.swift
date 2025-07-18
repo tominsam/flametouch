@@ -22,7 +22,7 @@ var globalLookup = [String: AddressCluster]()
 // and a list of addresses and hostnames. The factory method takes a list of addresses,
 // and vends the existing cluster that contains any of those addresses, adding them to the cluster,
 // or creates a new cluster with those addresses.
-public class AddressCluster {
+public class AddressCluster: Sendable {
     var identifier = UUID()
 
     var addresses: Set<String>

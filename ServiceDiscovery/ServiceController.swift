@@ -5,9 +5,9 @@ import Foundation
 
 public protocol ServiceController {
     var clusters: CurrentValueSubject<[Host], Never> { get }
-    func start()
-    func restart()
-    func stop()
+    func start() async
+    func restart() async
+    func stop() async
 
     func host(for addressCluster: AddressCluster) -> Host?
 }
@@ -31,7 +31,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         browser.delegate = self
     }
 
-    public func start() {
+    public func start() async {
         // nil stoped date means we're running
         guard let stoppedDate = stoppedDate else { return }
 
@@ -42,26 +42,25 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         ELog("Stopped for \(stoppedTime) (compared to \(ServiceControllerImpl.maxStopTime))")
         if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
-            browser.reset()
+            await browser.reset()
             clusters.value = []
         }
-        browser.start()
+        await browser.start()
         self.stoppedDate = nil
     }
 
-    public func stop() {
-        browser.stop()
+    public func stop() async {
+        await browser.stop()
         stoppedDate = Date()
     }
 
     /// Completely restart the controller, clear all caches, start from scratch
-    public func restart() {
-        stop()
-        browser.reset()
+    public func restart() async {
+        await stop()
+        await browser.reset()
+        try? await Task.sleep(for: .seconds(0.5))
         clusters.value = []
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
-            start()
-        }
+        await start()
     }
 
     public func host(for addressCluster: AddressCluster) -> Host? {
@@ -70,7 +69,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
-    func serviceBrowser(_: ServiceBrowser, didChangeServices services: Set<Service>) {
+    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) async {
         let hosts = groupServices(services)
         clusters.value = hosts
     }

@@ -22,8 +22,16 @@ struct ServiceView: View {
         if let service = viewModel.service {
             List {
                 Section("Core") {
-                    ValueCell(title: "Name", subtitle: service.name)
-                    ValueCell(title: "Type", subtitle: service.type, url: service.url, tapAction: viewModel.tapAction)
+                    ValueCell(
+                        title: String(localized: "Name", comment: "Heading for a cell showing a service name"),
+                        subtitle: service.name
+                    )
+                    ValueCell(
+                        title: String(localized: "Type", comment: "Heading for a cell showing a service type"),
+                        subtitle: service.type,
+                        url: service.url,
+                        tapAction: viewModel.tapAction
+                    )
                     if let domain = service.domain {
                         ValueCell(title: "Domain", subtitle: domain)
                     }

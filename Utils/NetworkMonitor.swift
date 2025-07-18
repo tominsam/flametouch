@@ -4,8 +4,6 @@ import Combine
 import Foundation
 import Network
 
-// https://digitalbunker.dev/native-network-monitoring-in-swift/
-
 extension NWInterface.InterfaceType {
     static var allCases: [NWInterface.InterfaceType] = [
         .other,
@@ -39,33 +37,32 @@ public final class NetworkMonitor {
         }
     }
 
-    // MARK: - Public
-
     public static let shared = NetworkMonitor()
 
-    public lazy var state = PassthroughSubject.emittingValues(from: networkEvents).eraseToAnyPublisher()
+    private static let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
 
-    // MARK: - Private
+    public var state: AnyPublisher<NetworkState, Never> {
+        Deferred {
+            ELog("Watching network state")
+            let subject = PassthroughSubject<NetworkState, Never>()
 
-    private let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
-
-    private var networkEvents: AsyncStream<NetworkState> {
-        AsyncStream { continuation in
             let monitor = NWPathMonitor()
 
             monitor.pathUpdateHandler = { path in
+                ELog("Network state changed")
                 let state = NetworkState(
                     hasResponse: true,
                     isConnected: path.status != .unsatisfied,
                     isExpensive: path.isExpensive,
                     currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
                 )
-                continuation.yield(state)
+                subject.send(state)
             }
-            continuation.onTermination = { _ in
+            monitor.start(queue: Self.queue)
+            return subject.handleEvents(receiveCancel: {
+                ELog("Stopping network state watcher")
                 monitor.cancel()
-            }
-            monitor.start(queue: queue)
-        }
+            })
+        }.eraseToAnyPublisher()
     }
 }

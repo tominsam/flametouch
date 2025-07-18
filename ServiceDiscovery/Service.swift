@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Service {
+public struct Service: Sendable {
     // From the service itself
     public let name: String
     public let type: String

@@ -80,9 +80,12 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
         broadcast()
     }
 
-    private func convertToServices(_ netServices: Set<NetService>) -> Set<Service> {
-        Set(netServices.compactMap { ns -> Service? in
-            if ns.stringAddresses.isEmpty {
+    /// Converts a set of NetService instances to a set of Service instances asynchronously.
+    /// Added `async` keyword to allow awaiting inside the function.
+    private func convertToServices(_ netServices: Set<NetService>) async -> Set<Service> {
+        let services = await netServices.asyncCompactMap { ns async -> Service? in
+            let addressess = await ns.stringAddresses
+            if addressess.isEmpty {
                 // not resolved yet
                 return nil
             }
@@ -90,13 +93,14 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
                 name: ns.name,
                 type: ns.type,
                 domain: ns.domain == "local." ? nil : ns.domain,
-                addressCluster: AddressCluster.from(addresses: Set(ns.stringAddresses), hostnames: Set([ns.hostName].compactMap { $0 })),
+                addressCluster: AddressCluster.from(addresses: Set(addressess), hostnames: Set([ns.hostName].compactMap { $0 })),
                 port: ns.port,
                 data: ns.txtDict,
                 lastSeen: Date(),
                 alive: true
             )
-        })
+        }
+        return Set(services)
     }
 }
 

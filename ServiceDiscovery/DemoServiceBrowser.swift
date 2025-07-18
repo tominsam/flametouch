@@ -521,15 +521,15 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
         super.init()
     }
 
-    func start() {
-        delegate?.serviceBrowser(self, didChangeServices: services)
+    func start() async {
+        await delegate?.serviceBrowser(self, didChangeServices: services)
     }
 
-    func stop() {
-        delegate?.serviceBrowser(self, didChangeServices: [])
+    func stop() async {
+        await delegate?.serviceBrowser(self, didChangeServices: [])
     }
 
-    func reset() {
-        delegate?.serviceBrowser(self, didChangeServices: services)
+    func reset() async {
+        await delegate?.serviceBrowser(self, didChangeServices: services)
     }
 }

@@ -1,0 +1,44 @@
+{
+  "fill" : "system-light",
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "Image Layer.png",
+          "name" : "Image Layer",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -8,
+              1.7578125
+            ]
+          }
+        }
+      ],
+      "position" : {
+        "scale" : 1.1,
+        "translation-in-points" : [
+          -0.7066376136864525,
+          28.91718145785783
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

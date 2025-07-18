@@ -14,9 +14,10 @@ final class BrowseViewModel {
 
     var noWifi: Bool = false
 
-    var refreshAction: () -> Void = {}
+    var refreshAction: () async -> Void = {}
     var aboutAction: () -> Void = {}
     var exportAction: () -> Void = {}
+    var selectAction: (Host?) -> Void = { _  in }
 }
 
 struct BrowseView: View {
@@ -41,15 +42,19 @@ struct BrowseView: View {
                 DetailCell(
                     title: host.name,
                     subtitle: host.subtitle,
-                    copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard")
+                    copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
+                    url: host.url
                 )
             }
             .onAppear {
                 viewModel.selection = nil
             }
+            .onChange(of: viewModel.selection) { _, selection in
+                viewModel.selectAction(selection)
+            }
             .ifiOS {
                 $0.refreshable {
-                    viewModel.refreshAction()
+                    await viewModel.refreshAction()
                 }
             }
             .searchable(text: $searchTerm)
@@ -57,7 +62,7 @@ struct BrowseView: View {
                 #if targetEnvironment(macCatalyst)
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            viewModel.refreshAction()
+                            await viewModel.refreshAction()
                         } label: {
                             Image(systemName: "arrow.clockwise")
                                 .accessibilityLabel("About")
@@ -73,14 +78,6 @@ struct BrowseView: View {
                         }
                     }
                 #endif
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    Button {
-//                        viewModel.exportAction()
-//                    } label: {
-//                        Image(systemName: "square.and.arrow.up")
-//                            .accessibilityLabel("Export")
-//                    }
-//                }
             }
         }
     }
@@ -102,14 +99,14 @@ class BrowseViewController: UIHostingController<BrowseView> {
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.backButtonDisplayMode = .minimal
 
-        observeObject(viewModel, keypath: \.selection) { [weak self] selection in
+        viewModel.selectAction = { [weak self] selection in
             guard let host = selection else { return }
             let vc = HostViewController(serviceController: serviceController, host: host)
             self?.show(vc, sender: self)
         }
 
         viewModel.refreshAction = { [weak self] in
-            self?.handleTableRefresh(sender: nil)
+            await self?.refresh()
         }
 
         viewModel.aboutAction = { [weak self] in
@@ -198,16 +195,11 @@ class BrowseViewController: UIHostingController<BrowseView> {
         present(controller, animated: true, completion: nil)
     }
 
-    @objc func handleTableRefresh(sender: UIControl?) {
+    func refresh() async {
         // Fake some delays on this because it looks unnatural if things
         // are instant. Refresh the list, then hide the spinner a second later.
-        serviceController.restart()
+        await serviceController.restart()
         (splitViewController as? CustomSplitViewController)?.clearSecondaryViewController()
-        if let refresh = sender as? UIRefreshControl {
-            // iOS devices have pull-to-refresh that we need to stop
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                refresh.endRefreshing()
-            }
-        }
+        try? await Task.sleep(for: .seconds(2))
     }
 }

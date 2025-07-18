@@ -22,12 +22,21 @@ class ServiceNamer {
         case dyson = "_dyson_mqtt."
         case alexa = "_alexa."
         case eero = "_eero."
+        case eeroGw = "_eerogw."
+
+        // needs to be near bottom, lots of things have matter
+        // support, it's only the really simples stuff that can't
+        // advertise anything better.
+        case matter = "_matter."
     }
 
     static func nameForServices(_ services: Set<Service>) -> String? {
+        // Keep services order stable in the case that a device advertises >1 service with a given type.
+        // Order here isn't very important, it just needs to be stable.
+        let sortedServices = services.sorted { $0.name < $1.name }
         // Look for important names first. The **first** one we find will name the service
         for name in ImportantServices.allCases {
-            guard let service = services.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
+            guard let service = sortedServices.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
             // order here is not important
             switch name {
             case .chromecast:
@@ -68,6 +77,12 @@ class ServiceNamer {
                 }
             case .homeassistant:
                 return "Home Assistant (\(service.data["location_name"] ?? "New"))"
+
+            case .eeroGw:
+                return "Eero (Gateway)"
+
+            case .matter:
+                return "Matter device (\(service.name))"
 
             default:
                 break
