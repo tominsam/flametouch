@@ -61,10 +61,15 @@ targets:
 
     sources:
       - path: "Flame"
+        type: syncedFolder
       - path: "Utils"
+        type: syncedFolder
       - path: "ServiceDiscovery"
+        type: syncedFolder
       - path: "Views"
+        type: syncedFolder
       - path: "Translation"
+        type: syncedFolder
       - path: "Image Resources/AppIcon_26.icon"
 
     info:
