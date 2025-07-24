@@ -88,6 +88,8 @@ public struct ValueCell: View {
 }
 
 public struct DetailCell: View {
+    @Environment(\.openURL) private var openURL
+
     let title: String
     let subtitle: String
     let copyLabel: String
@@ -135,6 +137,13 @@ public struct DetailCell: View {
             }, label: {
                 Label(copyLabel, systemImage: "doc.on.clipboard")
             })
+            if let url {
+                Button(action: {
+                    openURL(url)
+                }, label: {
+                    Label("Open in browser", systemImage: "globe")
+                })
+            }
         }
         .accessibilityElement(children: .combine)
         .accessibilityHint("Double tap to open details")

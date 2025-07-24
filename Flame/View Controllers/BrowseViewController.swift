@@ -17,6 +17,7 @@ final class BrowseViewModel {
     var refreshAction: () async -> Void = {}
     var aboutAction: () -> Void = {}
     var exportAction: () -> Void = {}
+    var urlAction: (URL) -> Void = { _ in }
     var selectAction: (Host?) -> Void = { _  in }
 }
 
@@ -79,6 +80,10 @@ struct BrowseView: View {
                     }
                 #endif
             }
+            .environment(\.openURL, OpenURLAction { url in
+                viewModel.urlAction(url)
+                return .handled
+            })
         }
     }
 
@@ -115,6 +120,11 @@ class BrowseViewController: UIHostingController<BrowseView> {
 
         viewModel.exportAction = { [weak self] in
             self?.exportData(nil)
+        }
+
+        viewModel.urlAction = { [weak self] url in
+            guard let self else { return }
+            AppDelegate.instance.openUrl(url, from: self)
         }
 
         title = String(
