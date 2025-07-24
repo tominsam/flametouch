@@ -32,7 +32,7 @@ extension NetService {
     }
 
     /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
-    nonisolated
+    @concurrent nonisolated
     var stringAddresses: Set<String> {
         get async {
             // self.addresses is expensive
