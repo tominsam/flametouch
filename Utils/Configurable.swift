@@ -2,7 +2,7 @@
 
 import Foundation
 
-public func with<T>(_ thing: T, _ block: (T) -> Void) -> T {
+nonisolated public func with<T>(_ thing: T, _ block: (T) -> Void) -> T {
     block(thing)
     return thing
 }

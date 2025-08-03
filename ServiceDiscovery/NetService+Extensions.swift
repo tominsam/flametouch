@@ -6,7 +6,7 @@ import UIKit
 extension NetService: @unchecked @retroactive Sendable {}
 
 extension NetService {
-    private var txtData: [(key: String, value: String)] {
+    nonisolated private var txtData: [(key: String, value: String)] {
         guard let txtRecord = txtRecordData(), !txtRecord.isEmpty else {
             return []
         }
@@ -27,7 +27,7 @@ extension NetService {
         return txtData.sorted { $0.key.lowercased() < $1.key.lowercased() }
     }
 
-    var txtDict: [String: String] {
+    nonisolated var txtDict: [String: String] {
         Dictionary(txtData, uniquingKeysWith: { first, _ in first })
     }
 
@@ -96,7 +96,7 @@ private func getIFAddress(_ data: Data) -> String? {
 }
 
 extension Data {
-    var hex: String {
+    nonisolated var hex: String {
         map { byte in String(format: "%02X", byte) }.joined()
     }
 }

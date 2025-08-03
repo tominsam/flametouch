@@ -131,7 +131,9 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
 
             let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self
-            newBrowser.searchForServices(ofType: serviceType, inDomain: DeprecatedServiceBrowser.defaultDomain)
+            DispatchQueue.global().async {
+                newBrowser.searchForServices(ofType: serviceType, inDomain: DeprecatedServiceBrowser.defaultDomain)
+            }
             netServiceBrowsers[serviceType] = newBrowser
 
         } else {
