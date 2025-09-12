@@ -95,7 +95,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
                 domain: ns.domain == "local." ? nil : ns.domain,
                 addressCluster: AddressCluster.from(addresses: Set(addressess), hostnames: Set([ns.hostName].compactMap { $0 })),
                 port: ns.port,
-                data: ns.txtDict,
+                data: await ns.txtDict,
                 lastSeen: Date(),
                 alive: true
             )

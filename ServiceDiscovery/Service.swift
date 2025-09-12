@@ -57,8 +57,8 @@ public struct Service: Sendable {
 // (more strict than the spec but good enough for our needs.) This needs to be
 // done instead of implicit struct equality because UDP services (eg thread)
 // tend to resolve more than once.
-extension Service: Equatable, Hashable, Identifiable {
-    nonisolated public static func == (lhs: Service, rhs: Service) -> Bool {
+extension Service: @MainActor Equatable, @MainActor Hashable, Identifiable {
+    public static func == (lhs: Service, rhs: Service) -> Bool {
         lhs.name == rhs.name
             && lhs.type == rhs.type
             && lhs.domain == rhs.domain
@@ -66,7 +66,7 @@ extension Service: Equatable, Hashable, Identifiable {
             && lhs.addressCluster == rhs.addressCluster
     }
 
-    nonisolated public func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
         hasher.combine(type)
         hasher.combine(domain)

@@ -7,18 +7,19 @@ import UIKit
 /// Root view of the app, renders a list of hosts on the local network
 
 @Observable
-final class BrowseViewModel {
+final class BrowseViewModel: ObservableObject {
     var hosts: [Host] = []
-
     var selection: Host?
-
     var noWifi: Bool = false
+    var actions: BrowseActions?
+}
 
-    var refreshAction: () async -> Void = {}
-    var aboutAction: () -> Void = {}
-    var exportAction: () -> Void = {}
-    var urlAction: (URL) -> Void = { _ in }
-    var selectAction: (Host?) -> Void = { _  in }
+struct BrowseActions {
+    let refreshAction: () async -> Void
+    let aboutAction: () -> Void
+    let exportAction: () -> Void
+    let urlAction: (URL) -> Void
+    let selectAction: (Host?) -> Void
 }
 
 struct BrowseView: View {
@@ -51,11 +52,11 @@ struct BrowseView: View {
                 viewModel.selection = nil
             }
             .onChange(of: viewModel.selection) { _, selection in
-                viewModel.selectAction(selection)
+                viewModel.actions?.selectAction(selection)
             }
             .ifiOS {
                 $0.refreshable {
-                    await viewModel.refreshAction()
+                    await viewModel.actions?.refreshAction()
                 }
             }
             .searchable(text: $searchTerm)
@@ -72,7 +73,7 @@ struct BrowseView: View {
                 #else
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            viewModel.aboutAction()
+                            viewModel.actions?.aboutAction()
                         } label: {
                             Image(systemName: "info.circle")
                                 .accessibilityLabel("About")
@@ -81,7 +82,7 @@ struct BrowseView: View {
                 #endif
             }
             .environment(\.openURL, OpenURLAction { url in
-                viewModel.urlAction(url)
+                viewModel.actions?.urlAction(url)
                 return .handled
             })
         }
@@ -104,28 +105,28 @@ class BrowseViewController: UIHostingController<BrowseView> {
         navigationItem.largeTitleDisplayMode = .always
         navigationItem.backButtonDisplayMode = .minimal
 
-        viewModel.selectAction = { [weak self] selection in
-            guard let host = selection else { return }
-            let vc = HostViewController(serviceController: serviceController, host: host)
-            self?.show(vc, sender: self)
-        }
+        let actions = BrowseActions(
+            refreshAction: { [weak self] in
+                await self?.refresh()
+            },
+            aboutAction: { [weak self] in
+                self?.aboutPressed()
+            },
+            exportAction: { [weak self] in
+                self?.exportData(nil)
+            },
+            urlAction: { [weak self] url in
+                guard let self else { return }
+                AppDelegate.instance.openUrl(url, from: self)
+            },
+            selectAction: { [weak self] selection in
+                guard let host = selection else { return }
+                let vc = HostViewController(serviceController: serviceController, host: host)
+                self?.show(vc, sender: self)
+            }
+        )
 
-        viewModel.refreshAction = { [weak self] in
-            await self?.refresh()
-        }
-
-        viewModel.aboutAction = { [weak self] in
-            self?.aboutPressed()
-        }
-
-        viewModel.exportAction = { [weak self] in
-            self?.exportData(nil)
-        }
-
-        viewModel.urlAction = { [weak self] url in
-            guard let self else { return }
-            AppDelegate.instance.openUrl(url, from: self)
-        }
+        viewModel.actions = actions
 
         title = String(
             localized: "Flame",

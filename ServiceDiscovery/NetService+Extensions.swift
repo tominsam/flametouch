@@ -27,8 +27,10 @@ extension NetService {
         return txtData.sorted { $0.key.lowercased() < $1.key.lowercased() }
     }
 
-    nonisolated var txtDict: [String: String] {
-        Dictionary(txtData, uniquingKeysWith: { first, _ in first })
+    @concurrent nonisolated var txtDict: [String: String] {
+        get async {
+            Dictionary(txtData, uniquingKeysWith: { first, _ in first })
+        }
     }
 
     /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
