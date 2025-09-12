@@ -64,7 +64,9 @@ struct BrowseView: View {
                 #if targetEnvironment(macCatalyst)
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
-                            await viewModel.refreshAction()
+                            Task {
+                                await viewModel.actions?.refreshAction()
+                            }
                         } label: {
                             Image(systemName: "arrow.clockwise")
                                 .accessibilityLabel("About")
