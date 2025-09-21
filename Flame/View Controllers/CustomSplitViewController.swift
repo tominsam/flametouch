@@ -58,14 +58,14 @@ class CustomSplitViewController: UISplitViewController {
     // in the responder chain but still has a window/vc to present from
     // but the actual exporter is on the browser view controller because that's
     // where the list of services is
-    @objc
-    func saveExportedData() {
-        guard let browse = primary.viewControllers.first as? BrowseViewController else {
-            assertionFailure()
-            return
-        }
+//    @objc
+//    func saveExportedData() {
+//        guard let browse = primary.viewControllers.first as? BrowseViewController else {
+//            assertionFailure()
+//            return
+//        }
 //        browse.exportData(nil)
-    }
+//    }
 }
 
 // MARK: - UISplitViewControllerDelegate

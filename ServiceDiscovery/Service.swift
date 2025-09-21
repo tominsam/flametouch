@@ -44,6 +44,23 @@ public struct Service: Sendable {
         }
     }
 
+    public var openAction: String {
+        switch type.split(separator: ".").first {
+        case "_http":
+            return "Open web page"
+        case "_https":
+            return "Open web page"
+        case "_ssh":
+            return "Connect to SSH server"
+        case "_smb":
+            return "Connect to file server"
+        case "_sonos":
+            return "See Sonos status"
+        default:
+            return "Open \(type.split(separator: ".").first, default: type) service"
+        }
+    }
+
     public var typeWithDomain: String {
         if let domain = domain {
             return "\(type) (\(domain))"

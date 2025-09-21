@@ -50,8 +50,8 @@ public struct Host: Equatable, Hashable {
         addressCluster == host.addressCluster
     }
 
-    var url: URL? {
-        services.compactMap(\.url).first
+    var openableService: Service? {
+        services.first { $0.url != nil }
     }
 }
 

@@ -82,7 +82,7 @@ struct BrowseView: View {
                     title: host.name,
                     subtitle: host.subtitle,
                     copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
-                    url: host.openableService?.url,
+                    openableService: host.openableService,
                 )
             }
             .onAppear {

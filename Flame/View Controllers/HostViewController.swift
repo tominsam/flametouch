@@ -34,12 +34,12 @@ struct HostView: View {
                 )
                 .opacity(host.alive ? 1 : 0.3)
 
-                if let url = host.url {
+                if let service = host.openableService, let url = service.url {
                     Section {
                         Button(action: {
                             viewModel.tapAction(url)
                         }, label: {
-                            Text("Open in browser")
+                            Text(service.openAction)
                                 .frame(minHeight: 32)
                         })
                     }
@@ -56,7 +56,7 @@ struct HostView: View {
                                 title: service.name,
                                 subtitle: service.typeWithDomain,
                                 copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),
-                                url: service.url
+                                openableService: service,
                             )
                             .opacity(host.alive && service.alive ? 1 : 0.3)
                         }
