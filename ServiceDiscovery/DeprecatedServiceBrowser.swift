@@ -145,8 +145,8 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             // Services are not always cleaned up - for instance entering airplane mode won't remove services.
             netServices.insert(service)
             service.delegate = self
-            service.startMonitoring()
             DispatchQueue.global().async {
+                service.startMonitoring()
                 service.resolve(withTimeout: 10)
             }
             Task { await self.broadcast() }

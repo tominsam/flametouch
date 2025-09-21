@@ -4,18 +4,24 @@ import Foundation
 import SwiftUI
 import UIKit
 
-func bodyFont(legible: Bool) -> Font {
-    var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-    if legible {
+extension Font {
+    static var legible: Font = {
+        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
         descriptor = descriptor.addingAttributes([
             .featureSettings: [[
                 UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
                 UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
             ]],
         ])
-    }
-    let uiFont = UIFont(descriptor: descriptor, size: 0)
-    return Font(uiFont)
+        let uiFont = UIFont(descriptor: descriptor, size: 0)
+        return Font(uiFont)
+    }()
+
+    static var standard: Font = {
+        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
+        let uiFont = UIFont(descriptor: descriptor, size: 0)
+        return Font(uiFont)
+    }()
 }
 
 public struct ValueCell: View {
@@ -39,13 +45,13 @@ public struct ValueCell: View {
     public var body: some View {
         HStack {
             Text(title)
-                .font(bodyFont(legible: subtitle == nil))
+                .font(subtitle == nil ? .legible : .standard)
                 .foregroundColor(.primary)
                 .lineLimit(1)
             Spacer()
             if let subtitle {
                 Text(subtitle)
-                    .font(bodyFont(legible: true))
+                    .font(.legible)
                     .foregroundColor(url != nil ? .accentColor : .secondary)
                     .lineLimit(1)
             }
@@ -93,30 +99,30 @@ public struct DetailCell: View {
     let title: String
     let subtitle: String
     let copyLabel: String
-    let url: URL?
+    let openableService: Service?
 
     public init(
         title: String,
         subtitle: String,
         copyLabel: String,
-        url: URL? = nil
+        openableService: Service? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         self.copyLabel = copyLabel
-        self.url = url
+        self.openableService = openableService
     }
 
     public var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(bodyFont(legible: false))
+                    .font(.standard)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                Label(subtitle, systemImage: url == nil ? "" : "globe")
+                Label(subtitle, systemImage: openableService?.url == nil ? "" : "globe")
                     .labelStyle(SmallTrailingIcon())
-                    .font(bodyFont(legible: true))
+                    .font(.legible)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
@@ -137,11 +143,11 @@ public struct DetailCell: View {
             }, label: {
                 Label(copyLabel, systemImage: "doc.on.clipboard")
             })
-            if let url {
+            if let openableService, let url = openableService.url {
                 Button(action: {
                     openURL(url)
                 }, label: {
-                    Label("Open URL", systemImage: "globe")
+                    Label(openableService.openAction, systemImage: "globe")
                 })
             }
         }
@@ -187,7 +193,7 @@ struct SmallTrailingIcon: LabelStyle {
 
 #Preview {
     let url = URL(string: "http://foo.com")
-    return List {
+    List {
         Section("Value Cell") {
             ValueCell(title: "Title", subtitle: nil)
             ValueCell(title: "Title", subtitle: "Subtitle")
@@ -195,7 +201,12 @@ struct SmallTrailingIcon: LabelStyle {
         }
         Section("Detail Cell") {
             DetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test")
-            DetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test", url: url)
+            DetailCell(
+                title: "Title",
+                subtitle: "Subtitle",
+                copyLabel: "test",
+                openableService: Service(name: "Demo", type: "_http._tcp", domain: nil, addressCluster: .from(addresses: [], hostnames: []), port: 0, data: [:], lastSeen: .now, alive: true)
+            )
         }
     }.tint(.red)
 }
