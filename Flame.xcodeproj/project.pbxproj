@@ -309,7 +309,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 104.0.0;
+				MARKETING_VERSION = 104.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";
@@ -394,7 +394,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 104.0.0;
+				MARKETING_VERSION = 104.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				PROVISIONING_PROFILE_SPECIFIER = "Flametouch dev (with multicast)";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Flametouch Mac Dev";
