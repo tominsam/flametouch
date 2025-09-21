@@ -141,7 +141,7 @@ public struct DetailCell: View {
                 Button(action: {
                     openURL(url)
                 }, label: {
-                    Label("Open in browser", systemImage: "globe")
+                    Label("Open URL", systemImage: "globe")
                 })
             }
         }

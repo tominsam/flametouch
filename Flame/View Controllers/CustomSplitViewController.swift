@@ -64,7 +64,7 @@ class CustomSplitViewController: UISplitViewController {
             assertionFailure()
             return
         }
-        browse.exportData(nil)
+//        browse.exportData(nil)
     }
 }
 

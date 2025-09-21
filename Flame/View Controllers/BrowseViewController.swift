@@ -7,17 +7,54 @@ import UIKit
 /// Root view of the app, renders a list of hosts on the local network
 
 @Observable
-final class BrowseViewModel: ObservableObject {
+final class BrowseViewModel { // }: ObservableObject {
+    let serviceController: ServiceController
+
     var hosts: [Host] = []
     var selection: Host?
     var noWifi: Bool = false
     var actions: BrowseActions?
+
+    var cancellables = Set<AnyCancellable>()
+
+    init(serviceController: ServiceController) {
+        self.serviceController = serviceController
+
+        // Watch network state and show information about needing wifi when
+        // we're not on wifi and there are no services.
+        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map(\.isEmpty))
+            .map { state, noservices in
+                let nowifi = state.currentConnectionType != .wifi
+                let showOverlay = nowifi && noservices
+                return showOverlay
+            }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] value in
+                self?.noWifi = value
+            }
+            .store(in: &cancellables)
+
+        serviceController.clusters
+            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] value in
+                self?.hosts = value
+            }
+            .store(in: &cancellables)
+
+    }
+
+    func refresh() async {
+        // Fake some delays on this because it looks unnatural if things
+        // are instant. Refresh the list, then hide the spinner a second later.
+        selection = nil
+        await serviceController.restart()
+        try? await Task.sleep(for: .seconds(2))
+    }
 }
 
 struct BrowseActions {
-    let refreshAction: () async -> Void
     let aboutAction: () -> Void
-    let exportAction: () -> Void
     let urlAction: (URL) -> Void
     let selectAction: (Host?) -> Void
 }
@@ -45,7 +82,7 @@ struct BrowseView: View {
                     title: host.name,
                     subtitle: host.subtitle,
                     copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
-                    url: host.url
+                    url: host.openableService?.url,
                 )
             }
             .onAppear {
@@ -56,10 +93,11 @@ struct BrowseView: View {
             }
             .ifiOS {
                 $0.refreshable {
-                    await viewModel.actions?.refreshAction()
+                    await viewModel.refresh()
                 }
             }
             .searchable(text: $searchTerm)
+            .navigationTitle("Flame")
             .toolbar {
                 #if targetEnvironment(macCatalyst)
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -81,6 +119,11 @@ struct BrowseView: View {
                                 .accessibilityLabel("About")
                         }
                     }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        if let export = ServiceExporter.export(hosts: hosts) {
+                            ShareLink(item: export)
+                        }
+                    }
                 #endif
             }
             .environment(\.openURL, OpenURLAction { url in
@@ -96,26 +139,19 @@ struct BrowseView: View {
 }
 
 class BrowseViewController: UIHostingController<BrowseView> {
-    var cancellables = Set<AnyCancellable>()
-
     let serviceController: ServiceController
-    var viewModel = BrowseViewModel()
+    var viewModel: BrowseViewModel
 
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
+        self.viewModel = BrowseViewModel(serviceController: serviceController)
         super.init(rootView: BrowseView(viewModel: viewModel))
-        navigationItem.largeTitleDisplayMode = .always
-        navigationItem.backButtonDisplayMode = .minimal
+//        navigationItem.largeTitleDisplayMode = .always
+//        navigationItem.backButtonDisplayMode = .minimal
 
         let actions = BrowseActions(
-            refreshAction: { [weak self] in
-                await self?.refresh()
-            },
             aboutAction: { [weak self] in
                 self?.aboutPressed()
-            },
-            exportAction: { [weak self] in
-                self?.exportData(nil)
             },
             urlAction: { [weak self] url in
                 guard let self else { return }
@@ -129,41 +165,6 @@ class BrowseViewController: UIHostingController<BrowseView> {
         )
 
         viewModel.actions = actions
-
-        title = String(
-            localized: "Flame",
-            comment: "The name of the application"
-        )
-
-        // TODO: presenting this from swiftui is still a little complicated
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "square.and.arrow.up"),
-            style: .plain,
-            target: self,
-            action: #selector(exportData(_:))
-        )
-
-        // Watch network state and show information about needing wifi when
-        // we're not on wifi and there are no services.
-        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map(\.isEmpty))
-            .map { state, noservices in
-                let nowifi = state.currentConnectionType != .wifi
-                let showOverlay = nowifi && noservices
-                return showOverlay
-            }
-            .receive(on: RunLoop.main)
-            .sink { [viewModel] value in
-                viewModel.noWifi = value
-            }
-            .store(in: &cancellables)
-
-        serviceController.clusters
-            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
-            .receive(on: RunLoop.main)
-            .sink { [viewModel] value in
-                viewModel.hosts = value
-            }
-            .store(in: &cancellables)
     }
 
     @available(*, unavailable)
@@ -192,27 +193,14 @@ class BrowseViewController: UIHostingController<BrowseView> {
             present(vc, animated: true, completion: nil)
         #endif
     }
+}
 
-    @objc
-    func exportData(_ sender: UIBarButtonItem?) {
-        let hosts = serviceController.clusters.value
-        guard let url = ServiceExporter.export(hosts: hosts) else { return }
-        #if targetEnvironment(macCatalyst)
-            let controller = UIDocumentPickerViewController(forExporting: [url])
-        #else
-            // show system share dialog for this file
-            let controller = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-            // on iPad, we attach the share sheet to the button that activated it
-            controller.popoverPresentationController?.barButtonItem = sender
-        #endif
-        present(controller, animated: true, completion: nil)
-    }
-
-    func refresh() async {
-        // Fake some delays on this because it looks unnatural if things
-        // are instant. Refresh the list, then hide the spinner a second later.
-        await serviceController.restart()
-        (splitViewController as? CustomSplitViewController)?.clearSecondaryViewController()
-        try? await Task.sleep(for: .seconds(2))
+#Preview {
+    NavigationStack {
+        BrowseView(
+            viewModel: BrowseViewModel(
+                serviceController: ServiceControllerImpl.demo()
+            )
+        )
     }
 }

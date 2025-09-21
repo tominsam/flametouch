@@ -25,10 +25,20 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 
     private var stoppedDate: Date? = Date()
 
-    override public init() {
-        browser = DeprecatedServiceBrowser()
+    override convenience public init() {
+        self.init(browser: DeprecatedServiceBrowser())
+    }
+
+    public static func demo() -> ServiceController {
+        let controller = ServiceControllerImpl(browser: DemoServiceBrowser())
+        Task { await controller.start() }
+        return controller
+    }
+
+    internal init(browser: ServiceBrowser) {
+        self.browser = browser
         super.init()
-        browser.delegate = self
+        self.browser.delegate = self
     }
 
     public func start() async {
