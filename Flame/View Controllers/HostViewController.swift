@@ -10,11 +10,12 @@ import UIKit
 class HostViewModel {
     var host: Host?
     var selection: Service?
-    var tapAction: (URL) -> Void = { _ in }
     var selectAction: (Service?) -> Void = { _ in }
 }
 
 struct HostView: View {
+    @Environment(\.openURL) private var openURL
+
     @Bindable
     var viewModel: HostViewModel
 
@@ -37,7 +38,7 @@ struct HostView: View {
                 if let service = host.openableService, let url = service.url {
                     Section {
                         Button(action: {
-                            viewModel.tapAction(url)
+                            openURL(url)
                         }, label: {
                             Text(service.openAction)
                                 .frame(minHeight: 32)
@@ -70,20 +71,20 @@ struct HostView: View {
                 viewModel.selectAction(selection)
             }
             .navigationTitle(host.name)
+            .navigationBarTitleDisplayMode(.large)
         } else {
             EmptyView()
         }
     }
 }
 
-class HostViewController: UIHostingController<HostView>, UICollectionViewDelegate {
+class HostViewController: UIHostingController<ModifiedContent<HostView, SafariViewControllerViewModifier>> {
     var viewModel = HostViewModel()
     var cancellables = Set<AnyCancellable>()
 
     required init(serviceController: ServiceController, host: Host) {
-        super.init(rootView: HostView(viewModel: viewModel))
+        super.init(rootView: HostView(viewModel: viewModel).modifier(SafariViewControllerViewModifier()))
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.backButtonDisplayMode = .minimal
 
         serviceController.clusters
             .host(forAddressCluster: host.addressCluster)
@@ -93,10 +94,6 @@ class HostViewController: UIHostingController<HostView>, UICollectionViewDelegat
                 viewModel.host = value
             }
             .store(in: &cancellables)
-
-        viewModel.tapAction = { url in
-            AppDelegate.instance.openUrl(url, from: self)
-        }
 
         viewModel.selectAction = { [weak self] service in
             guard let service else { return }

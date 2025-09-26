@@ -71,41 +71,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        builder.remove(menu: .help)
 //    }
 
-    func openUrl(_ url: URL?, from presentingViewController: UIViewController) {
-        guard let url = url, let scheme = url.scheme else {
-            return
-        }
-        switch scheme {
-        case "http", "https":
-            // If there's a universal link handler for this URL, use that for preference
-            #if targetEnvironment(macCatalyst)
-                UIApplication.shared.open(url)
-            #else
-                UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { result in
-                    if !result {
-                        let vc = SFSafariViewController(url: url)
-                        #if !os(visionOS)
-                            vc.preferredControlTintColor = AppDelegate.tintColor
-                        #endif
-                        presentingViewController.present(vc, animated: true)
-                    }
-                }
-            #endif
-        default:
-            UIApplication.shared.open(url, options: [:]) { result in
-                if !result {
-                    let alertController = UIAlertController(
-                        title: "Can't open URL",
-                        message: "I couldn't open that URL - maybe you need a particular app installed",
-                        preferredStyle: .alert
-                    )
-                    alertController.addAction(UIAlertAction(title: "OK", style: .default))
-                    presentingViewController.present(alertController, animated: true)
-                }
-            }
-        }
-    }
-
     func sceneDelegateWillEnterForeground(_: SceneDelegate) {
         serviceRefreshTask?.cancel()
         serviceRefreshTask = Task {

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -23,7 +23,7 @@
 
 /* Begin PBXFileReference section */
 		045AE84E15F115E30741435C /* FlameTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = FlameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		07A148204DD2FA481DF56FFE /* AppIcon_26.icon */ = {isa = PBXFileReference; path = AppIcon_26.icon; sourceTree = "<group>"; };
+		07A148204DD2FA481DF56FFE /* AppIcon_26.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon_26.icon; sourceTree = "<group>"; };
 		1342B7C68D3E99C9A0874C6A /* project.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = project.yml; sourceTree = "<group>"; };
 		62B50C7FBF75F734ADACEFCE /* AddressClusterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressClusterTests.swift; sourceTree = "<group>"; };
 		78C3E6E9772AEF11D1D06A60 /* Flame.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Flame.entitlements; sourceTree = "<group>"; };
@@ -34,51 +34,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		02966C44B783723A370D895F /* Flame */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Flame;
-			sourceTree = "<group>";
-		};
-		117CBF2FF332E28749184FC4 /* Views */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		1C5F9DBE66E5435448D4FAAC /* Utils */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Utils;
-			sourceTree = "<group>";
-		};
-		2CE6D02AE6CD644421FD530D /* Translation */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Translation;
-			sourceTree = "<group>";
-		};
-		B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = ServiceDiscovery;
-			sourceTree = "<group>";
-		};
+		02966C44B783723A370D895F /* Flame */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Flame; sourceTree = "<group>"; };
+		117CBF2FF332E28749184FC4 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
+		1C5F9DBE66E5435448D4FAAC /* Utils */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utils; sourceTree = "<group>"; };
+		2CE6D02AE6CD644421FD530D /* Translation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Translation; sourceTree = "<group>"; };
+		B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ServiceDiscovery; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXGroup section */
@@ -150,10 +110,10 @@
 			);
 			fileSystemSynchronizedGroups = (
 				02966C44B783723A370D895F /* Flame */,
-				B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */,
-				2CE6D02AE6CD644421FD530D /* Translation */,
-				1C5F9DBE66E5435448D4FAAC /* Utils */,
 				117CBF2FF332E28749184FC4 /* Views */,
+				1C5F9DBE66E5435448D4FAAC /* Utils */,
+				2CE6D02AE6CD644421FD530D /* Translation */,
+				B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */,
 			);
 			name = Flame;
 			packageProductDependencies = (
@@ -208,7 +168,6 @@
 			);
 			mainGroup = 0D793BEB5F39D0D4D226DC7D;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

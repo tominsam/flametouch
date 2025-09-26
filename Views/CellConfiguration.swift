@@ -25,21 +25,20 @@ extension Font {
 }
 
 public struct ValueCell: View {
+    @Environment(\.openURL) private var openURL
+
     let title: String
     let subtitle: String?
     let url: URL?
-    let tapAction: (URL) -> Void
 
     public init(
         title: String,
         subtitle: String?,
-        url: URL? = nil,
-        tapAction: @escaping (URL) -> Void = { _ in }
+        url: URL? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         self.url = url
-        self.tapAction = tapAction
     }
 
     public var body: some View {
@@ -73,7 +72,7 @@ public struct ValueCell: View {
             })
             if let url {
                 Button(action: {
-                    tapAction(url)
+                    openURL(url)
                 }, label: {
                     Label("Open", systemImage: "arrowshape.turn.up.right")
                 })
@@ -81,7 +80,7 @@ public struct ValueCell: View {
         }
         .ifNonNil(url) { view, url in
             view.onTapGesture {
-                tapAction(url)
+                openURL(url)
             }
             .accessibilityAddTraits(.isButton)
             .accessibilityHint("Double tap to open URL")

@@ -55,7 +55,6 @@ final class BrowseViewModel { // }: ObservableObject {
 
 struct BrowseActions {
     let aboutAction: () -> Void
-    let urlAction: (URL) -> Void
     let selectAction: (Host?) -> Void
 }
 
@@ -85,6 +84,7 @@ struct BrowseView: View {
                     openableService: host.openableService,
                 )
             }
+            .listStyle(.plain)
             .onAppear {
                 viewModel.selection = nil
             }
@@ -98,6 +98,7 @@ struct BrowseView: View {
             }
             .searchable(text: $searchTerm)
             .navigationTitle("Flame")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 #if targetEnvironment(macCatalyst)
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -112,6 +113,7 @@ struct BrowseView: View {
                     }
                 #else
                     ToolbarItem(placement: .navigationBarLeading) {
+
                         Button {
                             viewModel.actions?.aboutAction()
                         } label: {
@@ -126,10 +128,6 @@ struct BrowseView: View {
                     }
                 #endif
             }
-            .environment(\.openURL, OpenURLAction { url in
-                viewModel.actions?.urlAction(url)
-                return .handled
-            })
         }
     }
 
@@ -138,24 +136,22 @@ struct BrowseView: View {
     }
 }
 
-class BrowseViewController: UIHostingController<BrowseView> {
+class BrowseViewController: UIHostingController<ModifiedContent<BrowseView, SafariViewControllerViewModifier>> {
     let serviceController: ServiceController
     var viewModel: BrowseViewModel
 
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
         self.viewModel = BrowseViewModel(serviceController: serviceController)
-        super.init(rootView: BrowseView(viewModel: viewModel))
-//        navigationItem.largeTitleDisplayMode = .always
-//        navigationItem.backButtonDisplayMode = .minimal
+        super.init(rootView:
+            BrowseView(viewModel: viewModel)
+            .modifier(SafariViewControllerViewModifier())
+        )
 
-        let actions = BrowseActions(
+        // Set after super.init
+        viewModel.actions = BrowseActions(
             aboutAction: { [weak self] in
                 self?.aboutPressed()
-            },
-            urlAction: { [weak self] url in
-                guard let self else { return }
-                AppDelegate.instance.openUrl(url, from: self)
             },
             selectAction: { [weak self] selection in
                 guard let host = selection else { return }
@@ -163,8 +159,6 @@ class BrowseViewController: UIHostingController<BrowseView> {
                 self?.show(vc, sender: self)
             }
         )
-
-        viewModel.actions = actions
     }
 
     @available(*, unavailable)
@@ -175,23 +169,10 @@ class BrowseViewController: UIHostingController<BrowseView> {
     @objc
     func aboutPressed() {
         // Doesn't apply to catalyst, we're using the system about support for that.
-        #if os(visionOS)
-            // open about scene in a new window
-            let options = UIWindowScene.ActivationRequestOptions()
-            let activity = NSUserActivity(activityType: "org.jerakeen.flametouch.about")
-            UIApplication.shared.requestSceneSessionActivation(
-                nil,
-                userActivity: activity,
-                options: options,
-                errorHandler: nil
-            )
-        #else
-            // open about view controller modally
-            let about = AboutViewController()
-            about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
-            let vc = UINavigationController(rootViewController: about)
-            present(vc, animated: true, completion: nil)
-        #endif
+        let about = AboutViewController()
+        about.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: about, action: #selector(AboutViewController.done))
+        let vc = UINavigationController(rootViewController: about)
+        present(vc, animated: true, completion: nil)
     }
 }
 

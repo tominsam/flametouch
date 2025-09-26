@@ -18,12 +18,8 @@ class CustomSplitViewController: UISplitViewController {
         minimumPrimaryColumnWidth = 320
         preferredPrimaryColumnWidthFraction = 0.35
         primaryBackgroundStyle = .none // Or .sidebar but I hate it.
-
-        #if !os(visionOS)
-            presentsWithGesture = false
-            displayModeButtonVisibility = .never
-        #endif
-
+        presentsWithGesture = false
+        displayModeButtonVisibility = .never
         setViewController(StaticNavigationController(rootViewController: primaryViewController), for: .primary)
         setViewController(UINavigationController(rootViewController: emptyViewController), for: .secondary)
         primary.navigationBar.prefersLargeTitles = true

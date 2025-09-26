@@ -8,10 +8,13 @@ import UIKit
 
 @Observable
 class ServiceViewModel {
-    var service: Service?
+    var service: Service
     var alive = true
     var highlight = true
-    var tapAction: (URL) -> Void = { _ in }
+
+    init(service: Service) {
+        self.service = service
+    }
 }
 
 struct ServiceView: View {
@@ -19,44 +22,40 @@ struct ServiceView: View {
     var viewModel: ServiceViewModel
 
     var body: some View {
-        if let service = viewModel.service {
-            List {
-                Section("Core") {
-                    ValueCell(
-                        title: String(localized: "Name", comment: "Heading for a cell showing a service name"),
-                        subtitle: service.name
-                    )
-                    ValueCell(
-                        title: String(localized: "Type", comment: "Heading for a cell showing a service type"),
-                        subtitle: service.type,
-                        url: service.url,
-                        tapAction: viewModel.tapAction
-                    )
-                    if let domain = service.domain {
-                        ValueCell(title: "Domain", subtitle: domain)
-                    }
-
-                    ForEach(service.addressCluster.sorted, id: \.self) { address in
-                        ValueCell(title: "Address", subtitle: address)
-                    }
-
-                    ValueCell(title: "Port", subtitle: String(service.port))
+        List {
+            Section("Core") {
+                ValueCell(
+                    title: String(localized: "Name", comment: "Heading for a cell showing a service name"),
+                    subtitle: viewModel.service.name
+                )
+                ValueCell(
+                    title: String(localized: "Type", comment: "Heading for a cell showing a service type"),
+                    subtitle: viewModel.service.type,
+                    url: viewModel.service.url
+                )
+                if let domain = viewModel.service.domain {
+                    ValueCell(title: "Domain", subtitle: domain)
                 }
 
-                let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
-                if !sortedData.isEmpty {
-                    Section("Data") {
-                        ForEach(sortedData, id: \.key) { data in
-                            ValueCell(title: data.key, subtitle: data.value, url: realUrl(from: data.value), tapAction: viewModel.tapAction)
-                        }
+                ForEach(viewModel.service.addressCluster.sorted, id: \.self) { address in
+                    ValueCell(title: "Address", subtitle: address)
+                }
+
+                ValueCell(title: "Port", subtitle: String(viewModel.service.port))
+            }
+
+            let sortedData = viewModel.service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
+            if !sortedData.isEmpty {
+                Section("Data") {
+                    ForEach(sortedData, id: \.key) { data in
+                        ValueCell(title: data.key, subtitle: data.value, url: realUrl(from: data.value))
                     }
                 }
             }
-            .opacity(viewModel.alive ? 1 : 0.3)
-            .navigationTitle(service.typeWithDomain)
-        } else {
-            EmptyView()
         }
+        .opacity(viewModel.alive ? 1 : 0.3)
+        .navigationTitle(viewModel.service.typeWithDomain)
+        .navigationBarTitleDisplayMode(.large)
     }
 
     func realUrl(from string: String) -> URL? {
@@ -67,14 +66,14 @@ struct ServiceView: View {
     }
 }
 
-class ServiceViewController: UIHostingController<ServiceView>, UICollectionViewDelegate {
+class ServiceViewController: UIHostingController<ModifiedContent<ServiceView, SafariViewControllerViewModifier>> {
     var cancellables = Set<AnyCancellable>()
-    var viewModel = ServiceViewModel()
+    var viewModel: ServiceViewModel
 
     required init(serviceController: ServiceController, service: Service) {
-        super.init(rootView: ServiceView(viewModel: viewModel))
+        self.viewModel = ServiceViewModel(service: service)
+        super.init(rootView: ServiceView(viewModel: viewModel).modifier(SafariViewControllerViewModifier()))
         navigationItem.largeTitleDisplayMode = .never
-        navigationItem.backButtonDisplayMode = .minimal
 
         serviceController.clusters
             .map { [service] hosts in
@@ -84,7 +83,7 @@ class ServiceViewController: UIHostingController<ServiceView>, UICollectionViewD
             .receive(on: RunLoop.main)
             .sink { [viewModel] service in
                 if let found = service {
-                    viewModel.service = service
+                    viewModel.service = found
                     viewModel.alive = found.alive
                 } else {
                     // this service is gone. Keep the addresses in case it comes back.
@@ -92,10 +91,6 @@ class ServiceViewController: UIHostingController<ServiceView>, UICollectionViewD
                 }
             }
             .store(in: &cancellables)
-
-        viewModel.tapAction = { url in
-            AppDelegate.instance.openUrl(url, from: self)
-        }
     }
 
     @available(*, unavailable)
