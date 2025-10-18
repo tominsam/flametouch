@@ -11,6 +11,9 @@ public struct SafariViewControllerViewModifier: ViewModifier {
     @State private var alert: Bool = false
 
     public func body(content: Content) -> some View {
+#if targetEnvironment(macCatalyst)
+        content
+#else
         content
             .environment(\.openURL, OpenURLAction { url in
 
@@ -49,6 +52,7 @@ public struct SafariViewControllerViewModifier: ViewModifier {
                     Text("I couldn't open that URL - maybe you need a particular app installed")
                 }
             )
+#endif
     }
 }
 

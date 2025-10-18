@@ -7,11 +7,10 @@ import UIKit
 /// Root view of the app, renders a list of hosts on the local network
 
 @Observable
-final class BrowseViewModel { // }: ObservableObject {
+final class BrowseViewModel {
     let serviceController: ServiceController
 
     var hosts: [Host] = []
-    var selection: Host?
     var noWifi: Bool = false
     var actions: BrowseActions?
 
@@ -22,34 +21,30 @@ final class BrowseViewModel { // }: ObservableObject {
 
         // Watch network state and show information about needing wifi when
         // we're not on wifi and there are no services.
-        Publishers.CombineLatest(NetworkMonitor.shared.state, serviceController.clusters.map(\.isEmpty))
-            .map { state, noservices in
+        Publishers.CombineLatest(
+            NetworkMonitor.shared.state,
+            serviceController.clusters.map(\.isEmpty)
+        )
+            .map { state, isEmpty in
                 let nowifi = state.currentConnectionType != .wifi
-                let showOverlay = nowifi && noservices
+                let showOverlay = nowifi && isEmpty
                 return showOverlay
             }
             .receive(on: RunLoop.main)
-            .sink { [weak self] value in
-                self?.noWifi = value
-            }
+            .assign(to: \.noWifi, on: self)
             .store(in: &cancellables)
 
         serviceController.clusters
             .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
             .receive(on: RunLoop.main)
-            .sink { [weak self] value in
-                self?.hosts = value
-            }
+            .assign(to: \.hosts, on: self)
             .store(in: &cancellables)
-
     }
 
     func refresh() async {
         // Fake some delays on this because it looks unnatural if things
         // are instant. Refresh the list, then hide the spinner a second later.
-        selection = nil
         await serviceController.restart()
-        try? await Task.sleep(for: .seconds(2))
     }
 }
 
@@ -65,18 +60,14 @@ struct BrowseView: View {
     @State
     var searchTerm: String = ""
 
+    @State
+    var selection: Host?
+
     var body: some View {
         if viewModel.noWifi {
-            VStack(alignment: .center, spacing: 20, content: {
-                Text("No services found", comment: "Title of a view shown when there are no local services")
-                    .font(.title)
-                Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
-            })
-            .padding()
-            .multilineTextAlignment(.center)
-
+            emptyView
         } else {
-            List(hosts, id: \.self, selection: $viewModel.selection) { host in
+            List(hosts, id: \.self, selection: $selection) { host in
                 DetailCell(
                     title: host.name,
                     subtitle: host.subtitle,
@@ -86,49 +77,69 @@ struct BrowseView: View {
             }
             .listStyle(.plain)
             .onAppear {
-                viewModel.selection = nil
+                selection = nil
             }
-            .onChange(of: viewModel.selection) { _, selection in
+            .onChange(of: selection) { _, selection in
                 viewModel.actions?.selectAction(selection)
             }
             .ifiOS {
                 $0.refreshable {
+                    selection = nil
                     await viewModel.refresh()
+                    // leave the spinner visible while it populates
+                    try? await Task.sleep(for: .seconds(2))
                 }
             }
             .searchable(text: $searchTerm)
             .navigationTitle("Flame")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                #if targetEnvironment(macCatalyst)
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            Task {
-                                await viewModel.actions?.refreshAction()
-                            }
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                                .accessibilityLabel("About")
-                        }
-                    }
-                #else
-                    ToolbarItem(placement: .navigationBarLeading) {
-
-                        Button {
-                            viewModel.actions?.aboutAction()
-                        } label: {
-                            Image(systemName: "info.circle")
-                                .accessibilityLabel("About")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if let export = ServiceExporter.export(hosts: hosts) {
-                            ShareLink(item: export)
-                        }
-                    }
-                #endif
+                toolbarContent
             }
         }
+    }
+
+    @ViewBuilder
+    var emptyView: some View {
+        VStack(alignment: .center, spacing: 20, content: {
+            Text("No services found", comment: "Title of a view shown when there are no local services")
+                .font(.title)
+            Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
+        })
+        .padding()
+        .multilineTextAlignment(.center)
+    }
+
+
+    @ToolbarContentBuilder
+    var toolbarContent: some ToolbarContent {
+#if targetEnvironment(macCatalyst)
+        ToolbarItem(placement: .navigationBarLeading) {
+            Button {
+                Task {
+                    await viewModel.refresh()
+                }
+            } label: {
+                Image(systemName: "arrow.clockwise")
+                    .accessibilityLabel("Refresh")
+            }
+        }
+#else
+        ToolbarItem(placement: .navigationBarLeading) {
+
+            Button {
+                viewModel.actions?.aboutAction()
+            } label: {
+                Image(systemName: "info.circle")
+                    .accessibilityLabel("About")
+            }
+        }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            if let export = ServiceExporter.export(hosts: hosts) {
+                ShareLink(item: export)
+            }
+        }
+#endif
     }
 
     var hosts: [Host] {
