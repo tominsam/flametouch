@@ -80,6 +80,9 @@
     "Double tap to open URL" : {
 
     },
+    "Export" : {
+
+    },
     "Flame" : {
       "comment" : "The name of the application"
     },

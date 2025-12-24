@@ -61,8 +61,9 @@ public extension Collection where Element == Host {
         first { $0.isSameHost(as: host) }
     }
 
-    func serviceMatching(service: Service) -> Service? {
-        let host = first { $0.addressCluster == service.addressCluster }
-        return host?.services.first { $0.type == service.type && $0.name == service.name }
+    func serviceMatching(serviceRef: ServiceRef) -> Service? {
+        let host = first { $0.addressCluster == serviceRef.addressCluster }
+        return host?.services.first { $0.ref == serviceRef }
     }
 }
+

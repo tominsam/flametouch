@@ -25,7 +25,7 @@ targets:
       # this includes catalyst
       - iOS
 
-    deploymentTarget: "17.0"
+    deploymentTarget: "26.1"
 
     scheme:
       testTargets:
@@ -53,7 +53,8 @@ targets:
 
         # Better concurrency defaults
         SWIFT_APPROACHABLE_CONCURRENCY: YES
-        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        SWIFT_STRICT_CONCURRENCY: targeted
+        DEAD_CODE_STRIPPING: YES
 
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_26
       debug:

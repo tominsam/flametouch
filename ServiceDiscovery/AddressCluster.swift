@@ -1,6 +1,7 @@
 // Copyright 2021 Thomas Insam. All rights reserved.
 
 import Foundation
+import Synchronization
 
 // Clustering addresses into hosts is the core Hard Problem of the whole app. Services can advertise multiple
 // addresses, so the strategy is that any service that has >1 address will implicitly group those addresses
@@ -16,13 +17,13 @@ import Foundation
 
 // The absolute simplest reliable way of doing this is to remember every address we've ever seen,
 // so this is a map from "every IP address we know about" to "the addresscluster instance for that IP"
-var globalLookup = [String: AddressCluster]()
+fileprivate let globalLookup = Mutex<[String: AddressCluster]>([:])
 
 // An address cluster is a mutable instance with a random identifier (for diffing purposes)
 // and a list of addresses and hostnames. The factory method takes a list of addresses,
 // and vends the existing cluster that contains any of those addresses, adding them to the cluster,
 // or creates a new cluster with those addresses.
-public class AddressCluster: Sendable {
+public final class AddressCluster {
     var identifier = UUID()
 
     var addresses: Set<String>
@@ -32,37 +33,41 @@ public class AddressCluster: Sendable {
     /// contains any of the provided addresses will be extended to contain all of the provided addresses
     /// (and hostnames) and returned, otherwise we'll create a new cluster.
     public static func from(addresses: Set<String>, hostnames: Set<String>) -> AddressCluster {
-        // Look up the address in the global map
-        var existing = Set(addresses.compactMap { globalLookup[$0] })
-        if existing.isEmpty {
-            existing.insert(AddressCluster(withAddresses: addresses, hostnames: hostnames))
-        }
-        // It's possible for the set of existing address clusters to have more than one element,
-        // in the case where this new set of addresses corresponds to two previously separate clusters,
-        // so it's required that we both synchronize all the addresses and hosts, but also the identifiers
-        // so that they are considered equal (we want to retain the validity of the instances, though)
-        let allAddresses = existing.flatMap(\.addresses) + addresses
-        let allHosts = existing.flatMap(\.hostnames) + hostnames
-        let primary = existing.first! // safe because we inserted a new cluster in this case
+        globalLookup.withLock { lookup in
+            // Look up the address in the global map
+            var existing = Set(addresses.compactMap { lookup[$0] })
+            if existing.isEmpty {
+                existing.insert(AddressCluster(withAddresses: addresses, hostnames: hostnames))
+            }
+            // It's possible for the set of existing address clusters to have more than one element,
+            // in the case where this new set of addresses corresponds to two previously separate clusters,
+            // so it's required that we both synchronize all the addresses and hosts, but also the identifiers
+            // so that they are considered equal (we want to retain the validity of the instances, though)
+            let allAddresses = existing.flatMap(\.addresses) + addresses
+            let allHosts = existing.flatMap(\.hostnames) + hostnames
+            let primary = existing.first! // safe because we inserted a new cluster in this case
 
-        for cluster in existing {
-            cluster.add(addresses: Set(allAddresses), hostnames: Set(allHosts))
-            cluster.identifier = primary.identifier
-        }
+            for cluster in existing {
+                cluster.add(addresses: Set(allAddresses), hostnames: Set(allHosts))
+                cluster.identifier = primary.identifier
+            }
 
-        // Re-inject the primary cluster into the global map (the rest are still valid
-        // in case someone is holding a reference to them
-        for address in primary.addresses {
-            globalLookup[address] = primary
-        }
+            // Re-inject the primary cluster into the global map (the rest are still valid
+            // in case someone is holding a reference to them
+            for address in primary.addresses {
+                lookup[address] = primary
+            }
 
-        return primary
+            return primary
+        }
     }
 
     /// Invalidates the lookup and starts afresh. Any held references to existing address
     /// clusters will no longer be valid!
     public static func flushClusters() {
-        globalLookup.removeAll()
+        globalLookup.withLock { lookup in
+            lookup.removeAll()
+        }
     }
 
     private init(withAddresses addresses: Set<String>, hostnames: Set<String>) {

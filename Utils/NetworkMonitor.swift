@@ -5,7 +5,7 @@ import Foundation
 import Network
 
 extension NWInterface.InterfaceType {
-    static var allCases: [NWInterface.InterfaceType] = [
+    static let allCases: [NWInterface.InterfaceType] = [
         .other,
         .wifi,
         .cellular,
@@ -25,8 +25,9 @@ extension NWInterface.InterfaceType {
     }
 }
 
+@MainActor
 public final class NetworkMonitor {
-    public struct NetworkState {
+    public struct NetworkState: Sendable {
         public let hasResponse: Bool
         public let isConnected: Bool
         public let isExpensive: Bool
@@ -41,28 +42,27 @@ public final class NetworkMonitor {
 
     private static let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
 
-    public var state: AnyPublisher<NetworkState, Never> {
-        Deferred {
-            ELog("Watching network state")
-            let subject = PassthroughSubject<NetworkState, Never>()
+    @Published var state: NetworkState = .init(
+        hasResponse: false,
+        isConnected: true,
+        isExpensive: false,
+        currentConnectionType: nil
+    )
 
-            let monitor = NWPathMonitor()
-
-            monitor.pathUpdateHandler = { path in
-                ELog("Network state changed")
-                let state = NetworkState(
+    init() {
+        ELog("Watching network state")
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { [weak self] path in
+            ELog("Network state changed")
+            Task { @MainActor in
+                self?.state = NetworkState(
                     hasResponse: true,
                     isConnected: path.status != .unsatisfied,
                     isExpensive: path.isExpensive,
                     currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
                 )
-                subject.send(state)
             }
-            monitor.start(queue: Self.queue)
-            return subject.handleEvents(receiveCancel: {
-                ELog("Stopping network state watcher")
-                monitor.cancel()
-            })
-        }.eraseToAnyPublisher()
+        }
+        monitor.start(queue: Self.queue)
     }
 }

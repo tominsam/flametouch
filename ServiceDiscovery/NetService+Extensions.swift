@@ -3,7 +3,7 @@
 import UIKit
 
 // bwahahahah so unsafe
-extension NetService: @unchecked @retroactive Sendable {}
+//extension NetService: @unchecked @retroactive Sendable {}
 
 extension NetService {
     nonisolated private var txtData: [(key: String, value: String)] {
@@ -27,20 +27,16 @@ extension NetService {
         return txtData.sorted { $0.key.lowercased() < $1.key.lowercased() }
     }
 
-    @concurrent nonisolated var txtDict: [String: String] {
-        get async {
-            Dictionary(txtData, uniquingKeysWith: { first, _ in first })
-        }
+    var txtDict: [String: String] {
+        assert(!Thread.isMainThread)
+        return Dictionary(txtData, uniquingKeysWith: { first, _ in first }) // slow!
     }
 
     /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
-    @concurrent nonisolated
     var stringAddresses: Set<String> {
-        get async {
-            // self.addresses is expensive
-            assert(!Thread.isMainThread)
-            return Set((addresses ?? []).compactMap { getIFAddress($0) })
-        }
+        // self.addresses is expensive
+        assert(!Thread.isMainThread)
+        return Set((addresses ?? []).compactMap { getIFAddress($0) })
     }
 }
 

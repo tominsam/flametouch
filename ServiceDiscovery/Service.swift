@@ -2,7 +2,14 @@
 
 import Foundation
 
-public struct Service: Sendable {
+// Enough to uniquely describe and find a given service, but it won't change over time
+public struct ServiceRef: Hashable {
+    public let type: String
+    public let port: Int
+    public let addressCluster: AddressCluster
+}
+
+public struct Service {
     // From the service itself
     public let name: String
     public let type: String
@@ -68,13 +75,17 @@ public struct Service: Sendable {
             return type
         }
     }
+
+    var ref: ServiceRef {
+        ServiceRef(type: type, port: port, addressCluster: addressCluster)
+    }
 }
 
 // Services are equivalent if they have the same name, type, port, and addresses
 // (more strict than the spec but good enough for our needs.) This needs to be
 // done instead of implicit struct equality because UDP services (eg thread)
 // tend to resolve more than once.
-extension Service: @MainActor Equatable, @MainActor Hashable, Identifiable {
+extension Service: Equatable, Hashable, Identifiable {
     public static func == (lhs: Service, rhs: Service) -> Bool {
         lhs.name == rhs.name
             && lhs.type == rhs.type

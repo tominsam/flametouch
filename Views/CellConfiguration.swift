@@ -5,7 +5,7 @@ import SwiftUI
 import UIKit
 
 extension Font {
-    static var legible: Font = {
+    static let legible: Font = {
         var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
         descriptor = descriptor.addingAttributes([
             .featureSettings: [[
@@ -17,7 +17,7 @@ extension Font {
         return Font(uiFont)
     }()
 
-    static var standard: Font = {
+    static let standard: Font = {
         var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
         let uiFont = UIFont(descriptor: descriptor, size: 0)
         return Font(uiFont)
@@ -125,10 +125,10 @@ public struct DetailCell: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-            Spacer()
-            Image(systemName: "chevron.right")
-                .accessibilityHidden(true)
-                .foregroundColor(.secondary)
+//            Spacer()
+//            Image(systemName: "chevron.right")
+//                .accessibilityHidden(true)
+//                .foregroundColor(.secondary)
         }
         .padding([.top, .bottom], 4)
         .contextMenu {

@@ -31,7 +31,9 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 
     public static func demo() -> ServiceController {
         let controller = ServiceControllerImpl(browser: DemoServiceBrowser())
-        Task { await controller.start() }
+        Task {
+            await controller.start()
+        }
         return controller
     }
 
@@ -52,24 +54,37 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         ELog("Stopped for \(stoppedTime) (compared to \(ServiceControllerImpl.maxStopTime))")
         if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
-            await browser.reset()
-            clusters.value = []
+            browser.stop() { [self] in
+                clusters.value = []
+                browser.start()
+                self.stoppedDate = nil
+            }
+        } else {
+            ELog("Restarting service list")
+            browser.pause() { [self] in
+                browser.start()
+                self.stoppedDate = nil
+            }
         }
-        await browser.start()
-        self.stoppedDate = nil
     }
 
     public func stop() async {
-        await browser.stop()
-        stoppedDate = Date()
+        await withCheckedContinuation { continuation in
+            browser.pause() { [self] in
+                stoppedDate = Date()
+                continuation.resume()
+            }
+        }
     }
 
     /// Completely restart the controller, clear all caches, start from scratch
     public func restart() async {
-        await stop()
-        await browser.reset()
-        try? await Task.sleep(for: .seconds(0.5))
+        await withCheckedContinuation { continuation in
+            browser.stop() { continuation.resume()
+            }
+        }
         clusters.value = []
+        try? await Task.sleep(for: .seconds(0.5))
         await start()
     }
 
@@ -79,7 +94,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
-    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) async {
+    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) {
         let hosts = groupServices(services)
         clusters.value = hosts
     }

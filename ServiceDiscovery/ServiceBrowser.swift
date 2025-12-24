@@ -4,13 +4,13 @@ import Foundation
 import UIKit
 
 protocol ServiceBrowserDelegate: NSObjectProtocol {
-    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) async
+    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>)
 }
 
 protocol ServiceBrowser: NSObjectProtocol {
     var delegate: ServiceBrowserDelegate? { get set }
 
-    func start() async
-    func stop() async
-    func reset() async
+    func start()
+    func pause(completion: @Sendable @escaping () -> Void)
+    func stop(completion: @Sendable @escaping () -> Void)
 }

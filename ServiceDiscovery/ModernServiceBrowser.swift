@@ -66,25 +66,27 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
     }
 
     /// stop the metabrowser and all service browsers
-    func stop() {
+    func pause(completion: @escaping () -> Void) {
         ELog("Stop")
         netServiceBrowsers.removeAll()
         metaServiceBrowser = nil
 //        flameService.stop()
         broadcast()
+        completion()
     }
 
-    func reset() {
+    func stop(completion: @escaping () -> Void) {
 //        netServices.removeAll()
         AddressCluster.flushClusters()
         broadcast()
+        completion()
     }
 
     /// Converts a set of NetService instances to a set of Service instances asynchronously.
     /// Added `async` keyword to allow awaiting inside the function.
     private func convertToServices(_ netServices: Set<NetService>) async -> Set<Service> {
         let services = await netServices.asyncCompactMap { ns async -> Service? in
-            let addressess = await ns.stringAddresses
+            let addressess = ns.stringAddresses
             if addressess.isEmpty {
                 // not resolved yet
                 return nil
@@ -95,7 +97,7 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
                 domain: ns.domain == "local." ? nil : ns.domain,
                 addressCluster: AddressCluster.from(addresses: Set(addressess), hostnames: Set([ns.hostName].compactMap { $0 })),
                 port: ns.port,
-                data: await ns.txtDict,
+                data: ns.txtDict,
                 lastSeen: Date(),
                 alive: true
             )

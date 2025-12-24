@@ -8,7 +8,6 @@ import SafariServices
 
 public struct SafariViewControllerViewModifier: ViewModifier {
     @State private var url: URL?
-    @State private var alert: Bool = false
 
     public func body(content: Content) -> some View {
 #if targetEnvironment(macCatalyst)
@@ -16,7 +15,6 @@ public struct SafariViewControllerViewModifier: ViewModifier {
 #else
         content
             .environment(\.openURL, OpenURLAction { url in
-
                 switch url.scheme {
                 case "http", "https":
                     // If there's a universal link handler for this URL, use that for preference
@@ -25,39 +23,24 @@ public struct SafariViewControllerViewModifier: ViewModifier {
                             self.url = url
                         }
                     }
+                    return .handled
                 default:
-                    UIApplication.shared.open(url, options: [:]) { result in
-                        if !result {
-                            alert = true
-                        }
-                    }
+                    return .systemAction
                 }
-                return .handled
             })
-            .sheet(
+            .fullScreenCover(
                 isPresented: $url.asBool(),
                 onDismiss: {
                     url = nil
                 }, content: {
                     SafariViewRepresentable(url: url!)
                 })
-            .alert(
-                "Can't open URL",
-                isPresented: $alert,
-                actions: {
-                    Button("Ok") {
-                        alert = false
-                    }
-                }, message: {
-                    Text("I couldn't open that URL - maybe you need a particular app installed")
-                }
-            )
 #endif
     }
 }
 
 extension Binding {
-    func asBool<Wrapped>() -> Binding<Bool> where Value == Wrapped? {
+    func asBool<Wrapped>() -> Binding<Bool> where Value == Wrapped?, Value: Sendable {
         Binding<Bool>(
             get: {
                 wrappedValue != nil
@@ -79,5 +62,9 @@ struct SafariViewRepresentable: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: UIViewControllerRepresentableContext<SafariViewRepresentable>) {
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiViewController: SFSafariViewController, context: Context) -> CGSize? {
+        CGSize(width: proposal.width ?? .greatestFiniteMagnitude, height: proposal.height ?? .greatestFiniteMagnitude)
     }
 }
