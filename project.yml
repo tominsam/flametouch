@@ -53,7 +53,7 @@ targets:
 
         # Better concurrency defaults
         SWIFT_APPROACHABLE_CONCURRENCY: YES
-        SWIFT_STRICT_CONCURRENCY: targeted
+        SWIFT_STRICT_CONCURRENCY: complete
         DEAD_CODE_STRIPPING: YES
 
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_26

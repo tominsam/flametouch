@@ -3,6 +3,7 @@
 import SafariServices
 import UIKit
 import SwiftUI
+import Network
 
 @main
 struct FlameApp: App {
@@ -13,6 +14,7 @@ struct FlameApp: App {
     // Heartbeat task - the network browsers aren't super reliable so stop/start
     // them every 10 seconds
     @State var serviceRefreshTask: Task<Void, Never>?
+    @State var flameService: NWListener?
 
     var body: some Scene {
         WindowGroup {
@@ -70,11 +72,32 @@ struct FlameApp: App {
             ELog("Stopping heartbeat")
             await serviceController.stop()
         }
+
+        if flameService == nil {
+            // Advertise a local service called flametouch, partly as a demo, partly
+            // so you can tell there's _something_ there even if there are no other
+            // services on the network.
+            flameService = try? NWListener(
+                service: .init(name: UIDevice.current.name, type: "_flametouch._tcp."),
+                using: .tcp
+            )
+            flameService?.stateUpdateHandler = { newState in
+                ELog("Publish state is \(newState)")
+            }
+            flameService?.newConnectionHandler = { connection in
+                connection.cancel()
+            }
+            flameService?.start(queue: .main)
+        }
     }
+    
 
     func stop() {
         serviceRefreshTask?.cancel()
         serviceRefreshTask = nil
+
+        flameService?.cancel()
+        flameService = nil
     }
 }
 
@@ -95,6 +118,7 @@ struct MainWindow: View {
                 selection: $addressCluster,
                 searchTerm: searchText
             )
+            .searchable(text: $searchText, placement: .toolbarPrincipal)
             .navigationSplitViewColumnWidth(ideal: 400)
 #if !targetEnvironment(macCatalyst)
             .toolbar {
@@ -135,7 +159,6 @@ struct MainWindow: View {
                     }
             })
         })
-        .searchable(text: $searchText, placement: .toolbarPrincipal)
         // Put before about sheet so that links in the about pane just open safari
         .modifier(SafariViewControllerViewModifier())
         .sheet(isPresented: $showAbout) {

@@ -29,9 +29,6 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
     /// meta-service browser, discovers more services
     private var metaServiceBrowser: NetServiceBrowser?
 
-    /// broadcast a service from the local device
-    private var flameService: NetService?
-
     /// lookup of service type to browser for this service type.
     private var netServiceBrowsers = [String: NetServiceBrowser]()
 
@@ -41,17 +38,6 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
     @MainActor
     override init() {
         super.init()
-
-        // Publish a flametouch service while we're running. This is on the main thread,
-        // because I've found ir's not reliable otherwise.
-        flameService = NetService(
-            domain: Self.defaultDomain,
-            type: "_flametouch._tcp",
-            name: UIDevice.current.name, // will be "iphone" nowadays, but real on macs
-            port: 1812
-        )
-        flameService?.delegate = self
-        flameService?.publish()
 
         // Block init (and so app startup!) until the NetService thread has at least assigned to self.runloop
         let semaphore = DispatchSemaphore(value: 0)
@@ -112,7 +98,6 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
                 browser.stop()
             }
             metaServiceBrowser?.stop()
-            //flameService?.stop()
             netServiceBrowsers.removeAll()
             broadcast()
         } completion: {
