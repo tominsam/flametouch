@@ -125,10 +125,10 @@ public struct DetailCell: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
             }
-//            Spacer()
-//            Image(systemName: "chevron.right")
-//                .accessibilityHidden(true)
-//                .foregroundColor(.secondary)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .accessibilityHidden(true)
+                .foregroundColor(.secondary)
         }
         .padding([.top, .bottom], 4)
         .contextMenu {

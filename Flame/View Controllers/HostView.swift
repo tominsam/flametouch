@@ -6,7 +6,7 @@ import UIKit
 
 /// View of a single host - lists the services of that host
 
-@Observable
+@MainActor @Observable
 class HostViewModel {
     var cancellables = Set<AnyCancellable>()
 
@@ -28,9 +28,12 @@ struct HostView: View {
 
     var viewModel: HostViewModel
 
+    @Binding
+    var selection: ServiceRef?
+
     var body: some View {
         if let host = viewModel.host {
-            List {
+            List(selection: $selection) {
                 Section(
                     header: Text(
                         "\(host.addressCluster.sorted.count) address(es)",
@@ -62,21 +65,20 @@ struct HostView: View {
                     ),
                     content: {
                         ForEach(host.displayServices, id: \.ref) { service in
-                            NavigationLink(value: service.ref) {
-                                DetailCell(
-                                    title: service.name,
-                                    subtitle: service.typeWithDomain,
-                                    copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),
-                                    openableService: service,
-                                )
-                                .opacity(host.alive && service.alive ? 1 : 0.3)
-                            }
+                            DetailCell(
+                                title: service.name,
+                                subtitle: service.typeWithDomain,
+                                copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),
+                                openableService: service,
+                            )
+                            .opacity(host.alive && service.alive ? 1 : 0.3)
                         }
                     }
                 )
             }
             .navigationTitle(host.name)
             .navigationBarTitleDisplayMode(.large)
+            .listStyle(.insetGrouped)
         } else {
             EmptyView()
         }

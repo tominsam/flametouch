@@ -113,7 +113,8 @@ struct MainWindow: View {
                 Group {
                     if let addressCluster {
                         HostView(
-                            viewModel: HostViewModel(serviceController: serviceController, addressCluster: addressCluster)
+                            viewModel: HostViewModel(serviceController: serviceController, addressCluster: addressCluster),
+                            selection: $serviceRef,
                         )
                     }
                 }
@@ -121,6 +122,16 @@ struct MainWindow: View {
                         ServiceView(
                             viewModel: ServiceViewModel(serviceController: serviceController, serviceRef: serviceRef),
                         )
+                    }
+                    .onChange(of: serviceRef) {
+                        if let serviceRef {
+                            path.append(serviceRef)
+                        }
+                    }
+                    .onChange(of: path) {
+                        if path.isEmpty {
+                            serviceRef = nil
+                        }
                     }
             })
         })
