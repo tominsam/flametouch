@@ -12,7 +12,11 @@ public protocol ServiceController {
     func host(for addressCluster: AddressCluster) -> Host?
 }
 
+@MainActor
 public class ServiceControllerImpl: NSObject, ServiceController {
+    /// If the browser is pasued (in background) for longer than this, hard-refresh because
+    /// it's possibly a new environment. Otherwise soft-refresh, so we don't always resume
+    /// to a blank screen.
     #if DEBUG
         private static let maxStopTime: TimeInterval = 10
     #else
@@ -25,6 +29,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 
     private var stoppedDate: Date? = Date()
 
+    @MainActor
     override convenience public init() {
         self.init(browser: DeprecatedServiceBrowser())
     }
@@ -43,6 +48,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         self.browser.delegate = self
     }
 
+    @MainActor
     public func start() async {
         // nil stoped date means we're running
         guard let stoppedDate = stoppedDate else { return }
@@ -68,6 +74,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         }
     }
 
+    @MainActor
     public func stop() async {
         await withCheckedContinuation { continuation in
             browser.pause() { [self] in
@@ -78,6 +85,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     }
 
     /// Completely restart the controller, clear all caches, start from scratch
+    @MainActor
     public func restart() async {
         await withCheckedContinuation { continuation in
             browser.stop() { continuation.resume()
@@ -94,7 +102,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 }
 
 extension ServiceControllerImpl: ServiceBrowserDelegate {
-    func serviceBrowser(_ serviceBrowser: ServiceBrowser, didChangeServices services: Set<Service>) {
+    func serviceBrowser(didChangeServices services: Set<Service>) {
         let hosts = groupServices(services)
         clusters.value = hosts
     }

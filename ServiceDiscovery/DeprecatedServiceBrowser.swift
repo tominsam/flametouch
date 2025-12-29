@@ -1,5 +1,5 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
-
+import os
 import Foundation
 import UIKit
 
@@ -7,10 +7,14 @@ import UIKit
 /// to discover and browse services. Ugly and doesn't use async/await because the underlying
 /// APIs are pretty nasty in this respect and I have to abuse threads pretty badly to
 /// walk the line of them working, but not blocking the main thread too badly.
-class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
+class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked Sendable {
 
-    // We try to do all work on this queue
-    let queue = DispatchQueue(label: "service browser", qos: .userInteractive)
+    // NetServiceBrowser needs a runloop to work, but resolving addresses can block its thread. NSNetService can
+    // only be interacted with on the runloop that it was created on, which is the runloop that NetServiceBrowser
+    // is running on. So it's _critical_ that _all_ interactions with the low-level networking components are
+    // on this background thread, which has its own dedicated runloop for the browser.
+    var thread: Thread!
+    var runLoop: RunLoop?
 
     // Includes bluetooth, wifi direct, other domains, etc.
     // This currently has all sorts of tricky behavior with my Thread routers,
@@ -34,39 +38,70 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     /// definitive list of all services (using a set here has been crashy)
     private var netServices = Array<NetService>()
 
+    @MainActor
+    override init() {
+        super.init()
+
+        // Publish a flametouch service while we're running. This is on the main thread,
+        // because I've found ir's not reliable otherwise.
+        flameService = NetService(
+            domain: Self.defaultDomain,
+            type: "_flametouch._tcp",
+            name: UIDevice.current.name, // will be "iphone" nowadays, but real on macs
+            port: 1812
+        )
+        flameService?.delegate = self
+        flameService?.publish()
+
+        // Block init (and so app startup!) until the NetService thread has at least assigned to self.runloop
+        let semaphore = DispatchSemaphore(value: 0)
+
+        thread = Thread { [self] in
+            runLoop = RunLoop.current
+            semaphore.signal()
+
+            ELog("Starting runloop")
+            // Add dummy source to keep runloop alive
+            runLoop!.add(NSMachPort(), forMode: .default)
+            while true {
+                let didProcess = runLoop!.run(mode: .default, before: Date.distantFuture)
+                if !didProcess {
+                    ELog("Nothing in runloop to process, snoozing")
+                    Thread.sleep(forTimeInterval: 0.1)
+                }
+            }
+        }
+        thread.qualityOfService = .userInitiated
+        thread.start()
+
+        ELog("Waiting on runloop")
+        semaphore.wait()
+        ELog("Startup continues")
+    }
+
     /// start meta-browser and all service browsers
     func start() {
         ELog("Starting")
         onQueue { [self] in
-            // NetService and NetServiceBrowser must be constructed on the main thread or it doesn't work,
-            // (and it'll also call its delegate methods on the main thread!)
-            DispatchQueue.main.sync {
-                flameService = NetService(
-                    domain: Self.defaultDomain,
-                    type: "_flametouch._tcp",
-                    name: UIDevice.current.name,
-                    port: 1812
-                )
-                flameService?.delegate = self
-                flameService?.publish()
 
-                metaServiceBrowser = NetServiceBrowser()
-                metaServiceBrowser?.delegate = self
-                metaServiceBrowser?.includesPeerToPeer = Self.includePeerToPeer
+            metaServiceBrowser = NetServiceBrowser()
+            metaServiceBrowser?.delegate = self
+            metaServiceBrowser?.includesPeerToPeer = Self.includePeerToPeer
 
-            }
-            // This can be slow but is safe off the main thread
+            // This can be slow
             metaServiceBrowser?.searchForServices(ofType: "_services._dns-sd._udp.", inDomain: Self.defaultDomain)
             for (serviceType, netServiceBrowser) in netServiceBrowsers {
                 netServiceBrowser.searchForServices(ofType: serviceType, inDomain: Self.defaultDomain)
             }
-            ELog("Started")
+
             broadcast()
+        } completion: {
+            ELog("Started")
         }
     }
 
     /// stop the metabrowser and all service browsers
-    func pause(completion: @Sendable @escaping () -> Void) {
+    func pause(completion: @MainActor @escaping () -> Void) {
         ELog("Pausing")
         onQueue { [self] in
             for service in netServices {
@@ -77,42 +112,42 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
                 browser.stop()
             }
             metaServiceBrowser?.stop()
-            flameService?.stop()
+            //flameService?.stop()
             netServiceBrowsers.removeAll()
             broadcast()
+        } completion: {
             ELog("Paused")
-            DispatchQueue.main.sync {
-                completion()
-            }
+            completion()
         }
     }
 
     // full stop, unregister everything
-    func stop(completion: @Sendable @escaping () -> Void) {
-        ELog("Stop")
+    func stop(completion: @MainActor @escaping () -> Void) {
+        dispatchPrecondition(condition: .onQueue(.main))
+        ELog("Stopping")
         pause() { [self] in
             onQueue { [self] in
                 netServices.removeAll()
                 AddressCluster.flushClusters()
                 broadcast()
-                DispatchQueue.main.sync {
-                    completion()
-                }
+            } completion: {
+                ELog("Stopped")
+                completion()
             }
         }
     }
 
     private func broadcast() {
-        assert(!Thread.isMainThread)
+        assert(Thread.current == self.thread)
+        guard let delegate = self.delegate else { return }
         let services = convertToServices(netServices)
         DispatchQueue.main.sync {
-            // Call the delegate method on the main thread because it's probably UI
-            self.delegate?.serviceBrowser(self, didChangeServices: services)
+            delegate.serviceBrowser(didChangeServices: services)
         }
     }
 
     private func convertToServices(_ netServices: Array<NetService>) -> Set<Service> {
-        assert(!Thread.isMainThread)
+        assert(Thread.current == self.thread)
         var services = Set<Service>()
         for ns in netServices {
             let addresses = ns.stringAddresses // slow!
@@ -144,11 +179,24 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
     }
 
     // Sanity utility - force main thread stuff on to the serial queue
-    func onQueue(_ block: @escaping () -> Void) {
-        if Thread.isMainThread {
-            queue.async(execute: block)
-        } else {
+    func onQueue(_ block: @Sendable @escaping () -> Void, completion: @MainActor @escaping () -> Void) {
+        guard let runLoop else {
+            fatalError("Runloop not started!!")
+        }
+        if Thread.current == self.thread {
             block()
+            DispatchQueue.main.sync {
+                completion()
+            }
+        } else {
+            runLoop.perform {
+                assert(Thread.current == self.thread)
+                ELog("running")
+                block()
+                DispatchQueue.main.sync {
+                    completion()
+                }
+            }
         }
     }
 }
@@ -156,6 +204,7 @@ class DeprecatedServiceBrowser: NSObject, ServiceBrowser {
 // MARK: NetServiceBrowserDelegate
 extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
     func netServiceBrowser(_: NetServiceBrowser, didFind service: NetService, moreComing _: Bool) {
+        assert(Thread.current == self.thread)
         if service.type == "_tcp.local." || service.type == "_udp.local." {
             // meta-browser found something new. Create a new service browser for it.
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
@@ -171,10 +220,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             let newBrowser = NetServiceBrowser()
             newBrowser.delegate = self
             netServiceBrowsers[serviceType] = newBrowser
-            onQueue {
-                // this is sometimes slow
-                newBrowser.searchForServices(ofType: serviceType, inDomain: Self.defaultDomain)
-            }
+            newBrowser.searchForServices(ofType: serviceType, inDomain: Self.defaultDomain)
 
         } else {
             // single-service browser found a new broadcast
@@ -185,40 +231,38 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             ELog("🟡 Found service \(service.type)")
             netServices.append(service)
             service.delegate = self
-            onQueue { [self] in
-                service.startMonitoring() // slow!
-                service.resolve(withTimeout: 10) // slow!
-                self.broadcast()
-            }
+            service.startMonitoring() // slow!
+            service.resolve(withTimeout: 10) // slow!
+            self.broadcast()
         }
 
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didRemove service: NetService, moreComing _: Bool) {
-        onQueue { [self] in
-            if service.type == "_tcp.local." || service.type == "_udp.local." {
-                let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
-                ELog("🅾️ removed type \(name)")
-                guard let browser = netServiceBrowsers[name] else {
-                    ELog("‼️ can't remove type \(service.name)")
-                    return
-                }
-                browser.stop()
-                netServiceBrowsers.removeValue(forKey: name)
-            } else {
-                ELog("🔴 removed service \(service.type)")
-                guard let index = netServices.firstIndex(of: service) else {
-                    ELog("‼️ can't remove service \(service.description)")
-                    return
-                }
-                service.stopMonitoring()
-                netServices.remove(at: index)
+        assert(Thread.current == self.thread)
+        if service.type == "_tcp.local." || service.type == "_udp.local." {
+            let name = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
+            ELog("🅾️ removed type \(name)")
+            guard let browser = netServiceBrowsers[name] else {
+                ELog("‼️ can't remove type \(service.name)")
+                return
             }
-            broadcast()
+            browser.stop()
+            netServiceBrowsers.removeValue(forKey: name)
+        } else {
+            ELog("🔴 removed service \(service.type)")
+            guard let index = netServices.firstIndex(of: service) else {
+                ELog("‼️ can't remove service \(service.description)")
+                return
+            }
+            service.stopMonitoring()
+            netServices.remove(at: index)
         }
+        broadcast()
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didNotSearch errorDict: [String: NSNumber]) {
+        assert(Thread.current == self.thread)
         ELog("Did not search: \(errorDict)")
     }
 }
@@ -228,24 +272,32 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
 
 extension DeprecatedServiceBrowser: NetServiceDelegate {
     func netServiceDidResolveAddress(_ service: NetService) {
-        onQueue { [self] in
-            ELog("🟢 resolved \(service.type) \(service.name) \(service.domain)")
-            broadcast()
-        }
+        assert(Thread.current == self.thread)
+        ELog("🟢 resolved \(service.type) \(service.name) \(service.domain)")
+        broadcast()
     }
 
     func netService(_ service: NetService, didUpdateTXTRecord _: Data) {
-        onQueue { [self] in
-            //ELog("❕ New data for \(service.type) \(service.name)")
-            broadcast()
-        }
+        assert(Thread.current == self.thread)
+        //ELog("❕ New data for \(service.type) \(service.name)")
+        broadcast()
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didFindDomain domainString: String, moreComing _: Bool) {
+        assert(Thread.current == self.thread)
         ELog("found domain \(domainString)")
     }
 
     func netServiceBrowser(_: NetServiceBrowser, didRemoveDomain domainString: String, moreComing _: Bool) {
+        assert(Thread.current == self.thread)
         ELog("lost domain \(domainString)")
+    }
+
+    func netServiceDidPublish(_ sender: NetService) {
+        ELog("Published \(sender.type)")
+    }
+
+    func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
+        ELog("failed to publish: \(errorDict)")
     }
 }

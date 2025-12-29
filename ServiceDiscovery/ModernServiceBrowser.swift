@@ -66,20 +66,24 @@ class ModernServiceBrowser: NSObject, ServiceBrowser {
     }
 
     /// stop the metabrowser and all service browsers
-    func pause(completion: @escaping () -> Void) {
+    func pause(completion: @MainActor @escaping () -> Void) {
         ELog("Stop")
         netServiceBrowsers.removeAll()
         metaServiceBrowser = nil
 //        flameService.stop()
         broadcast()
-        completion()
+        DispatchQueue.main.async {
+            completion()
+        }
     }
 
-    func stop(completion: @escaping () -> Void) {
+    func stop(completion: @MainActor @escaping () -> Void) {
 //        netServices.removeAll()
         AddressCluster.flushClusters()
         broadcast()
-        completion()
+        DispatchQueue.main.async {
+            completion()
+        }
     }
 
     /// Converts a set of NetService instances to a set of Service instances asynchronously.

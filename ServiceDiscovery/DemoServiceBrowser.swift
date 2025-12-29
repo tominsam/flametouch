@@ -24,7 +24,7 @@ private extension Service {
 }
 
 // Demo data for screenshots so I don't need to stress about leaking things about my house
-class DemoServiceBrowser: NSObject, ServiceBrowser {
+class DemoServiceBrowser: NSObject, @MainActor ServiceBrowser {
     weak var delegate: ServiceBrowserDelegate?
 
     let services: Set<Service>
@@ -521,17 +521,20 @@ class DemoServiceBrowser: NSObject, ServiceBrowser {
         super.init()
     }
 
+    @MainActor
     func start() {
-        delegate?.serviceBrowser(self, didChangeServices: services)
+        delegate?.serviceBrowser(didChangeServices: services)
     }
 
-    func pause(completion: @escaping () -> Void) {
-        delegate?.serviceBrowser(self, didChangeServices: [])
+    @MainActor
+    func pause(completion: @MainActor @escaping () -> Void) {
+        delegate?.serviceBrowser(didChangeServices: [])
         completion()
     }
 
-    func stop(completion: @escaping () -> Void) {
-        delegate?.serviceBrowser(self, didChangeServices: services)
+    @MainActor
+    func stop(completion: @MainActor @escaping () -> Void) {
+        delegate?.serviceBrowser(didChangeServices: services)
         completion()
     }
 }
