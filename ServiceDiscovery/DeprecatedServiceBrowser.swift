@@ -210,7 +210,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
         } else {
             // single-service browser found a new broadcast
             // Services are not always cleaned up - for instance entering airplane mode won't remove services.
-            if netServices.map(\.type).contains(service.type) {
+            if netServices.contains(service) {
                 return
             }
             ELog("🟡 Found service \(service.type)")
