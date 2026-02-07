@@ -49,7 +49,7 @@ targets:
         # This is the human-readable version, xcode cloud generates the build number now
         # so it doesn't need to be in the project
         # YOU MUST REGENERATE AND COMMIT THE XCODE PROJECT TO BUMP THIS
-        MARKETING_VERSION: 104.1.0
+        MARKETING_VERSION: 105.0.0
 
         # Better concurrency defaults
         SWIFT_APPROACHABLE_CONCURRENCY: YES
