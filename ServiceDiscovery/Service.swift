@@ -79,6 +79,12 @@ public struct Service: Sendable {
     var ref: ServiceRef {
         ServiceRef(type: type, port: port, addressCluster: addressCluster)
     }
+
+    func expire() -> Self {
+        var mutableSelf = self
+        mutableSelf.alive = false
+        return mutableSelf
+    }
 }
 
 // Services are equivalent if they have the same name, type, port, and addresses

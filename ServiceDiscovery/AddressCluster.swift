@@ -23,11 +23,12 @@ fileprivate let globalLookup = Mutex<[String: AddressCluster]>([:])
 // and a list of addresses and hostnames. The factory method takes a list of addresses,
 // and vends the existing cluster that contains any of those addresses, adding them to the cluster,
 // or creates a new cluster with those addresses.
-public final class AddressCluster {
+public final class AddressCluster: @unchecked Sendable {
     var identifier = UUID()
 
-    var addresses: Set<String>
-    var hostnames: Set<String>
+    var _addresses: Set<String>
+    var _hostnames: Set<String>
+    let lock = NSLock()
 
     /// Return a new or existing address cluster for a given set of IP addresses. Any cluster that
     /// contains any of the provided addresses will be extended to contain all of the provided addresses
@@ -71,13 +72,23 @@ public final class AddressCluster {
     }
 
     private init(withAddresses addresses: Set<String>, hostnames: Set<String>) {
-        self.addresses = Set(addresses)
-        self.hostnames = Set(hostnames)
+        self._addresses = Set(addresses)
+        self._hostnames = Set(hostnames)
     }
 
     private func add(addresses: Set<String>, hostnames: Set<String>) {
-        self.addresses.formUnion(addresses)
-        self.hostnames.formUnion(hostnames)
+        lock.withLock {
+            self._addresses.formUnion(addresses)
+            self._hostnames.formUnion(hostnames)
+        }
+    }
+
+    var addresses: Set<String> {
+        lock.withLock { _addresses }
+    }
+
+    var hostnames: Set<String> {
+        lock.withLock { _hostnames }
     }
 
     public var sorted: [String] {
