@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct Host: Equatable, Hashable {
+public struct Host: Equatable, Hashable, Sendable {
     public let services: Set<Service>
     public let addressCluster: AddressCluster
 

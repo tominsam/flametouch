@@ -9,7 +9,7 @@ public struct ServiceRef: Hashable {
     public let addressCluster: AddressCluster
 }
 
-public struct Service {
+public struct Service: Sendable {
     // From the service itself
     public let name: String
     public let type: String

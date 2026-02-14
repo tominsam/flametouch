@@ -1,38 +1,26 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import Combine
 import SwiftUI
 import UIKit
 
 /// Shows the details of a particular service on a particular host
 
-@Observable
+@MainActor @Observable
 class ServiceViewModel {
-    var cancellables = Set<AnyCancellable>()
-    var alive = true
-    var highlight = true
-    var service: Service?
+    let serviceController: ServiceController
+    let serviceRef: ServiceRef
+
+    var service: Service? {
+        serviceController.clusters.serviceMatching(serviceRef: serviceRef)
+    }
+
+    var alive: Bool {
+        service?.alive ?? false
+    }
 
     init(serviceController: ServiceController, serviceRef: ServiceRef) {
-        self.service = serviceController.clusters.value.serviceMatching(serviceRef: serviceRef)
-
-        serviceController.clusters
-            .map { hosts in
-                hosts.serviceMatching(serviceRef: serviceRef)
-            }
-            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
-            .receive(on: RunLoop.main)
-            .sink { [weak self] found in
-                guard let self else { return }
-                if let found  {
-                    service = found
-                    alive = found.alive
-                } else {
-                    // this service is gone. Keep the addresses in case it comes back.
-                    alive = false
-                }
-            }
-            .store(in: &cancellables)
+        self.serviceController = serviceController
+        self.serviceRef = serviceRef
     }
 }
 

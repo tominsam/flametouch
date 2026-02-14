@@ -1,6 +1,5 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import Combine
 import Foundation
 import Network
 
@@ -25,8 +24,8 @@ extension NWInterface.InterfaceType {
     }
 }
 
-@MainActor
-public final class NetworkMonitor {
+@Observable
+public final class NetworkMonitor: Sendable {
     public struct NetworkState: Sendable {
         public let hasResponse: Bool
         public let isConnected: Bool
@@ -42,7 +41,7 @@ public final class NetworkMonitor {
 
     private static let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
 
-    @Published var state: NetworkState = .init(
+    var state: NetworkState = .init(
         hasResponse: false,
         isConnected: true,
         isExpensive: false,
@@ -54,14 +53,12 @@ public final class NetworkMonitor {
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { [weak self] path in
             ELog("Network state changed")
-            Task { @MainActor in
-                self?.state = NetworkState(
-                    hasResponse: true,
-                    isConnected: path.status != .unsatisfied,
-                    isExpensive: path.isExpensive,
-                    currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
-                )
-            }
+            self?.state = NetworkState(
+                hasResponse: true,
+                isConnected: path.status != .unsatisfied,
+                isExpensive: path.isExpensive,
+                currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
+            )
         }
         monitor.start(queue: Self.queue)
     }

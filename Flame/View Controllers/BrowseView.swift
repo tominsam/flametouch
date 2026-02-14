@@ -1,45 +1,33 @@
 // Copyright 2015 Thomas Insam. All rights reserved.
 
-import Combine
 import SwiftUI
 import UIKit
 
 /// Root view of the app, renders a list of hosts on the local network
 
+@MainActor
+protocol BrowseViewModel: Observable {
+    var noWifi: Bool { get }
+    var hosts: [Host] { get }
+    func refresh() async
+}
+
 @MainActor @Observable
-final class BrowseViewModel {
+final class BrowseViewModelImpl: BrowseViewModel {
     let serviceController: ServiceController
 
-    var hosts: [Host] = []
-    var noWifi: Bool = false
-    var actions: BrowseActions?
+    var noWifi: Bool {
+        let nowifi = NetworkMonitor.shared.state.currentConnectionType != .wifi
+        let isEmpty = serviceController.clusters.isEmpty
+        return nowifi && isEmpty
+    }
 
-    var cancellables = Set<AnyCancellable>()
+    var hosts: [Host] {
+        serviceController.clusters
+    }
 
     init(serviceController: ServiceController) {
         self.serviceController = serviceController
-        self.hosts = serviceController.clusters.value
-
-        // Watch network state and show information about needing wifi when
-        // we're not on wifi and there are no services.
-        Publishers.CombineLatest(
-            NetworkMonitor.shared.$state,
-            serviceController.clusters.map(\.isEmpty)
-        )
-            .map { state, isEmpty in
-                let nowifi = state.currentConnectionType != .wifi
-                let showOverlay = nowifi && isEmpty
-                return showOverlay
-            }
-            .receive(on: RunLoop.main)
-            .assign(to: \.noWifi, on: self)
-            .store(in: &cancellables)
-
-        serviceController.clusters
-            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
-            .receive(on: RunLoop.main)
-            .assign(to: \.hosts, on: self)
-            .store(in: &cancellables)
     }
 
     func refresh() async {
@@ -47,11 +35,6 @@ final class BrowseViewModel {
         // are instant. Refresh the list, then hide the spinner a second later.
         await serviceController.restart()
     }
-}
-
-struct BrowseActions {
-    let aboutAction: () -> Void
-    let selectAction: (Host?) -> Void
 }
 
 struct BrowseView: View {
@@ -91,13 +74,11 @@ struct BrowseView: View {
 
     @ViewBuilder
     var emptyView: some View {
-        VStack(alignment: .center, spacing: 20, content: {
-            Text("No services found", comment: "Title of a view shown when there are no local services")
-                .font(.title)
+        ContentUnavailableView {
+            Label("No services found", systemImage: "wifi")
+        } description: {
             Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
-        })
-        .padding()
-        .multilineTextAlignment(.center)
+        }
     }
 
     var hosts: [Host] {
@@ -110,9 +91,27 @@ struct BrowseView: View {
 
     NavigationStack {
         BrowseView(
-            viewModel: BrowseViewModel(
+            viewModel: BrowseViewModelImpl(
                 serviceController: ServiceControllerImpl.demo(),
             ),
+            selection: $selection,
+            searchTerm: ""
+        )
+    }
+}
+
+private class EmptyViewModel: BrowseViewModel {
+    var noWifi: Bool = true
+    var hosts: [Host] = []
+    func refresh() async {}
+}
+
+#Preview("Empty") {
+    @Previewable @State var selection: AddressCluster?
+
+    NavigationStack {
+        BrowseView(
+            viewModel: EmptyViewModel(),
             selection: $selection,
             searchTerm: ""
         )

@@ -114,7 +114,7 @@ struct MainWindow: View {
     var body: some View {
         NavigationSplitView(sidebar: {
             BrowseView(
-                viewModel: BrowseViewModel(serviceController: serviceController),
+                viewModel: BrowseViewModelImpl(serviceController: serviceController),
                 selection: $addressCluster,
                 searchTerm: searchText
             )

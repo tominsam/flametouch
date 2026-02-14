@@ -1,6 +1,5 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
-import Combine
 import SwiftUI
 import UIKit
 
@@ -8,19 +7,17 @@ import UIKit
 
 @MainActor @Observable
 class HostViewModel {
-    var cancellables = Set<AnyCancellable>()
+    let serviceController: ServiceController
+    let addressCluster: AddressCluster
 
-    init(serviceController: ServiceController, addressCluster: AddressCluster) {
-        self.host = serviceController.clusters.value.first { $0.addressCluster == addressCluster }
-        serviceController.clusters
-            .host(forAddressCluster: addressCluster)
-            .throttle(for: 0.200, scheduler: RunLoop.main, latest: true)
-            .map { $0 }
-            .assign(to: \.host, on: self)
-            .store(in: &cancellables)
+    var host: Host? {
+        serviceController.clusters.first { $0.addressCluster == addressCluster }
     }
 
-    var host: Host?
+    init(serviceController: ServiceController, addressCluster: AddressCluster) {
+        self.serviceController = serviceController
+        self.addressCluster = addressCluster
+    }
 }
 
 struct HostView: View {
