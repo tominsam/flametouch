@@ -37,7 +37,7 @@ final class BrowseViewModelImpl: BrowseViewModel {
     }
 }
 
-struct BrowseView: View {
+struct SlateBrowseView: View {
     var viewModel: BrowseViewModel
 
     @Binding
@@ -51,7 +51,7 @@ struct BrowseView: View {
             emptyView
         } else {
             List(hosts, id: \.addressCluster, selection: $selection) { host in
-                DetailCell(
+                SlateDetailCell(
                     title: host.name,
                     subtitle: host.subtitle,
                     copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
@@ -90,7 +90,7 @@ struct BrowseView: View {
     @Previewable @State var selection: AddressCluster?
 
     NavigationStack {
-        BrowseView(
+        SlateBrowseView(
             viewModel: BrowseViewModelImpl(
                 serviceController: ServiceControllerImpl.demo(),
             ),
@@ -110,7 +110,7 @@ private class EmptyViewModel: BrowseViewModel {
     @Previewable @State var selection: AddressCluster?
 
     NavigationStack {
-        BrowseView(
+        SlateBrowseView(
             viewModel: EmptyViewModel(),
             selection: $selection,
             searchTerm: ""

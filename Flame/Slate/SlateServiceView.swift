@@ -6,7 +6,7 @@ import UIKit
 /// Shows the details of a particular service on a particular host
 
 @MainActor @Observable
-class ServiceViewModel {
+class SlateServiceViewModel {
     let serviceController: ServiceController
     let serviceRef: ServiceRef
 
@@ -24,37 +24,37 @@ class ServiceViewModel {
     }
 }
 
-struct ServiceView: View {
-    var viewModel: ServiceViewModel
+struct SlateServiceView: View {
+    var viewModel: SlateServiceViewModel
 
     var body: some View {
         List {
             Section("Core") {
-                ValueCell(
+                SlateValueCell(
                     title: String(localized: "Name", comment: "Heading for a cell showing a service name"),
                     subtitle: viewModel.service?.name
                 )
-                ValueCell(
+                SlateValueCell(
                     title: String(localized: "Type", comment: "Heading for a cell showing a service type"),
                     subtitle: viewModel.service?.type,
                     url: viewModel.service?.url
                 )
                 if let domain = viewModel.service?.domain {
-                    ValueCell(title: "Domain", subtitle: domain)
+                    SlateValueCell(title: "Domain", subtitle: domain)
                 }
 
                 ForEach(viewModel.service?.addressCluster.sorted ?? [], id: \.self) { address in
-                    ValueCell(title: "Address", subtitle: address)
+                    SlateValueCell(title: "Address", subtitle: address)
                 }
 
-                ValueCell(title: "Port", subtitle: String(viewModel.service?.port ?? 0))
+                SlateValueCell(title: "Port", subtitle: String(viewModel.service?.port ?? 0))
             }
 
             let sortedData = viewModel.service?.data.sorted { $0.key.lowercased() < $1.key.lowercased() } ?? []
             if !sortedData.isEmpty {
                 Section("Data") {
                     ForEach(sortedData, id: \.key) { data in
-                        ValueCell(title: data.key, subtitle: data.value, url: realUrl(from: data.value))
+                        SlateValueCell(title: data.key, subtitle: data.value, url: realUrl(from: data.value))
                     }
                 }
             }

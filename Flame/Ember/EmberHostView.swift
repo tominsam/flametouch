@@ -6,7 +6,7 @@ import UIKit
 /// View of a single host - lists the services of that host
 
 @MainActor @Observable
-class HostViewModel {
+class EmberHostViewModel {
     let serviceController: ServiceController
     let addressCluster: AddressCluster
 
@@ -20,10 +20,10 @@ class HostViewModel {
     }
 }
 
-struct HostView: View {
+struct EmberHostView: View {
     @Environment(\.openURL) private var openURL
 
-    var viewModel: HostViewModel
+    var viewModel: EmberHostViewModel
 
     @Binding
     var selection: ServiceRef?
@@ -38,7 +38,7 @@ struct HostView: View {
                     ),
                     content: {
                         ForEach(host.addressCluster.sorted, id: \.self) { address in
-                            ValueCell(title: address, subtitle: nil)
+                            EmberValueCell(title: address, subtitle: nil)
                         }
                     }
                 )
@@ -62,7 +62,7 @@ struct HostView: View {
                     ),
                     content: {
                         ForEach(host.displayServices, id: \.ref) { service in
-                            DetailCell(
+                            EmberDetailCell(
                                 title: service.name,
                                 subtitle: service.typeWithDomain,
                                 copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),

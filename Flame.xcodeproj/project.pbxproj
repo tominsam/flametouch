@@ -43,15 +43,6 @@
 			path = Flame;
 			sourceTree = "<group>";
 		};
-		117CBF2FF332E28749184FC4 /* Views */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
 		1C5F9DBE66E5435448D4FAAC /* Utils */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			explicitFileTypes = {
@@ -102,7 +93,6 @@
 				B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */,
 				2CE6D02AE6CD644421FD530D /* Translation */,
 				1C5F9DBE66E5435448D4FAAC /* Utils */,
-				117CBF2FF332E28749184FC4 /* Views */,
 				EF3DC09CEB47C3D95BF7C27F /* FlameTests */,
 				6D044DDE8A46CECEC904B9A2 /* generated */,
 				2F1D94310F43DE6505A0F53A /* Image Resources */,
@@ -153,7 +143,6 @@
 				B4E24FE3CDA33916E217CD26 /* ServiceDiscovery */,
 				2CE6D02AE6CD644421FD530D /* Translation */,
 				1C5F9DBE66E5435448D4FAAC /* Utils */,
-				117CBF2FF332E28749184FC4 /* Views */,
 			);
 			name = Flame;
 			packageProductDependencies = (

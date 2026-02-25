@@ -3,7 +3,9 @@
 import SwiftUI
 import UIKit
 
-struct AboutView: View {
+struct SlateAboutView: View {
+    var useEmberUI: Binding<Bool>
+
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 16) {
@@ -22,6 +24,7 @@ struct AboutView: View {
                 Spacer().frame(height: 4)
 
                 Link("movieos.org/code/flame", destination: URL(string: "https://movieos.org/code/flame/")!)
+                    .foregroundStyle(.tint)
 
                 Spacer().frame(height: 8)
                 Divider()
@@ -31,6 +34,7 @@ struct AboutView: View {
                         "She had fortunately always her appetite for news. The pure flame of the " +
                      "disinterested burned in her cave of treasures as a lamp in a Byzantine vault."
                 )
+                .font(.body)
                 .italic()
                 .padding([.leading, .trailing], 16)
 
@@ -39,6 +43,13 @@ struct AboutView: View {
                     Text(attributed)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                 }
+
+                Spacer().frame(height: 8)
+                Divider()
+                Spacer().frame(height: 8)
+
+                Toggle("Use Ember UI", isOn: useEmberUI)
+                    .frame(maxWidth: 300)
 
                 Spacer()
                 Spacer()
@@ -49,5 +60,15 @@ struct AboutView: View {
             .padding([.leading, .trailing, .top], 40)
             .frame(maxWidth: .infinity)
         }
+    }
+}
+
+#Preview {
+    @Previewable @State var ember: Bool = false
+    if ember {
+        SlateAboutView(useEmberUI: $ember)
+            .emberTheme()
+    } else {
+        SlateAboutView(useEmberUI: $ember)
     }
 }

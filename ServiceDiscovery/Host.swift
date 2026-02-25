@@ -10,9 +10,16 @@ public struct Host: Equatable, Hashable, Sendable {
         ServiceNamer.nameForServices(services) ?? "Host"
     }
 
+    public var servicesCount: String {
+        String(localized: "\(services.count) service(s)")
+    }
+
+    public var displayAddress: String {
+        addressCluster.displayAddress
+    }
+
     public var subtitle: String {
-        let countString = String(localized: "\(services.count) service(s)")
-        return "\(addressCluster.displayAddress) (\(countString))"
+        return "\(displayAddress) (\(servicesCount))"
     }
 
     public var displayServices: [Service] {

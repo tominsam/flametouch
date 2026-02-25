@@ -4,27 +4,7 @@ import Foundation
 import SwiftUI
 import UIKit
 
-extension Font {
-    static let legible: Font = {
-        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-        descriptor = descriptor.addingAttributes([
-            .featureSettings: [[
-                UIFontDescriptor.FeatureKey.type: kStylisticAlternativesType,
-                UIFontDescriptor.FeatureKey.selector: kStylisticAltSixOnSelector,
-            ]],
-        ])
-        let uiFont = UIFont(descriptor: descriptor, size: 0)
-        return Font(uiFont)
-    }()
-
-    static let standard: Font = {
-        var descriptor = UIFont.preferredFont(forTextStyle: .body).fontDescriptor
-        let uiFont = UIFont(descriptor: descriptor, size: 0)
-        return Font(uiFont)
-    }()
-}
-
-public struct ValueCell: View {
+public struct EmberValueCell: View {
     @Environment(\.openURL) private var openURL
 
     let title: String
@@ -92,7 +72,7 @@ public struct ValueCell: View {
     }
 }
 
-public struct DetailCell: View {
+public struct EmberDetailCell: View {
     @Environment(\.openURL) private var openURL
 
     let title: String
@@ -120,7 +100,7 @@ public struct DetailCell: View {
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 Label(subtitle, systemImage: openableService?.url == nil ? "" : "globe")
-                    .labelStyle(SmallTrailingIcon())
+                    .labelStyle(EmberSmallTrailingIcon())
                     .font(.legible)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
@@ -161,27 +141,7 @@ public struct DetailCell: View {
     }
 }
 
-public extension View {
-    @ViewBuilder
-    func ifNonNil<Content: View, T>(_ value: T?, transform: (Self, T) -> Content) -> some View {
-        if let value {
-            transform(self, value)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder
-    func ifiOS<Content: View>(transform: (Self) -> Content) -> some View {
-        #if targetEnvironment(macCatalyst)
-            self
-        #else
-            transform(self)
-        #endif
-    }
-}
-
-struct SmallTrailingIcon: LabelStyle {
+struct EmberSmallTrailingIcon: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
             configuration.title
@@ -194,13 +154,13 @@ struct SmallTrailingIcon: LabelStyle {
     let url = URL(string: "http://foo.com")
     List {
         Section("Value Cell") {
-            ValueCell(title: "Title", subtitle: nil)
-            ValueCell(title: "Title", subtitle: "Subtitle")
-            ValueCell(title: "Title", subtitle: "Subtitle", url: url)
+            EmberValueCell(title: "Title", subtitle: nil)
+            EmberValueCell(title: "Title", subtitle: "Subtitle")
+            EmberValueCell(title: "Title", subtitle: "Subtitle", url: url)
         }
         Section("Detail Cell") {
-            DetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test")
-            DetailCell(
+            EmberDetailCell(title: "Title", subtitle: "Subtitle", copyLabel: "test")
+            EmberDetailCell(
                 title: "Title",
                 subtitle: "Subtitle",
                 copyLabel: "test",

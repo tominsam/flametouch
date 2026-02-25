@@ -7,19 +7,37 @@ import Network
 
 @main
 struct FlameApp: App {
+    // Switch between UI layers: true = Ember (new), false = Slate (preserved)
+    @AppStorage("useEmberUI") var useEmberUI = false
+
     let serviceController: ServiceController = ServiceControllerImpl()
 
     @Environment(\.scenePhase) private var scenePhase
 
     // Heartbeat task - the network browsers aren't super reliable so stop/start
     // them every 10 seconds
+    @State var showAbout = false
     @State var serviceRefreshTask: Task<Void, Never>?
     @State var flameService: NWListener?
 
     var body: some Scene {
         WindowGroup {
-            MainWindow(serviceController: serviceController)
-                .accentColor(Color(red: 204.0 / 255, green: 59.0 / 255, blue: 72.0 / 255, opacity: 1))
+            Group {
+                if useEmberUI {
+                    EmberMainWindow(serviceController: serviceController, showAbout: $showAbout)
+                } else {
+                    SlateMainWindow(serviceController: serviceController, showAbout: $showAbout)
+                }
+            }
+            .modifier(SafariViewControllerViewModifier())
+            .sheet(isPresented: $showAbout) {
+                if useEmberUI {
+                    SlateAboutView(useEmberUI: $useEmberUI)
+                        .emberTheme()
+                } else {
+                    SlateAboutView(useEmberUI: $useEmberUI)
+                }
+            }
         }
         .commands {
             CommandGroup(after: .newItem) {
@@ -49,7 +67,12 @@ struct FlameApp: App {
         }
 
         WindowGroup(id: "about") {
-            AboutView()
+            if useEmberUI {
+                SlateAboutView(useEmberUI: $useEmberUI)
+                    .emberTheme()
+            } else {
+                SlateAboutView(useEmberUI: $useEmberUI)
+            }
         }
         .defaultSize(width: 480, height: 640)
     }
@@ -101,68 +124,3 @@ struct FlameApp: App {
     }
 }
 
-struct MainWindow: View {
-    let serviceController: ServiceController
-    @State var addressCluster: AddressCluster?
-    @State var serviceRef: ServiceRef?
-    @State var showAbout: Bool = false
-    @State var searchText: String = ""
-
-    @State
-    var path = NavigationPath()
-
-    var body: some View {
-        NavigationSplitView(sidebar: {
-            BrowseView(
-                viewModel: BrowseViewModelImpl(serviceController: serviceController),
-                selection: $addressCluster,
-                searchTerm: searchText
-            )
-            .searchable(text: $searchText, placement: .toolbarPrincipal)
-            .navigationSplitViewColumnWidth(ideal: 400)
-#if !targetEnvironment(macCatalyst)
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button(action: {
-                        showAbout = true
-                    }, label: {
-                        Label("About", systemImage: "info.circle")
-                    })
-                }
-            }
-#endif
-            .toolbar(removing: .sidebarToggle)
-        }, detail: {
-            NavigationStack(path: $path, root: {
-                Group {
-                    if let addressCluster {
-                        HostView(
-                            viewModel: HostViewModel(serviceController: serviceController, addressCluster: addressCluster),
-                            selection: $serviceRef,
-                        )
-                    }
-                }
-                    .navigationDestination(for: ServiceRef.self) { serviceRef in
-                        ServiceView(
-                            viewModel: ServiceViewModel(serviceController: serviceController, serviceRef: serviceRef),
-                        )
-                    }
-                    .onChange(of: serviceRef) {
-                        if let serviceRef {
-                            path.append(serviceRef)
-                        }
-                    }
-                    .onChange(of: path) {
-                        if path.isEmpty {
-                            serviceRef = nil
-                        }
-                    }
-            })
-        })
-        // Put before about sheet so that links in the about pane just open safari
-        .modifier(SafariViewControllerViewModifier())
-        .sheet(isPresented: $showAbout) {
-            AboutView()
-        }
-    }
-}
