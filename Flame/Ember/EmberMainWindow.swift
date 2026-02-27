@@ -77,5 +77,10 @@ struct EmberMainWindow: View {
             }
         }
         .emberTheme()
+        .onChange(of: serviceController.host(for: addressCluster)) { _, host in
+            if addressCluster != nil, host == nil {
+                addressCluster = nil
+            }
+        }
     }
 }

@@ -58,11 +58,11 @@ struct EmberHostView: View {
                 Text(address)
                     .lineLimit(1)
                     .font(.emberMeta)
-                    .foregroundStyle(.emberTintDim)
+                    .foregroundStyle(.emberTint)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
                     .background {
-                        FilledStrokedRoundRect(fill: .emberCard, stroke: .emberTintDim, radius: 20)
+                        FilledStrokedRoundRect(fill: .emberCard, stroke: .emberTint, radius: 20)
                             .padding(4)
                     }
                     .overlay {
@@ -72,7 +72,7 @@ struct EmberHostView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        .padding(.vertical, 8)
         .opacity(host.alive ? 1 : 0.3)
     }
 
@@ -142,11 +142,11 @@ struct EmberHostView: View {
                             .padding(.bottom, 16)
                     }
                 }
-                .background {
-                    if isSelected {
-                        Color(.emberCard)
-                    }
-                }
+//                .background {
+//                    if isSelected {
+//                        Color(.emberCard)
+//                    }
+//                }
             }
         }
     }

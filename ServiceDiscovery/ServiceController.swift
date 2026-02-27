@@ -9,7 +9,7 @@ public protocol ServiceController: Observable {
     func restart() async
     func stop() async
 
-    func host(for addressCluster: AddressCluster) -> Host?
+    func host(for addressCluster: AddressCluster?) -> Host?
 }
 
 @MainActor @Observable
@@ -92,7 +92,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         self.stoppedDate = nil
     }
 
-    public func host(for addressCluster: AddressCluster) -> Host? {
+    public func host(for addressCluster: AddressCluster?) -> Host? {
         clusters.first { $0.addressCluster == addressCluster }
     }
 }

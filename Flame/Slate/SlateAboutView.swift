@@ -16,6 +16,9 @@ struct SlateAboutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 120)
                     .cornerRadius(24)
+                    .contextMenu {
+                        Toggle(isOn: useEmberUI, label: { Text("Ember (experimental)") })
+                    }
 
                 Spacer().frame(height: 8)
 
@@ -48,9 +51,6 @@ struct SlateAboutView: View {
                 Divider()
                 Spacer().frame(height: 8)
 
-                Toggle("Use Ember UI", isOn: useEmberUI)
-                    .frame(maxWidth: 300)
-
                 Spacer()
                 Spacer()
             }
@@ -59,9 +59,9 @@ struct SlateAboutView: View {
             .frame(maxWidth: 600)
             .padding([.leading, .trailing, .top], 40)
             .frame(maxWidth: .infinity)
-            .background(.background)
         }
         .scrollIndicators(.hidden)
+        .background(.background)
     }
 }
 

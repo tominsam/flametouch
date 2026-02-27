@@ -67,6 +67,7 @@ struct EmberBrowseView: View {
                         }
                     }
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .ifiOS {
                     $0.refreshable {

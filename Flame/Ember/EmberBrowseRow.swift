@@ -58,6 +58,7 @@ struct EmberBrowseRow: View {
                     .font(.emberMeta)
                     .foregroundColor(isSelected ? .emberTextMid : .emberTextLow)
                     .lineLimit(1)
+                    .truncationMode(.middle)
             }
             Spacer()
             Image(systemName: "chevron.right")
