@@ -15,7 +15,7 @@ struct EmberServiceRow: View {
         HStack {
             Text(title)
                 .font(.emberMeta)
-                .foregroundColor(.emberTextHi)
+                .foregroundColor(.emberTextLow)
                 .lineLimit(1)
             Spacer()
             if let subtitle {

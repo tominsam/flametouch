@@ -19,7 +19,7 @@ struct EmberTitleView: View {
             Text(subTitle)
                 .font(.emberMeta)
                 .textCase(.uppercase)
-                .foregroundStyle(.emberTextMid)
+                .foregroundStyle(.emberTextLow)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 8)
         }
