@@ -21,30 +21,31 @@ struct EmberBrowseView: View {
     @State var searchTerm: String = ""
 
     var body: some View {
-        if viewModel.noWifi {
-            emptyView
-        } else {
-            VStack(spacing: 0) {
-                HStack {
-                    EmberTitleView(
-                        title: "Network",
-                        subTitle: "\(hosts.count) host(s)"
-                    )
+        VStack(spacing: 0) {
+            HStack {
+                EmberTitleView(
+                    title: "Network",
+                    subTitle: "\(hosts.count) host(s)"
+                )
 
-                    Button(action: {
-                        showAbout = true
-                    }, label: {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.emberTextHi)
-                            .frame(width: 28, height: 28)
-                    })
-                    .buttonBorderShape(.circle)
-                    .buttonStyle(.glass)
-                    .accessibilityLabel("About")
-                }
-                .padding(.leading, 16)
-                .padding(.trailing, 8)
-                .containerCornerOffset(.leading, sizeToFit: true)
+                Button(action: {
+                    showAbout = true
+                }, label: {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.emberTextHi)
+                        .frame(width: 28, height: 28)
+                })
+                .buttonBorderShape(.circle)
+                .buttonStyle(.glass)
+                .accessibilityLabel("About")
+            }
+            .padding(.leading, 16)
+            .padding(.trailing, 8)
+            .containerCornerOffset(.leading, sizeToFit: true)
+
+            if viewModel.noWifi {
+                emptyView
+            } else {
 
                 ScrollView {
                     LazyVStack {
@@ -79,26 +80,29 @@ struct EmberBrowseView: View {
                 }
                 .safeAreaInset(edge: .bottom, spacing: 8) {
                     TextField("", text: $searchTerm, prompt:
-                        Text("Search").foregroundStyle(.emberTextLow)
+                                Text("Search").foregroundStyle(.emberTextLow)
                     )
-                        .focused($focusState, equals: true)
-                        .padding(.leading, 16)
-                        .padding(.trailing, 40)
-                        .frame(height: 44)
-                        .overlay(alignment: .trailing) {
+                    .focused($focusState, equals: true)
+                    .padding(.leading, 16)
+                    .padding(.trailing, 40)
+                    .frame(height: 44)
+                    .overlay(alignment: .trailing) {
+                        if !searchTerm.isEmpty {
                             Button(action: {
                                 searchTerm = ""
+                                focusState = false  
                             }, label: {
                                 Image(systemName: "xmark.circle.fill")
                                     .frame(width: 44, height: 44)
                             })
                         }
-                        .glassEffect(
-                            .regular,
-                            in: RoundedRectangle(cornerRadius: 22)
-                        )
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
+                    }
+                    .glassEffect(
+                        .regular,
+                        in: RoundedRectangle(cornerRadius: 22)
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
                 }
             }
         }
@@ -109,9 +113,11 @@ struct EmberBrowseView: View {
         ContentUnavailableView {
             Label("No services found", systemImage: "wifi")
                 .font(.emberHeading)
+                .foregroundStyle(.emberTextMid)
         } description: {
             Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
                 .font(.emberCellTitle)
+                .foregroundStyle(.emberTextLow)
         }
     }
 

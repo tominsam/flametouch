@@ -9,7 +9,7 @@ struct EmberTitleView: View {
     let subTitle: String
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             Text(title)
                 .font(.emberHeading)
                 .foregroundStyle(.emberTextHi)
@@ -17,7 +17,7 @@ struct EmberTitleView: View {
                 .padding(.top, 8)
 
             Text(subTitle)
-                .font(.emberMeta)
+                .font(.emberSectionHeader)
                 .textCase(.uppercase)
                 .foregroundStyle(.emberTextLow)
                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -15,13 +15,13 @@ struct EmberServiceRow: View {
         HStack {
             Text(title)
                 .font(.emberMeta)
-                .foregroundColor(.emberTextLow)
+                .foregroundColor(.emberTextMid)
                 .lineLimit(1)
             Spacer()
             if let subtitle {
                 Text(subtitle)
                     .font(.emberMeta)
-                    .foregroundColor(url != nil ? .accentColor : .emberTextMid)
+                    .foregroundColor(url != nil ? .accentColor : .emberTextHi)
                     .lineLimit(1)
             }
         }

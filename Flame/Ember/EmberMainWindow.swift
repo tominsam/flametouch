@@ -58,14 +58,15 @@ struct EmberMainWindow: View {
 
                     if let addressCluster {
                         detailView(for: addressCluster)
-                    } else {
+                    } else if !serviceController.clusters.isEmpty {
                         ContentUnavailableView {
                             Label("Choose a host", systemImage: "point.3.connected.trianglepath.dotted")
                                 .font(.emberHeading)
+                                .foregroundStyle(.emberTextMid)
                         } description: {
-                            Text("Something something someintg")
-                                .font(.emberCellTitle)
                         }
+                    } else {
+                        Color(.emberBase)
                     }
 
                 }

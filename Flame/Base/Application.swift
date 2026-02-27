@@ -51,6 +51,9 @@ struct FlameApp: App {
                     }
                 }
                 .keyboardShortcut(KeyEquivalent("r"), modifiers: [.command])
+                Toggle(isOn: $useEmberUI) {
+                    Text("Use Ember")
+                }
             }
         }
         .onChange(of: scenePhase) {

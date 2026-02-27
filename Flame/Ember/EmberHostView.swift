@@ -41,7 +41,7 @@ struct EmberHostView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         addresses(for: host)
-                        actions(for: host)
+                        //actions(for: host)
                         services(for: host)
                         Color(.clear).frame(height: 1)
                     }
@@ -57,7 +57,7 @@ struct EmberHostView: View {
             ForEach(host.addressCluster.sorted, id: \.self) { address in
                 Text(address)
                     .lineLimit(1)
-                    .font(.emberSectionHeader)
+                    .font(.emberMeta)
                     .foregroundStyle(.emberTintDim)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)

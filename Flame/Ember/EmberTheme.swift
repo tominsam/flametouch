@@ -5,12 +5,12 @@ extension ShapeStyle where Self == Color {
     // MARK: Backgrounds
     static var emberBase: Color { .ember(dark: 0x0c0a08, light: 0xfaf7f3) }
     static var emberCard: Color { .ember(dark: 0x1c1610, light: 0xf5f0ea) }
-    static var emberInset: Color { .ember(dark: 0x252018, light: 0xede8e0) }
+    static var emberInset: Color { .ember(dark: 0x261e14, light: 0xede8e0) }
     static var emberElevated: Color { .ember(dark: 0x2e2820, light: 0xe3dcd2) }
 
     // MARK: Foregroundsπ
     static var emberTextHi: Color { .ember(dark: 0xf0e4d0, light: 0x1e1208) }
-    static var emberTextMid: Color { .ember(dark: 0xf0c890, light: 0x5c3d20) }
+    static var emberTextMid: Color { .ember(dark: 0xf0d0a0, light: 0x5c3d20) }
     static var emberTextLow: Color { .ember(dark: 0x8c6038, light: 0x9a7050) }
     static var emberTextDim: Color { .ember(dark: 0x3a2a1e, light: 0xc0a882) }
     static var emberTextOnTint: Color { .ember(dark: 0x1a0e06, light: 0xfff8f2) }
@@ -45,14 +45,14 @@ extension Font {
 
     /// Secondary row label — "Plex Media Server"
     static var emberCellSubtitle: Font {
-        .system(.footnote, design: .rounded, weight: .medium)
+        .system(.subheadline, design: .rounded, weight: .medium)
     }
 
     // MARK: - Metadata (monospaced)
 
     /// IPs, hostnames, service type strings — "_ssh._tcp"
     static var emberMeta: Font {
-        var descriptor = UIFont.preferredFont(forTextStyle: .footnote).fontDescriptor
+        var descriptor = UIFont.preferredFont(forTextStyle: .subheadline).fontDescriptor
             .withDesign(.rounded)!
         descriptor = descriptor.addingAttributes([
             .featureSettings: [[
