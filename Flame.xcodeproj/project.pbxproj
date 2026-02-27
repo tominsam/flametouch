@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		40CAB0E92BF42ADFDDB92C9D /* AppIcon_26.icon in Resources */ = {isa = PBXBuildFile; fileRef = 07A148204DD2FA481DF56FFE /* AppIcon_26.icon */; };
+		8466E12852DB6FFEE4BC36C6 /* Flow in Frameworks */ = {isa = PBXBuildFile; productRef = B5B666E2354CDAC25405B5AE /* Flow */; };
 		ED37415087EC38D715CE2902 /* AddressClusterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B50C7FBF75F734ADACEFCE /* AddressClusterTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,17 @@
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		104DF555A55BB2AB4195A7C2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8466E12852DB6FFEE4BC36C6 /* Flow in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
 		0028A47C8392FA158E09492D /* Products */ = {
 			isa = PBXGroup;
@@ -133,6 +145,7 @@
 			buildPhases = (
 				FC08C3E06A648D7F0A0C5BB7 /* Sources */,
 				7A55AE208CE11747408F60FC /* Resources */,
+				104DF555A55BB2AB4195A7C2 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -146,6 +159,7 @@
 			);
 			name = Flame;
 			packageProductDependencies = (
+				B5B666E2354CDAC25405B5AE /* Flow */,
 			);
 			productName = Flame;
 			productReference = 7DB9E430F6CDA0A49EA5D10C /* Flame.app */;
@@ -197,6 +211,9 @@
 			);
 			mainGroup = 0D793BEB5F39D0D4D226DC7D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				777EC50FEB270116C7D6FEBB /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -493,6 +510,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		777EC50FEB270116C7D6FEBB /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tevelee/SwiftUI-Flow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B5B666E2354CDAC25405B5AE /* Flow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 777EC50FEB270116C7D6FEBB /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */;
+			productName = Flow;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 036F4B6D91307D898786261F /* Project object */;
 }

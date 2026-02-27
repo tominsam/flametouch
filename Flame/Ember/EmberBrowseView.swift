@@ -5,43 +5,13 @@ import UIKit
 
 /// Root view of the app, renders a list of hosts on the local network
 
-@MainActor
-protocol EmberBrowseViewModel: Observable {
-    var noWifi: Bool { get }
-    var hosts: [Host] { get }
-    func refresh() async
-}
-
-@MainActor @Observable
-final class EmberBrowseViewModelImpl: EmberBrowseViewModel {
-    let serviceController: ServiceController
-
-    var noWifi: Bool {
-        let nowifi = NetworkMonitor.shared.state.currentConnectionType != .wifi
-        let isEmpty = serviceController.clusters.isEmpty
-        return nowifi && isEmpty
-    }
-
-    var hosts: [Host] {
-        serviceController.clusters
-    }
-
-    init(serviceController: ServiceController) {
-        self.serviceController = serviceController
-    }
-
-    func refresh() async {
-        // Fake some delays on this because it looks unnatural if things
-        // are instant. Refresh the list, then hide the spinner a second later.
-        await serviceController.restart()
-    }
-}
-
 struct EmberBrowseView: View {
-    var viewModel: EmberBrowseViewModel
+    var viewModel: BrowseViewModel
 
     @Binding
     var selection: AddressCluster?
+
+    @Namespace var selectionBackgroundNamespace
 
     // Searchable is in the main view
     let searchTerm: String
@@ -50,25 +20,59 @@ struct EmberBrowseView: View {
         if viewModel.noWifi {
             emptyView
         } else {
-            List(hosts, id: \.addressCluster, selection: $selection) { host in
-                EmberDetailCell(
-                    title: host.name,
-                    subtitle: host.subtitle,
-                    copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
-                    openableService: host.openableService,
-                )
-            }
-            .listStyle(.plain)
-            .ifiOS {
-                $0.refreshable {
-                    selection = nil
-                    await viewModel.refresh()
-                    // leave the spinner visible while it populates
-                    try? await Task.sleep(for: .seconds(2))
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Network")
+                        .font(.emberHeading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Text("\(hosts.count)")
+                        .font(.emberCellSubtitle)
+                        .foregroundStyle(.emberTextMid)
+                        .padding(4)
+                        .frame(minWidth: 28, minHeight: 28)
+                        .background {
+                            FilledStrokedRoundRect(
+                                fill: .emberCard,
+                                stroke: .emberTintDim,
+                                radius: 4
+                            )
+                        }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8) // about right to be the height of the traffic lights
+                .containerCornerOffset(.leading, sizeToFit: true)
+
+                ScrollView {
+                    LazyVStack {
+
+                        ForEach(hosts, id: \.addressCluster) { host in
+                            EmberBrowseRow(
+                                title: host.name,
+                                subtitle: "\(host.displayAddress) • \(host.servicesCount)",
+                                copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
+                                openableService: host.openableService,
+                                isSelected: selection == host.addressCluster,
+                                selectionBackgroundNamespace: selectionBackgroundNamespace,
+                                action: {
+                                    withAnimation(.bouncy(duration: 0.2)) {
+                                        selection = host.addressCluster
+                                    }
+                                },
+                            )
+                        }
+                    }
+                }
+                .scrollIndicators(.never)
+                .ifiOS {
+                    $0.refreshable {
+                        selection = nil
+                        await viewModel.refresh()
+                        // leave the spinner visible while it populates
+                        try? await Task.sleep(for: .seconds(2))
+                    }
                 }
             }
-            .navigationTitle("Flame")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
@@ -76,8 +80,10 @@ struct EmberBrowseView: View {
     var emptyView: some View {
         ContentUnavailableView {
             Label("No services found", systemImage: "wifi")
+                .font(.emberHeading)
         } description: {
             Text("Connect to a WiFi network to see local services", comment: "Body of a view shown when there are no local services")
+                .font(.emberCellTitle)
         }
     }
 
@@ -89,18 +95,17 @@ struct EmberBrowseView: View {
 #Preview {
     @Previewable @State var selection: AddressCluster?
 
-    NavigationStack {
-        EmberBrowseView(
-            viewModel: EmberBrowseViewModelImpl(
-                serviceController: ServiceControllerImpl.demo(),
-            ),
-            selection: $selection,
-            searchTerm: ""
-        )
-    }
+    EmberBrowseView(
+        viewModel: BrowseViewModelImpl(
+            serviceController: ServiceControllerImpl.demo(),
+        ),
+        selection: $selection,
+        searchTerm: ""
+    )
+    .emberTheme()
 }
 
-private class EmptyViewModel: EmberBrowseViewModel {
+private class EmptyViewModel: BrowseViewModel {
     var noWifi: Bool = true
     var hosts: [Host] = []
     func refresh() async {}
@@ -109,11 +114,10 @@ private class EmptyViewModel: EmberBrowseViewModel {
 #Preview("Empty") {
     @Previewable @State var selection: AddressCluster?
 
-    NavigationStack {
-        EmberBrowseView(
-            viewModel: EmptyViewModel(),
-            selection: $selection,
-            searchTerm: ""
-        )
-    }
+    EmberBrowseView(
+        viewModel: EmptyViewModel(),
+        selection: $selection,
+        searchTerm: ""
+    )
+    .emberTheme()
 }

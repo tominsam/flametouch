@@ -22,3 +22,17 @@ public extension View {
         #endif
     }
 }
+
+struct FilledStrokedRoundRect<FillStyle: ShapeStyle, StrokeStyle: ShapeStyle>: View {
+    let fill: FillStyle
+    let stroke: StrokeStyle
+    let radius: CGFloat
+
+    var body: some View {
+        RoundedRectangle(cornerRadius: radius)
+            .stroke(stroke, lineWidth: 2)
+            .background(
+                RoundedRectangle(cornerRadius: radius).fill(fill)
+            )
+    }
+}

@@ -71,6 +71,10 @@ targets:
         type: syncedFolder
       - path: "Image Resources/AppIcon_26.icon"
 
+    dependencies:
+      - package: Flow
+        product: Flow
+
     info:
       path: generated/Info.plist
       properties:
@@ -129,3 +133,7 @@ targets:
       base:
         DEVELOPMENT_TEAM: "76AFK3W7M9"
 
+packages:
+  Flow:
+    url: https://github.com/tevelee/SwiftUI-Flow
+    from: 3.1.1

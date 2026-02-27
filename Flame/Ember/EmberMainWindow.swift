@@ -5,6 +5,8 @@ import SwiftUI
 import UIKit
 
 struct EmberMainWindow: View {
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
     let serviceController: ServiceController
     @State var addressCluster: AddressCluster?
     @State var serviceRef: ServiceRef?
@@ -14,54 +16,54 @@ struct EmberMainWindow: View {
     @State
     var path = NavigationPath()
 
+    var mainView: some View {
+        EmberBrowseView(
+            viewModel: BrowseViewModelImpl(serviceController: serviceController),
+            selection: $addressCluster,
+            searchTerm: searchText
+        )
+    }
+
+    @ViewBuilder
+    func detailView(for addressCluster: AddressCluster) -> some View {
+        EmberHostView(
+            viewModel: EmberHostViewModel(serviceController: serviceController, addressCluster: addressCluster),
+        )
+    }
+
     var body: some View {
-        NavigationSplitView(sidebar: {
-            EmberBrowseView(
-                viewModel: EmberBrowseViewModelImpl(serviceController: serviceController),
-                selection: $addressCluster,
-                searchTerm: searchText
-            )
-            .searchable(text: $searchText, placement: .toolbarPrincipal)
-            .navigationSplitViewColumnWidth(ideal: 400)
-#if !targetEnvironment(macCatalyst)
-            .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button(action: {
-                        showAbout = true
-                    }, label: {
-                        Label("About", systemImage: "info.circle")
-                    })
+        Group {
+            if horizontalSizeClass == .compact {
+                NavigationStack(path: $path) {
+                    mainView
+                        .background(.background)
+                        .navigationDestination(item: $addressCluster, destination: { addressCluster in
+                            detailView(for: addressCluster)
+                                .background(.background)
+                        })
+                }
+            } else {
+                HStack {
+                    mainView
+                        .containerRelativeFrame(.horizontal) { width, _ in
+                            min(width / 3, 300)
+                        }
+
+                    if let addressCluster {
+                        detailView(for: addressCluster)
+                    } else {
+                        ContentUnavailableView {
+                            Label("Choose a host", systemImage: "point.3.connected.trianglepath.dotted")
+                                .font(.emberHeading)
+                        } description: {
+                            Text("Something something someintg")
+                                .font(.emberCellTitle)
+                        }
+                    }
+
                 }
             }
-#endif
-            .toolbar(removing: .sidebarToggle)
-        }, detail: {
-            NavigationStack(path: $path, root: {
-                Group {
-                    if let addressCluster {
-                        EmberHostView(
-                            viewModel: EmberHostViewModel(serviceController: serviceController, addressCluster: addressCluster),
-                            selection: $serviceRef,
-                        )
-                    }
-                }
-                    .navigationDestination(for: ServiceRef.self) { serviceRef in
-                        EmberServiceView(
-                            viewModel: EmberServiceViewModel(serviceController: serviceController, serviceRef: serviceRef),
-                        )
-                    }
-                    .onChange(of: serviceRef) {
-                        if let serviceRef {
-                            path.append(serviceRef)
-                        }
-                    }
-                    .onChange(of: path) {
-                        if path.isEmpty {
-                            serviceRef = nil
-                        }
-                    }
-            })
-        })
-        .accentColor(Color(red: 204.0 / 255, green: 59.0 / 255, blue: 72.0 / 255, opacity: 1))
+        }
+        .emberTheme()
     }
 }
