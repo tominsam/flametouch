@@ -133,7 +133,7 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
 
     private func convertToServices(_ netServices: [NetService]) -> Set<Service> {
         assert(Thread.current == self.thread)
-        var services = Set<Service>()
+        var services = [ServiceRef: Service]()
         for ns in netServices {
             let addresses = ns.stringAddresses // slow!
             if addresses.isEmpty {
@@ -158,9 +158,9 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
                 lastSeen: Date(),
                 alive: true
             )
-            services.insert(service)
+            services[service.ref] = service
         }
-        return services
+        return Set(services.values)
     }
 
     // Sanity utility - force main thread stuff on to the serial queue

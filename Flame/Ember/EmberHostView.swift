@@ -136,7 +136,7 @@ struct EmberHostView: View {
                     )
                     .geometryGroup()
                     if isSelected {
-                        services(for: service)
+                        serviceData(for: service)
                             .padding(.leading, 40)
                             .padding(.trailing, 16)
                             .padding(.bottom, 16)
@@ -152,7 +152,7 @@ struct EmberHostView: View {
     }
 
     @ViewBuilder
-    func services(for service: Service) -> some View {
+    func serviceData(for service: Service) -> some View {
         VStack(spacing: 0) {
             let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
 
