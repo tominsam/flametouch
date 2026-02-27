@@ -15,6 +15,8 @@ struct EmberBrowseView: View {
 
     @Binding var showAbout: Bool
 
+    @FocusState var focusState: Bool
+
     // Searchable is in the main view
     @State var searchTerm: String = ""
 
@@ -68,6 +70,8 @@ struct EmberBrowseView: View {
                 .ifiOS {
                     $0.refreshable {
                         selection = nil
+                        searchTerm = ""
+                        focusState = false
                         await viewModel.refresh()
                         // leave the spinner visible while it populates
                         try? await Task.sleep(for: .seconds(2))
@@ -77,6 +81,7 @@ struct EmberBrowseView: View {
                     TextField("", text: $searchTerm, prompt:
                         Text("Search").foregroundStyle(.emberTextLow)
                     )
+                        .focused($focusState, equals: true)
                         .padding(.leading, 16)
                         .padding(.trailing, 40)
                         .frame(height: 44)
@@ -111,7 +116,7 @@ struct EmberBrowseView: View {
     }
 
     var hosts: [Host] {
-        viewModel.hosts.filter { $0.matches(search: searchTerm ?? "") }
+        viewModel.hosts.filter { $0.matches(search: searchTerm) }
     }
 }
 

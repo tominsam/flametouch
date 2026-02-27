@@ -83,11 +83,13 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     /// Completely restart the controller, clear all caches, start from scratch
     @MainActor
     public func restart() async {
+        ELog("Restart / refresh browser")
         await browser.stop()
         clusterTask?.cancel()
         clusters = []
         try? await Task.sleep(for: .seconds(0.5))
-        await start()
+        browser.start()
+        self.stoppedDate = nil
     }
 
     public func host(for addressCluster: AddressCluster) -> Host? {
