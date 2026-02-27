@@ -15,3 +15,13 @@ protocol ServiceBrowser: NSObjectProtocol {
     func pause(completion: @MainActor @escaping () -> Void)
     func stop(completion: @MainActor @escaping () -> Void)
 }
+
+extension ServiceBrowser {
+    func stop() async {
+        await withCheckedContinuation { stop(completion: $0.resume) }
+    }
+
+    func pause() async {
+        await withCheckedContinuation { pause(completion: $0.resume) }
+    }
+}

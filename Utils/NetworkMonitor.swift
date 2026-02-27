@@ -24,6 +24,7 @@ extension NWInterface.InterfaceType {
     }
 }
 
+@MainActor
 @Observable
 public final class NetworkMonitor: Sendable {
     public struct NetworkState: Sendable {
@@ -37,9 +38,10 @@ public final class NetworkMonitor: Sendable {
         }
     }
 
+    @MainActor
     public static let shared = NetworkMonitor()
 
-    private static let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
+//    private static let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
 
     var state: NetworkState = .init(
         hasResponse: false,
@@ -52,14 +54,16 @@ public final class NetworkMonitor: Sendable {
         ELog("Watching network state")
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { [weak self] path in
-            ELog("Network state changed")
-            self?.state = NetworkState(
-                hasResponse: true,
-                isConnected: path.status != .unsatisfied,
-                isExpensive: path.isExpensive,
-                currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
-            )
+            MainActor.assumeIsolated {
+                ELog("Network state changed")
+                self?.state = NetworkState(
+                    hasResponse: true,
+                    isConnected: path.status != .unsatisfied,
+                    isExpensive: path.isExpensive,
+                    currentConnectionType: NWInterface.InterfaceType.allCases.filter(path.usesInterfaceType).first
+                )
+            }
         }
-        monitor.start(queue: Self.queue)
+        monitor.start(queue: DispatchQueue.main)
     }
 }

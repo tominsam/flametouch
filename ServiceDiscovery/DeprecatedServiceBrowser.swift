@@ -90,6 +90,7 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
     func pause(completion: @MainActor @escaping () -> Void) {
         ELog("Pausing")
         onQueue { [self] in
+            metaServiceBrowser?.stop()
             for service in netServices {
                 service.stopMonitoring()
             }
@@ -97,7 +98,6 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
                 browser.delegate = nil
                 browser.stop()
             }
-            metaServiceBrowser?.stop()
             netServiceBrowsers.removeAll()
             broadcast()
         } completion: {
@@ -176,7 +176,6 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
         } else {
             runLoop.perform {
                 assert(Thread.current == self.thread)
-                ELog("running")
                 block()
                 DispatchQueue.main.sync {
                     completion()
@@ -194,7 +193,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             // meta-browser found something new. Create a new service browser for it.
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             if netServiceBrowsers[serviceType] == nil {
-                ELog("✅ Found type \"\(serviceType)\"")
+                //ELog("✅ Found type \"\(serviceType)\"")
             }
             if let found = netServiceBrowsers[serviceType] {
                 ELog("stopping existing browser for \(serviceType)")
@@ -213,7 +212,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             if netServices.contains(service) {
                 return
             }
-            ELog("🟡 Found service \(service.type)")
+            //ELog("🟡 Found service \(service.type)")
             netServices.append(service)
             service.delegate = self
             service.startMonitoring() // slow!

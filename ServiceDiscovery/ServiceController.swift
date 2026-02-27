@@ -24,6 +24,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     #endif
 
     public var clusters: [Host] = []
+    var clusterTask: Task<Void, Never>?
 
     private let browser: ServiceBrowser
 
@@ -60,37 +61,30 @@ public class ServiceControllerImpl: NSObject, ServiceController {
         ELog("Stopped for \(stoppedTime) (compared to \(ServiceControllerImpl.maxStopTime))")
         if stoppedTime > ServiceControllerImpl.maxStopTime {
             ELog("Resetting service list")
-            browser.stop() { [self] in
-                clusters = []
-                browser.start()
-                self.stoppedDate = nil
-            }
+            await browser.stop()
+            clusterTask?.cancel()
+            clusters = []
+            browser.start()
+            self.stoppedDate = nil
         } else {
             ELog("Restarting service list")
-            browser.pause() { [self] in
-                browser.start()
-                self.stoppedDate = nil
-            }
+            await browser.pause()
+            browser.start()
+            self.stoppedDate = nil
         }
     }
 
     @MainActor
     public func stop() async {
-        await withCheckedContinuation { continuation in
-            browser.pause() { [self] in
-                stoppedDate = Date()
-                continuation.resume()
-            }
-        }
+        await browser.pause()
+        stoppedDate = Date()
     }
 
     /// Completely restart the controller, clear all caches, start from scratch
     @MainActor
     public func restart() async {
-        await withCheckedContinuation { continuation in
-            browser.stop() { continuation.resume()
-            }
-        }
+        await browser.stop()
+        clusterTask?.cancel()
         clusters = []
         try? await Task.sleep(for: .seconds(0.5))
         await start()
@@ -104,8 +98,12 @@ public class ServiceControllerImpl: NSObject, ServiceController {
 extension ServiceControllerImpl: ServiceBrowserDelegate {
     func serviceBrowser(didChangeServices services: Set<Service>) {
         dispatchPrecondition(condition: .onQueue(.main))
-        Task {
-            clusters = await Self.groupServices(oldClusters: clusters, services: services)
+        clusterTask?.cancel()
+        clusterTask = Task {
+            let newClusters = await Self.groupServices(oldClusters: clusters, services: services)
+            if !Task.isCancelled {
+                self.clusters = newClusters
+            }
         }
     }
 

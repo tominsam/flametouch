@@ -100,10 +100,8 @@ struct FlameApp: App {
             // Advertise a local service called flametouch, partly as a demo, partly
             // so you can tell there's _something_ there even if there are no other
             // services on the network.
-            flameService = try? NWListener(
-                service: .init(name: UIDevice.current.name, type: "_flametouch._tcp."),
-                using: .tcp
-            )
+            flameService = try? NWListener(using: .tcp, on: 1812)
+            flameService?.service = .init(name: UIDevice.current.name, type: "_flametouch._tcp.")
             flameService?.stateUpdateHandler = { newState in
                 ELog("Publish state is \(newState)")
             }
