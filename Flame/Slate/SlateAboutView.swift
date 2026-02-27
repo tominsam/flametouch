@@ -59,7 +59,9 @@ struct SlateAboutView: View {
             .frame(maxWidth: 600)
             .padding([.leading, .trailing, .top], 40)
             .frame(maxWidth: .infinity)
+            .background(.background)
         }
+        .scrollIndicators(.hidden)
     }
 }
 

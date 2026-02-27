@@ -20,7 +20,7 @@ struct EmberMainWindow: View {
         EmberBrowseView(
             viewModel: BrowseViewModelImpl(serviceController: serviceController),
             selection: $addressCluster,
-            searchTerm: searchText
+            showAbout: $showAbout,
         )
     }
 
@@ -36,15 +36,22 @@ struct EmberMainWindow: View {
             if horizontalSizeClass == .compact {
                 NavigationStack(path: $path) {
                     mainView
-                        .background(.background)
+                        .background {
+                            Color(.emberBase)
+                                .ignoresSafeArea(.all)
+                        }
                         .navigationDestination(item: $addressCluster, destination: { addressCluster in
                             detailView(for: addressCluster)
-                                .background(.background)
+                                .background {
+                                    Color(.emberBase)
+                                        .ignoresSafeArea(.all)
+                                }
                         })
                 }
             } else {
                 HStack {
                     mainView
+                        .background(.background, ignoresSafeAreaEdges: .all)
                         .containerRelativeFrame(.horizontal) { width, _ in
                             min(width / 3, 300)
                         }
@@ -61,6 +68,10 @@ struct EmberMainWindow: View {
                         }
                     }
 
+                }
+                .background {
+                    Color(.emberBase)
+                        .ignoresSafeArea(.all)
                 }
             }
         }

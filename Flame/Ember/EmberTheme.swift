@@ -93,7 +93,6 @@ struct EmberTheme: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(.emberCellTitle)
-            .background(.background)
             .backgroundStyle(.emberBase)
             .foregroundStyle(.emberTextMid)
             .tint(.emberTint)

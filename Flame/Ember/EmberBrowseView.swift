@@ -13,8 +13,10 @@ struct EmberBrowseView: View {
 
     @Namespace var selectionBackgroundNamespace
 
+    @Binding var showAbout: Bool
+
     // Searchable is in the main view
-    let searchTerm: String
+    @State var searchTerm: String = ""
 
     var body: some View {
         if viewModel.noWifi {
@@ -22,25 +24,24 @@ struct EmberBrowseView: View {
         } else {
             VStack(spacing: 0) {
                 HStack {
-                    Text("Network")
-                        .font(.emberHeading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    EmberTitleView(
+                        title: "Network",
+                        subTitle: "\(hosts.count) host(s)"
+                    )
 
-                    Text("\(hosts.count)")
-                        .font(.emberCellSubtitle)
-                        .foregroundStyle(.emberTextMid)
-                        .padding(4)
-                        .frame(minWidth: 28, minHeight: 28)
-                        .background {
-                            FilledStrokedRoundRect(
-                                fill: .emberCard,
-                                stroke: .emberTintDim,
-                                radius: 4
-                            )
-                        }
+                    Button(action: {
+                        showAbout = true
+                    }, label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.emberTextHi)
+                            .frame(width: 28, height: 28)
+                    })
+                    .buttonBorderShape(.circle)
+                    .buttonStyle(.glass)
+                    .accessibilityLabel("About")
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8) // about right to be the height of the traffic lights
+                .padding(.leading, 16)
+                .padding(.trailing, 8)
                 .containerCornerOffset(.leading, sizeToFit: true)
 
                 ScrollView {
@@ -72,6 +73,28 @@ struct EmberBrowseView: View {
                         try? await Task.sleep(for: .seconds(2))
                     }
                 }
+                .safeAreaInset(edge: .bottom, spacing: 8) {
+                    TextField("", text: $searchTerm, prompt:
+                        Text("Search").foregroundStyle(.emberTextLow)
+                    )
+                        .padding(.leading, 16)
+                        .padding(.trailing, 40)
+                        .frame(height: 44)
+                        .overlay(alignment: .trailing) {
+                            Button(action: {
+                                searchTerm = ""
+                            }, label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .frame(width: 44, height: 44)
+                            })
+                        }
+                        .glassEffect(
+                            .regular,
+                            in: RoundedRectangle(cornerRadius: 22)
+                        )
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
+                }
             }
         }
     }
@@ -88,7 +111,7 @@ struct EmberBrowseView: View {
     }
 
     var hosts: [Host] {
-        viewModel.hosts.filter { $0.matches(search: searchTerm) }
+        viewModel.hosts.filter { $0.matches(search: searchTerm ?? "") }
     }
 }
 
@@ -100,7 +123,7 @@ struct EmberBrowseView: View {
             serviceController: ServiceControllerImpl.demo(),
         ),
         selection: $selection,
-        searchTerm: ""
+        showAbout: .constant(false),
     )
     .emberTheme()
 }
@@ -117,7 +140,7 @@ private class EmptyViewModel: BrowseViewModel {
     EmberBrowseView(
         viewModel: EmptyViewModel(),
         selection: $selection,
-        searchTerm: ""
+        showAbout: .constant(false),
     )
     .emberTheme()
 }

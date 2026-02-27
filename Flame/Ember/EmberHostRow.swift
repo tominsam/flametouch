@@ -29,11 +29,11 @@ struct EmberHostRow: View {
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.emberCellTitle)
-                    .foregroundColor(isAlive ? .emberTextHi : .emberTextMid)
+                    .foregroundColor(isAlive && isSelected ? .emberTextHi : .emberTextMid)
                     .lineLimit(1)
                 Text(subtitle)
                     .font(.emberCellSubtitle)
-                    .foregroundColor(isAlive ? .emberTextMid : .emberTextDim)
+                    .foregroundColor(isAlive && isSelected ? .emberTextMid : .emberTextLow)
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -51,12 +51,12 @@ struct EmberBrowseRow: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .font(.emberCellTitle)
-                    .foregroundColor(.emberTextHi)
+                    .foregroundColor(isSelected ? .emberTextHi : .emberTextMid)
                     .lineLimit(1)
                 Label(subtitle, systemImage: openableService?.url == nil ? "" : "globe")
                     .labelStyle(SmallTrailingIcon())
                     .font(.emberMeta)
-                    .foregroundColor(.emberTextMid)
+                    .foregroundColor(isSelected ? .emberTextMid : .emberTextLow)
                     .lineLimit(1)
             }
             Spacer()

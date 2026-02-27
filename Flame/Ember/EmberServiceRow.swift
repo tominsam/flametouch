@@ -30,17 +30,21 @@ struct EmberServiceRow: View {
         .overlay {
             Menu(content: {
                 if subtitle != nil {
+                    Section(title) {
+                        Button(action: {
+                            UIPasteboard.general.string = title
+                        }, label: {
+                            Label("Copy name", systemImage: "doc.on.clipboard.fill")
+                        })
+                    }
+                }
+                Section(subtitle ?? title) {
                     Button(action: {
-                        UIPasteboard.general.string = title
+                        UIPasteboard.general.string = subtitle ?? title
                     }, label: {
-                        Label("Copy name", systemImage: "doc.on.clipboard.fill")
+                        Label("Copy value", systemImage: "doc.on.clipboard")
                     })
                 }
-                Button(action: {
-                    UIPasteboard.general.string = subtitle ?? title
-                }, label: {
-                    Label("Copy value", systemImage: "doc.on.clipboard")
-                })
                 if let url {
                     Button(action: {
                         openURL(url)
