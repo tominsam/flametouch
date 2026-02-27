@@ -73,4 +73,3 @@ public extension Collection where Element == Host {
         return host?.services.first { $0.ref == serviceRef }
     }
 }
-

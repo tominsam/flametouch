@@ -17,7 +17,7 @@ import Synchronization
 
 // The absolute simplest reliable way of doing this is to remember every address we've ever seen,
 // so this is a map from "every IP address we know about" to "the addresscluster instance for that IP"
-fileprivate let globalLookup = Mutex<[String: AddressCluster]>([:])
+private let globalLookup = Mutex<[String: AddressCluster]>([:])
 
 // An address cluster is a mutable instance with a random identifier (for diffing purposes)
 // and a list of addresses and hostnames. The factory method takes a list of addresses,

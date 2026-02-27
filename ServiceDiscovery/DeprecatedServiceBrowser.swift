@@ -33,7 +33,7 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
     private var netServiceBrowsers = [String: NetServiceBrowser]()
 
     /// definitive list of all services (using a set here has been crashy)
-    private var netServices = Array<NetService>()
+    private var netServices = [NetService]()
 
     @MainActor
     override init() {
@@ -110,7 +110,7 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
     func stop(completion: @MainActor @escaping () -> Void) {
         dispatchPrecondition(condition: .onQueue(.main))
         ELog("Stopping")
-        pause() { [self] in
+        pause { [self] in
             onQueue { [self] in
                 netServices.removeAll()
                 AddressCluster.flushClusters()
@@ -131,7 +131,7 @@ class DeprecatedServiceBrowser: NSObject, @MainActor ServiceBrowser, @unchecked 
         }
     }
 
-    private func convertToServices(_ netServices: Array<NetService>) -> Set<Service> {
+    private func convertToServices(_ netServices: [NetService]) -> Set<Service> {
         assert(Thread.current == self.thread)
         var services = Set<Service>()
         for ns in netServices {
@@ -193,7 +193,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             // meta-browser found something new. Create a new service browser for it.
             let serviceType = service.name + (service.type == "_tcp.local." ? "._tcp" : "._udp")
             if netServiceBrowsers[serviceType] == nil {
-                //ELog("✅ Found type \"\(serviceType)\"")
+                // ELog("✅ Found type \"\(serviceType)\"")
             }
             if let found = netServiceBrowsers[serviceType] {
                 ELog("stopping existing browser for \(serviceType)")
@@ -212,7 +212,7 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
             if netServices.contains(service) {
                 return
             }
-            //ELog("🟡 Found service \(service.type)")
+            // ELog("🟡 Found service \(service.type)")
             netServices.append(service)
             service.delegate = self
             service.startMonitoring() // slow!
@@ -251,7 +251,6 @@ extension DeprecatedServiceBrowser: NetServiceBrowserDelegate {
     }
 }
 
-
 // MARK: NetServiceDelegate
 
 extension DeprecatedServiceBrowser: NetServiceDelegate {
@@ -263,7 +262,7 @@ extension DeprecatedServiceBrowser: NetServiceDelegate {
 
     func netService(_ service: NetService, didUpdateTXTRecord _: Data) {
         assert(Thread.current == self.thread)
-        //ELog("❕ New data for \(service.type) \(service.name)")
+        // ELog("❕ New data for \(service.type) \(service.name)")
         broadcast()
     }
 
@@ -281,7 +280,7 @@ extension DeprecatedServiceBrowser: NetServiceDelegate {
         ELog("Published \(sender.type)")
     }
 
-    func netService(_ sender: NetService, didNotPublish errorDict: [String : NSNumber]) {
+    func netService(_ sender: NetService, didNotPublish errorDict: [String: NSNumber]) {
         ELog("failed to publish: \(errorDict)")
     }
 }

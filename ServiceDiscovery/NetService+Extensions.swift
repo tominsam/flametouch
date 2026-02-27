@@ -3,7 +3,7 @@
 import UIKit
 
 // bwahahahah so unsafe
-//extension NetService: @unchecked @retroactive Sendable {}
+// extension NetService: @unchecked @retroactive Sendable {}
 
 extension NetService {
     nonisolated private var txtData: [(key: String, value: String)] {

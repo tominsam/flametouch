@@ -111,7 +111,6 @@ struct FlameApp: App {
             flameService?.start(queue: .main)
         }
     }
-    
 
     func stop() {
         serviceRefreshTask?.cancel()
@@ -121,4 +120,3 @@ struct FlameApp: App {
         flameService = nil
     }
 }
-

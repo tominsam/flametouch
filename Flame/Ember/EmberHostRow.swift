@@ -37,7 +37,7 @@ struct EmberHostRow: View {
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            //.contextMenu { contextMenu }
+            // .contextMenu { contextMenu }
 
             if let url {
                 Button(action: {

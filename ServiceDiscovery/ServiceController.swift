@@ -144,7 +144,7 @@ extension ServiceControllerImpl: ServiceBrowserDelegate {
 }
 
 extension Sequence {
-    func groupBy<T: Hashable>(_ map: (Element) -> T) -> [T: [Element]]{
+    func groupBy<T: Hashable>(_ map: (Element) -> T) -> [T: [Element]] {
         Dictionary(grouping: self, by: map)
     }
 }
