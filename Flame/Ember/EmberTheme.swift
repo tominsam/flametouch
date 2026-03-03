@@ -1,24 +1,25 @@
+import UIKit
 import SwiftUI
 
 extension ShapeStyle where Self == Color {
 
     // MARK: Backgrounds
-    static var emberBase: Color { .ember(dark: 0x0c0a08, light: 0xfaf7f3) }
-    static var emberCard: Color { .ember(dark: 0x1c1610, light: 0xf5f0ea) }
-    static var emberInset: Color { .ember(dark: 0x261e14, light: 0xede8e0) }
-    static var emberElevated: Color { .ember(dark: 0x2e2820, light: 0xe3dcd2) }
+    static var emberBase: Color { .ember(dark: 0x0c0806, light: 0xfaf7f3) }
+    static var emberCard: Color { .ember(dark: 0x1a0e08, light: 0xf5f0ea) }
+    static var emberInset: Color { .ember(dark: 0x240e06, light: 0xede8e0) }
+    static var emberElevated: Color { .ember(dark: 0x301a0c, light: 0xe3dcd2) }
 
-    // MARK: Foregroundsπ
-    static var emberTextHi: Color { .ember(dark: 0xf0e4d0, light: 0x1e1208) }
-    static var emberTextMid: Color { .ember(dark: 0xf0d0a0, light: 0x5c3d20) }
-    static var emberTextLow: Color { .ember(dark: 0x8c6038, light: 0x9a7050) }
-    static var emberTextDim: Color { .ember(dark: 0x3a2a1e, light: 0xc0a882) }
-    static var emberTextOnTint: Color { .ember(dark: 0x1a0e06, light: 0xfff8f2) }
+    // MARK: Foregrounds
+    static var emberTextHi: Color { .ember(dark: 0xfff0d8, light: 0x1e1208) }
+    static var emberTextMid: Color { .ember(dark: 0xe8c084, light: 0x5c3d20) }
+    static var emberTextLow: Color { .ember(dark: 0xd09030, light: 0x9a7050) }
+    static var emberTextDim: Color { .ember(dark: 0xa06830, light: 0xc0a882) }
+    static var emberTextOnTint: Color { .ember(dark: 0x180600, light: 0xfff8f2) }
 
     // MARK: Tint
-    static var emberTintHi: Color { .ember(dark: 0xe8964e, light: 0x8c4810) }
-    static var emberTint: Color { .ember(dark: 0xc87941, light: 0xa85a1c) }
-    static var emberTintDim: Color { .ember(dark: 0x8a5128, light: 0xc87840) }
+    static var emberTintHi: Color { .ember(dark: 0xffaa58, light: 0x8c4810) }
+    static var emberTint: Color { .ember(dark: 0xff8840, light: 0xa85a1c) }
+    static var emberTintDim: Color { .ember(dark: 0xe06028, light: 0xc87840) }
 }
 
 

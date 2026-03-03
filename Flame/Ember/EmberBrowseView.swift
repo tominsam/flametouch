@@ -22,27 +22,6 @@ struct EmberBrowseView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                EmberTitleView(
-                    title: "Network",
-                    subTitle: "\(hosts.count) host(s)"
-                )
-
-                Button(action: {
-                    showAbout = true
-                }, label: {
-                    Image(systemName: "info.circle")
-                        .foregroundStyle(.emberTextHi)
-                        .frame(width: 28, height: 28)
-                })
-                .buttonBorderShape(.circle)
-                .buttonStyle(.glass)
-                .accessibilityLabel("About")
-            }
-            .padding(.leading, 16)
-            .padding(.trailing, 8)
-            .containerCornerOffset(.leading, sizeToFit: true)
-
             if viewModel.noWifi {
                 emptyView
             } else {
@@ -67,6 +46,7 @@ struct EmberBrowseView: View {
                         }
                     }
                 }
+                .scrollEdgeEffectStyle(.soft, for: .top)
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .ifiOS {
@@ -81,7 +61,7 @@ struct EmberBrowseView: View {
                 }
                 .safeAreaInset(edge: .bottom, spacing: 8) {
                     TextField("", text: $searchTerm, prompt:
-                                Text("Search").foregroundStyle(.emberTextLow)
+                                Text("Search").foregroundStyle(.emberTextDim)
                     )
                     .focused($focusState, equals: true)
                     .padding(.leading, 16)
@@ -107,6 +87,33 @@ struct EmberBrowseView: View {
                 }
             }
         }
+        .safeAreaBar(edge: .top) {
+            titleView
+        }
+    }
+
+    @ViewBuilder
+    var titleView: some View {
+        HStack {
+            EmberTitleView(
+                title: "Network",
+                subTitle: String(localized: "\(hosts.count) host(s)")
+            )
+
+            Button(action: {
+                showAbout = true
+            }, label: {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(.emberTextHi)
+                    .frame(width: 28, height: 28)
+            })
+            .buttonBorderShape(.circle)
+            .buttonStyle(.glass)
+            .accessibilityLabel("About")
+        }
+        .padding(.leading, 16)
+        .padding(.trailing, 8)
+        .containerCornerOffset(.leading, sizeToFit: true)
     }
 
     @ViewBuilder

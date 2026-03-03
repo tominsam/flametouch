@@ -31,24 +31,28 @@ struct EmberHostView: View {
 
     var body: some View {
         if let host = viewModel.host {
-            VStack(spacing: 0) {
-                EmberTitleView(
-                    title: host.name,
-                    subTitle: "\(host.displayServices.count) service(s)"
-                )
-                .padding(.horizontal, 16)
-
-                ScrollView {
-                    VStack(spacing: 0) {
-                        addresses(for: host)
-                        //actions(for: host)
-                        services(for: host)
-                        Color(.clear).frame(height: 1)
-                    }
+            ScrollView {
+                VStack(spacing: 0) {
+                    addresses(for: host)
+                    //actions(for: host)
+                    services(for: host)
+                    Color(.clear).frame(height: 1)
                 }
-                .scrollIndicators(.never)
+            }
+            .scrollIndicators(.never)
+            //.toolbar(.hidden, for: .navigationBar)
+            .safeAreaBar(edge: .top) {
+                titleView(for: host)
             }
         }
+    }
+
+    func titleView(for host: Host) -> some View {
+        EmberTitleView(
+            title: host.name,
+            subTitle: String(localized: "\(host.displayServices.count) service(s)")
+        )
+        .padding(.horizontal, 16)
     }
 
     @ViewBuilder
