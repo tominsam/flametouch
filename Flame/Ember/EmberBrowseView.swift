@@ -63,6 +63,7 @@ struct EmberBrowseView: View {
                     TextField("", text: $searchTerm, prompt:
                                 Text("Search").foregroundStyle(.emberTextDim)
                     )
+                    .autocorrectionDisabled(true)
                     .focused($focusState, equals: true)
                     .padding(.leading, 16)
                     .padding(.trailing, 40)

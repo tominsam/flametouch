@@ -23,6 +23,8 @@ class ServiceNamer {
         case alexa = "_alexa."
         case eero = "_eero."
         case eeroGw = "_eerogw."
+        case zoomRooms = "_zoomrooms."
+        case raop = "_raop."
 
         // needs to be near bottom, lots of things have matter
         // support, it's only the really simples stuff that can't
@@ -68,6 +70,11 @@ class ServiceNamer {
                     return "\(modelName) (\(service.name))"
                 }
 
+            case .raop:
+                if service.name.contains("@") {
+                    return service.name.components(separatedBy: "@").last
+                }
+
             case .airplay:
                 if let manufacturer = service.data["manufacturer"] {
                     return "\(manufacturer) (\(service.name))"
@@ -82,6 +89,9 @@ class ServiceNamer {
                 }
             case .homeassistant:
                 return "Home Assistant (\(service.data["location_name"] ?? "New"))"
+
+            case .zoomRooms:
+                return "Zoom Room (\(service.name))"
 
             case .eeroGw:
                 return "Eero (Gateway)"
@@ -98,7 +108,7 @@ class ServiceNamer {
         // If we got to here, then we didn't find a special case service.
         // fallback to whichever is shorter out of the hostname and the first service name
         // (I'm assuming that short == pithy)
-        guard let service = services.first else { return nil }
+        guard let service = sortedServices.first else { return nil }
 
         return [
             service.addressCluster.displayName,

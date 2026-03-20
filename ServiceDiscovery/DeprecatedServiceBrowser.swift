@@ -262,7 +262,6 @@ extension DeprecatedServiceBrowser: NetServiceDelegate {
 
     func netService(_ service: NetService, didUpdateTXTRecord _: Data) {
         assert(Thread.current == self.thread)
-        // ELog("❕ New data for \(service.type) \(service.name)")
         broadcast()
     }
 
