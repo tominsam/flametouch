@@ -78,18 +78,18 @@ public struct SlateDetailCell: View {
     let title: String
     let subtitle: String
     let copyLabel: String
-    let openableService: Service?
+    let openable: ServiceNamer.OpenableService?
 
-    public init(
+    init(
         title: String,
         subtitle: String,
         copyLabel: String,
-        openableService: Service? = nil
+        openable: ServiceNamer.OpenableService? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         self.copyLabel = copyLabel
-        self.openableService = openableService
+        self.openable = openable
     }
 
     public var body: some View {
@@ -99,7 +99,7 @@ public struct SlateDetailCell: View {
                     .font(.standard)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                Label(subtitle, systemImage: openableService?.url == nil ? "" : "globe")
+                Label(subtitle, systemImage: openable?.icon ?? "")
                     .labelStyle(SlateSmallTrailingIcon())
                     .font(.legible)
                     .foregroundColor(.secondary)
@@ -122,11 +122,11 @@ public struct SlateDetailCell: View {
             }, label: {
                 Label(copyLabel, systemImage: "doc.on.clipboard")
             })
-            if let openableService, let url = openableService.url {
+            if let openable {
                 Button(action: {
-                    openURL(url)
+                    openURL(openable.url)
                 }, label: {
-                    Label(openableService.openAction, systemImage: "globe")
+                    Label(openable.action, systemImage: openable.icon)
                 })
             }
         }
@@ -164,7 +164,7 @@ struct SlateSmallTrailingIcon: LabelStyle {
                 title: "Title",
                 subtitle: "Subtitle",
                 copyLabel: "test",
-                openableService: Service(name: "Demo", type: "_http._tcp", domain: nil, addressCluster: .from(addresses: [], hostnames: []), port: 0, data: [:], lastSeen: .now, alive: true)
+                openable: ServiceNamer.OpenableService(Service(name: "Demo", type: "_http._tcp", domain: nil, addressCluster: .from(addresses: [], hostnames: []), port: 0, data: [:], lastSeen: .now, alive: true))
             )
         }
     }.tint(.red)

@@ -99,12 +99,12 @@ struct EmberHostView: View {
 
     @ViewBuilder
     func actions(for host: Host) -> some View {
-        if let service = host.openableService, let url = service.url {
+        if let openable = host.openableService {
             Section {
                 Button(action: {
-                    openURL(url)
+                    openURL(openable.url)
                 }, label: {
-                    Text(service.openAction)
+                    Text(openable.action)
                         .frame(minHeight: 32)
                 })
             }

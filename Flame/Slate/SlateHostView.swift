@@ -44,13 +44,12 @@ struct SlateHostView: View {
                 )
                 .opacity(host.alive ? 1 : 0.3)
 
-                if let service = host.openableService, let url = service.url {
+                if let openable = host.openableService {
                     Section {
                         Button(action: {
-                            openURL(url)
+                            openURL(openable.url)
                         }, label: {
-                            Text(service.openAction)
-                                .frame(minHeight: 32)
+                            Text(openable.action).frame(minHeight: 32)
                         })
                     }
                     .listSectionSpacing(16)
@@ -66,7 +65,7 @@ struct SlateHostView: View {
                                 title: service.name,
                                 subtitle: service.typeWithDomain,
                                 copyLabel: String(localized: "Copy type", comment: "Action to copy the type of the service to the clipboard"),
-                                openableService: service,
+                                openable: ServiceNamer.OpenableService(service),
                             )
                             .opacity(host.alive && service.alive ? 1 : 0.3)
                         }

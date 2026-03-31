@@ -53,7 +53,7 @@ struct EmberMainWindow: View {
                     mainView
                         .background(.background, ignoresSafeAreaEdges: .all)
                         .containerRelativeFrame(.horizontal) { width, _ in
-                            min(width / 3, 300)
+                            min(width / 2.5, 340)
                         }
 
                     if let addressCluster {

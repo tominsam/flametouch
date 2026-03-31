@@ -10,6 +10,10 @@ public struct Host: Equatable, Hashable, Sendable {
         ServiceNamer.nameForServices(services) ?? "Host"
     }
 
+    public var hostIcon: String {
+        ServiceNamer.hostIcon(forServices: services)
+    }
+
     public var servicesCount: String {
         String(localized: "\(services.count) service(s)")
     }
@@ -57,8 +61,11 @@ public struct Host: Equatable, Hashable, Sendable {
         addressCluster == host.addressCluster
     }
 
-    var openableService: Service? {
-        services.first { $0.url != nil }
+    var openableService: ServiceNamer.OpenableService? {
+        ServiceNamer.ImportantServices.allCases.lazy
+            .compactMap { important in services.first { $0.type == important.rawValue } }
+            .compactMap { ServiceNamer.OpenableService($0) }
+            .first
     }
 }
 

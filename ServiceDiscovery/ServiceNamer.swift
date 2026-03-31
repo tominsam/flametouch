@@ -1,35 +1,136 @@
 // Copyright 2016 Thomas Insam. All rights reserved.
 
 import Foundation
+import SwiftUI
 
 class ServiceNamer {
+
     // Ordered list of "important" service names - these will be used to extract the
     // host name preferentially
     enum ImportantServices: String, CaseIterable {
         // Order here is important
-        case airplay = "_airplay."
-        case airport = "_airport."
-        case rdlink = "_rdlink."
-        case companionLink = "_companion-link."
-        case sleep = "_sleep-proxy."
-        case homeassistant = "_home-assistant."
-        case homekit = "_hap."
-        case ssh = "_ssh."
-        case smb = "_smb."
-        case printer = "_ipp."
-        case chromecast = "_googlecast."
-        case flametouch = "_flametouch."
-        case dyson = "_dyson_mqtt."
-        case alexa = "_alexa."
-        case eero = "_eero."
-        case eeroGw = "_eerogw."
-        case zoomRooms = "_zoomrooms."
-        case raop = "_raop."
+
+        // Anything that's very device-specific
+        case dyson = "_dyson_mqtt._tcp."
+        case sonos = "_sonos._tcp."
+        case eero = "_eero._tcp."
+        case eeroGw = "_eerogw._tcp."
+        case zoomRooms = "_zoomrooms._tcp."
+        case printer = "_ipp._tcp."
+        case scanner = "_scanner._tcp."
+        case chromecast = "_googlecast._tcp."
+
+        // most apple stuff
+        case raop = "_raop._tcp."
+        case airplay = "_airplay._tcp."
+        case airport = "_airport._tcp."
+        case rdlink = "_rdlink._tcp."
+        case remotePairing = "_remotepairing._tcp."
+        case companionLink = "_companion-link._tcp."
+        case sleep = "_sleep-proxy._tcp."
+
+        case homeassistant = "_home-assistant._tcp."
+        case homekit = "_hap._tcp."
+        case alexa = "_alexa._tcp."
+        case flametouch = "_flametouch._tcp."
+
+        // servers
+        case ssh = "_ssh._tcp."
+        case smb = "_smb._tcp."
+        case http = "_http._tcp."
+        case https = "_https._tcp."
 
         // needs to be near bottom, lots of things have matter
-        // support, it's only the really simples stuff that can't
+        // support, it's only the really simple stuff that can't
         // advertise anything better.
-        case matter = "_matter."
+        case matter = "_matter._tcp."
+
+        /// Returns an SFSymbols string
+        var hostIcon: String {
+            switch self {
+            case .raop: return "airplayaudio"
+            case .airplay: return "airplayvideo"
+            case .airport: return "wifi.router"
+            case .companionLink: return "iphone"
+            case .remotePairing: return "iphone"
+            case .rdlink: return "iphone"
+            case .sleep: return "sleep"
+            case .homeassistant: return "house.fill"
+            case .homekit: return "homekit"
+            case .ssh: return "terminal"
+            case .smb: return "externaldrive"
+            case .printer: return "printer"
+            case .scanner: return "scanner"
+            case .chromecast: return "tv"
+            case .flametouch: return "flame"
+            case .dyson: return "fan"
+            case .alexa: return "mic"
+            case .eero, .eeroGw: return "wifi.router"
+            case .zoomRooms: return "video"
+            case .sonos: return "hifispeaker"
+            case .http, .https: return "globe"
+            case .matter: return "matter.logo"
+            }
+        }
+
+        /// String to show on "open" action button
+        var openAction: String {
+            switch self {
+            case .http, .https: return "Open web page"
+            case .ssh: return "Connect to SSH server"
+            case .smb: return "Connect to file server"
+            case .sonos: return "See Sonos status"
+            default: return "Open service"
+            }
+        }
+    }
+
+    struct OpenableService {
+        let url: URL
+        let action: String
+        let icon: String
+
+        init?(_ service: Service) {
+            guard let url = service.url, let named = ImportantServices(rawValue: service.type) else {
+                return nil
+            }
+            self.url = url
+            self.action = named.openAction
+            self.icon = named.hostIcon
+        }
+    }
+
+    static func hostIcon(forServices services: Set<Service>) -> String {
+        // Keep services order stable in the case that a device advertises >1 service with a given type.
+        // Order here isn't very important, it just needs to be stable.
+        let sortedServices = services.sorted { $0.name < $1.name }
+        // Look for important names first. The **first** one we find will name the service
+        for name in ImportantServices.allCases {
+            guard let service = sortedServices.first(where: { $0.type == name.rawValue }) else { continue }
+            // order here is not important
+            switch name {
+
+            case .raop:
+                guard let am = service.data["am"] else { break }
+                return AppleHardware.from(am: am).icon
+
+            case .companionLink:
+                guard let am = service.data["rpMd"] else {
+                    // raop comes first and always has am. companionlink on static hardware
+                    // (tv, homepod) tends to have rpMd, but phones + ipads don't, so if it's
+                    // missing it's a portable device?
+                    return "iphone"
+                }
+                return AppleHardware.from(am: am).icon
+
+            default:
+                break
+            }
+
+            return name.hostIcon
+        }
+
+        return "desktopcomputer"
     }
 
     static func nameForServices(_ services: Set<Service>) -> String? {
@@ -38,7 +139,7 @@ class ServiceNamer {
         let sortedServices = services.sorted { $0.name < $1.name }
         // Look for important names first. The **first** one we find will name the service
         for name in ImportantServices.allCases {
-            guard let service = sortedServices.filter({ $0.type.starts(with: name.rawValue) }).first else { continue }
+            guard let service = sortedServices.first(where: { $0.type == name.rawValue }) else { continue }
             // order here is not important
             switch name {
             case .chromecast:
@@ -53,6 +154,18 @@ class ServiceNamer {
                 if service.name.contains(" @ ") {
                     // "printer name @ computer name" for windows printer sharing
                     return service.name.components(separatedBy: " @ ")[1]
+                }
+
+            case .scanner:
+                if service.name.contains(" @ ") {
+                    // "printer name @ computer name" for windows printer sharing
+                    return service.name.components(separatedBy: " @ ")[1]
+                }
+
+            case .sonos:
+                if service.name.contains("@") {
+                    let name = service.name.components(separatedBy: "@")[1]
+                    return "Sonos (\(name))"
                 }
 
             case .dyson:
@@ -72,20 +185,19 @@ class ServiceNamer {
 
             case .raop:
                 if service.name.contains("@") {
-                    return service.name.components(separatedBy: "@").last
+                    if let am = service.data["am"] {
+                        let name = service.name.components(separatedBy: "@").last ?? service.name
+                        let hardware = AppleHardware.from(am: am)
+                        return hardware.displayName(for: name)
+                    }
                 }
 
             case .airplay:
                 if let manufacturer = service.data["manufacturer"] {
                     return "\(manufacturer) (\(service.name))"
                 } else if let model = service.data["model"] {
-                    if model.starts(with: "AudioAccessory1,") {
-                        return "HomePod (\(service.name))"
-                    } else if model.starts(with: "AudioAccessory5,") {
-                        return "HomePod Mini (\(service.name))"
-                    } else if model.starts(with: "AppleTV") {
-                        return "Apple TV (\(service.name))"
-                    }
+                    let hardware = AppleHardware.from(am: model)
+                    return hardware.displayName(for: service.name)
                 }
             case .homeassistant:
                 return "Home Assistant (\(service.data["location_name"] ?? "New"))"
@@ -99,8 +211,16 @@ class ServiceNamer {
             case .matter:
                 return "Matter device (\(service.name))"
 
+            case .remotePairing:
+                continue
+
             default:
                 break
+
+            }
+
+            if service.name.contains("@") {
+                return service.name.components(separatedBy: "@")[1].trimmingCharacters(in: .whitespaces)
             }
             return service.name
         }
@@ -114,6 +234,75 @@ class ServiceNamer {
             service.addressCluster.displayName,
             service.name,
         ].compactMap { $0 }.sorted { $0.count < $1.count }.first
+    }
+}
+
+#Preview("Service Icons") {
+    List(ServiceNamer.ImportantServices.allCases, id: \.self) { type in
+        Label(type.rawValue, systemImage: type.hostIcon)
+    }
+}
+
+enum AppleHardware {
+    // https://openairplay.github.io/airplay-spec/service_discovery.html
+    // https://github.com/postlund/pyatv/blob/master/docs/documentation/protocols.md
+
+    case appleTv
+    case homepod
+    case homepodMini
+    case mac
+    case unknown(String)
+
+    static func from(am: String) -> Self {
+        if am.starts(with: "AppleTV") {
+            return .appleTv
+        } else if am.starts(with: "AudioAccessory5") {
+            return .homepodMini
+        } else if am.starts(with: "AudioAccessory") {
+            return .homepod
+        } else if am.starts(with: "Mac") {
+            return .mac
+        }
+        return .unknown(am)
+    }
+
+    var icon: String {
+        switch self {
+        case .appleTv:
+            "tv"
+        case .homepod:
+            "homepod.fill"
+        case .homepodMini:
+            "homepod.mini.fill"
+        case .mac:
+            "macbook"
+        case .unknown:
+            "airplayaudio"
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .appleTv:
+            "AppleTV"
+        case .homepod:
+            "Homepod"
+        case .homepodMini:
+            "Homepod Mini"
+        case .mac:
+            "Mac"
+        case .unknown(let name):
+            name
+        }
+    }
+
+    func displayName(for serviceName: String) -> String {
+        if case .mac = self {
+            return serviceName
+        } else {
+            return "\(name) (\(serviceName))"
+        }
+
     }
 }
 

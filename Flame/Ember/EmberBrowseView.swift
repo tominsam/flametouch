@@ -34,7 +34,8 @@ struct EmberBrowseView: View {
                                 title: host.name,
                                 subtitle: "\(host.displayAddress) • \(host.servicesCount)",
                                 copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
-                                openableService: host.openableService,
+                                hostIcon: host.hostIcon,
+                                openable: host.openableService,
                                 isSelected: selection == host.addressCluster,
                                 selectionBackgroundNamespace: selectionBackgroundNamespace,
                                 action: {

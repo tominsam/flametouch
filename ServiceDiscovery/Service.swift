@@ -46,27 +46,13 @@ public struct Service: Sendable {
             return URL(string: "smb://\(addressCluster.displayAddress):\(port)/")
         case "_sonos":
             return URL(string: "http://\(addressCluster.displayAddress):1400/support/review")
+        case "_home-assistant":
+            return URL(string: "http://\(addressCluster.displayAddress):\(port)/")
         default:
             return nil
         }
     }
 
-    public var openAction: String {
-        switch type.split(separator: ".").first {
-        case "_http":
-            return "Open web page"
-        case "_https":
-            return "Open web page"
-        case "_ssh":
-            return "Connect to SSH server"
-        case "_smb":
-            return "Connect to file server"
-        case "_sonos":
-            return "See Sonos status"
-        default:
-            return "Open \(type.split(separator: ".").first, default: type) service"
-        }
-    }
 
     public var typeWithDomain: String {
         if let domain = domain {

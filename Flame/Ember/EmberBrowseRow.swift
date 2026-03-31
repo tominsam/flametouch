@@ -10,7 +10,8 @@ struct EmberBrowseRow: View {
     let title: String
     let subtitle: String
     let copyLabel: String
-    let openableService: Service?
+    let hostIcon: String
+    let openable: ServiceNamer.OpenableService?
     let isSelected: Bool
     let selectionBackgroundNamespace: Namespace.ID
     let action: () -> Void
@@ -47,13 +48,18 @@ struct EmberBrowseRow: View {
     }
 
     var label: some View {
-        HStack {
+        HStack(spacing: 12) {
+            Image(systemName: hostIcon)
+                .font(.title3)
+                .foregroundColor(isSelected ? .emberTintHi : .emberTextLow)
+                .frame(width: 28)
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .font(.emberCellTitle)
                     .foregroundColor(isSelected ? .emberTextHi : .emberTextMid)
                     .lineLimit(1)
-                Label(subtitle, systemImage: openableService?.url == nil ? "" : "globe")
+                Label(subtitle, systemImage: openable?.icon ?? "")
                     .labelStyle(SmallTrailingIcon())
                     .font(.emberMeta)
                     .foregroundColor(isSelected ? .emberTextMid : .emberTextLow)
@@ -66,7 +72,6 @@ struct EmberBrowseRow: View {
                 .accessibilityHidden(true)
                 .foregroundColor(.emberTextLow)
         }
-
     }
 
     var menu: some View {
@@ -81,11 +86,11 @@ struct EmberBrowseRow: View {
             }, label: {
                 Label(copyLabel, systemImage: "doc.on.clipboard")
             })
-            if let openableService, let url = openableService.url {
+            if let openable {
                 Button(action: {
-                    openURL(url)
+                    openURL(openable.url)
                 }, label: {
-                    Label(openableService.openAction, systemImage: "globe")
+                    Label(openable.action, systemImage: openable.icon)
                 })
             }
         }
@@ -116,22 +121,34 @@ private struct SmallTrailingIcon: LabelStyle {
 
     VStack(spacing: 0) {
         EmberBrowseRow(
-            title: "Title",
-            subtitle: "Subtitle",
+            title: "Generic Host",
+            subtitle: "192.168.1.1 • 3 services",
             copyLabel: "test",
-            openableService: nil,
+            hostIcon: "desktopcomputer",
+            openable: nil,
             isSelected: selection == 0,
             selectionBackgroundNamespace: selectionBackgroundNamespace,
             action: { selection = 0 },
         )
         EmberBrowseRow(
-            title: "Title",
-            subtitle: "Subtitle",
+            title: "Apple TV",
+            subtitle: "192.168.1.2 • 5 services",
             copyLabel: "test",
-            openableService: Service(name: "Demo", type: "_http._tcp", domain: nil, addressCluster: .from(addresses: [], hostnames: []), port: 0, data: [:], lastSeen: .now, alive: true),
+            hostIcon: "airplayvideo",
+            openable: ServiceNamer.OpenableService(Service(name: "Demo", type: "_http._tcp", domain: nil, addressCluster: .from(addresses: [], hostnames: []), port: 0, data: [:], lastSeen: .now, alive: true)),
             isSelected: selection == 1,
             selectionBackgroundNamespace: selectionBackgroundNamespace,
             action: { selection = 1 },
+        )
+        EmberBrowseRow(
+            title: "Printer",
+            subtitle: "192.168.1.3 • 2 services",
+            copyLabel: "test",
+            hostIcon: "printer",
+            openable: nil,
+            isSelected: selection == 2,
+            selectionBackgroundNamespace: selectionBackgroundNamespace,
+            action: { selection = 2 },
         )
     }
     .emberTheme()
