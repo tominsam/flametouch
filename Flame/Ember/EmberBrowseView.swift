@@ -60,7 +60,7 @@ struct EmberBrowseView: View {
                         try? await Task.sleep(for: .seconds(2))
                     }
                 }
-                .safeAreaInset(edge: .bottom, spacing: 8) {
+                .safeAreaBar(edge: .bottom) {
                     TextField("", text: $searchTerm, prompt:
                                 Text("Search").foregroundStyle(.emberTextDim)
                     )
@@ -85,13 +85,20 @@ struct EmberBrowseView: View {
                         in: RoundedRectangle(cornerRadius: 22)
                     )
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, safeAreaBottomInset > 0 ? 0 : 16)
                 }
             }
         }
         .safeAreaBar(edge: .top) {
             titleView
         }
+    }
+
+    var safeAreaBottomInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.windows.first(where: \.isKeyWindow)?
+            .safeAreaInsets.bottom ?? 0
     }
 
     @ViewBuilder

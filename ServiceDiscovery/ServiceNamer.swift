@@ -130,7 +130,7 @@ class ServiceNamer {
             return name.hostIcon
         }
 
-        return "desktopcomputer"
+        return "rectangle"
     }
 
     static func nameForServices(_ services: Set<Service>) -> String? {
