@@ -40,10 +40,7 @@ targets:
         DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: NO
         DEVELOPMENT_TEAM: "76AFK3W7M9"
 
-        # We have custom entitlements so we need to use manual code-signing
-        CODE_SIGN_STYLE: "Manual"
-        PROVISIONING_PROFILE_SPECIFIER: "Flametouch dev (with multicast)"
-        PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]: "Flametouch Mac Dev"
+        CODE_SIGN_STYLE: "Automatic"
 
         # I messed up and got these backwards once and now every version must be >80.
         # This is the human-readable version, xcode cloud generates the build number now
