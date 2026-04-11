@@ -24,13 +24,13 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     #endif
 
     public var clusters: [Host] = []
-    var clusterTask: Task<Void, Never>?
+
+    private var clusterTask: Task<Void, Never>?
 
     private let browser: ServiceBrowser
 
     private var stoppedDate: Date? = Date()
 
-    @MainActor
     override convenience public init() {
         self.init(browser: DeprecatedServiceBrowser())
     }
@@ -46,10 +46,21 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     internal init(browser: ServiceBrowser) {
         self.browser = browser
         super.init()
-        self.browser.delegate = self
+        Task { [weak self] in
+            for await services in browser.services {
+                ELog("Clustering \(services.count) services")
+                guard let self else { return }
+                clusterTask?.cancel()
+                clusterTask = Task {
+                    let newClusters = await groupServices(oldClusters: self.clusters, services: services)
+                    if !Task.isCancelled {
+                        self.clusters = newClusters
+                    }
+                }
+            }
+        }
     }
 
-    @MainActor
     public func start() async {
         // nil stoped date means we're running
         guard let stoppedDate = stoppedDate else { return }
@@ -64,31 +75,29 @@ public class ServiceControllerImpl: NSObject, ServiceController {
             await browser.stop()
             clusterTask?.cancel()
             clusters = []
-            browser.start()
+            await browser.start()
             self.stoppedDate = nil
         } else {
             ELog("Restarting service list")
             await browser.pause()
-            browser.start()
+            await browser.start()
             self.stoppedDate = nil
         }
     }
 
-    @MainActor
     public func stop() async {
         await browser.pause()
         stoppedDate = Date()
     }
 
     /// Completely restart the controller, clear all caches, start from scratch
-    @MainActor
     public func restart() async {
         ELog("Restart / refresh browser")
         await browser.stop()
         clusterTask?.cancel()
         clusters = []
         try? await Task.sleep(for: .seconds(0.5))
-        browser.start()
+        await browser.start()
         self.stoppedDate = nil
     }
 
@@ -97,51 +106,37 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     }
 }
 
-extension ServiceControllerImpl: ServiceBrowserDelegate {
-    func serviceBrowser(didChangeServices services: Set<Service>) {
-        dispatchPrecondition(condition: .onQueue(.main))
-        clusterTask?.cancel()
-        clusterTask = Task {
-            let newClusters = await Self.groupServices(oldClusters: clusters, services: services)
-            if !Task.isCancelled {
-                self.clusters = newClusters
-            }
-        }
+/// Collect services into hosts. We want to retain a service in the group for
+/// every service and host we've ever seen, but mark them as no longer alive.
+/// This means that if a service disappears it'll stay in the list but be rendered
+/// as dead, but if it re-appears the same element will be marked as alive.
+@concurrent nonisolated
+fileprivate func groupServices(oldClusters: [Host], services: Set<Service>) async -> [Host] {
+    dispatchPrecondition(condition: .notOnQueue(.main))
+
+    // All services in the current list, with "alive" set to false
+    let oldServices: [ServiceRef: [Service]] = oldClusters
+        .flatMap(\.services)
+        .map { $0.expire() }
+        .groupBy(\.ref)
+
+    // Filter to only the services _not_ in the new list
+    let newRefs = Set(services.map(\.ref))
+    let deadServices: [Service] = oldServices.filter { !newRefs.contains($0.key) }.values.flatMap { $0 }
+
+    // Add the dead services to the new list - this is now all services, with only the missing
+    // ones marked as dead.
+    let allServices: Set<Service> = services.union(deadServices)
+
+    // Group by addresscluster (which is a set of IP addresses we believe to belong to a
+    // single specific machine) and convert to Hosts
+    let hosts: [Host] = allServices.groupBy(\.addressCluster).map {
+        Host(services: Set($0.value), addressCluster: $0.key)
     }
 
-    @concurrent nonisolated
-    static func groupServices(oldClusters: [Host], services: Set<Service>) async -> [Host] {
-        dispatchPrecondition(condition: .notOnQueue(.main))
-
-        // Collect services into hosts. We want to retain a service in the group for
-        // every service and host we've ever seen, but mark them as no longer alive.
-        // This means that if a service disappears it'll stay in the list but be rendered
-        // as dead, but if it re-appears the same element will be marked as alive.
-
-        // All services in the current list, with "alive" set to false
-        let oldServices: [ServiceRef: [Service]] = oldClusters
-            .flatMap(\.services)
-            .map { $0.expire() }
-            .groupBy(\.ref)
-
-        // Filter to only the services _not_ in the new list
-        let newRefs = Set(services.map(\.ref))
-        let deadServices: [Service] = oldServices.filter { !newRefs.contains($0.key) }.values.flatMap { $0 }
-
-        // Add the dead services to the new list - this is now all services, with only the missing
-        // ones marked as dead.
-        let allServices: Set<Service> = services.union(deadServices)
-
-        // Group by addresscluster (which is a set of IP addresses we believe to belong to a
-        // single specific machine) and convert to Hosts
-        let hosts: [Host] = allServices.groupBy(\.addressCluster).map {
-            Host(services: Set($0.value), addressCluster: $0.key)
-        }
-
-        // Sort by name and then my addresscluster (this sort must be deterministic)
-        return hosts.sorted {
-            ($0.name.lowercased(), $0.addressCluster.identifier.uuidString) < ($1.name.lowercased(), $1.addressCluster.identifier.uuidString)
-        }
+    // Sort by name and then my addresscluster (this sort must be deterministic)
+    return hosts.sorted {
+        ($0.name.lowercased(), $0.addressCluster.identifier.uuidString) < ($1.name.lowercased(), $1.addressCluster.identifier.uuidString)
     }
 }
 

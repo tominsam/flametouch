@@ -25,11 +25,14 @@ private extension Service {
 
 // Demo data for screenshots so I don't need to stress about leaking things about my house
 class DemoServiceBrowser: NSObject, @MainActor ServiceBrowser {
-    weak var delegate: ServiceBrowserDelegate?
+    let services: AsyncStream<Set<Service>>
+    private var continuation: AsyncStream<Set<Service>>.Continuation?
 
-    let services: Set<Service>
+    let demoServices: Set<Service>
     override init() {
-        services = [
+        var cont: AsyncStream<Set<Service>>.Continuation?
+        services = AsyncStream { cont = $0 }
+        demoServices = [
             .init(
                 domain: nil,
                 hostname: "Tv.local.",
@@ -519,22 +522,21 @@ class DemoServiceBrowser: NSObject, @MainActor ServiceBrowser {
             ),
         ]
         super.init()
+        self.continuation = cont
     }
 
     @MainActor
-    func start() {
-        delegate?.serviceBrowser(didChangeServices: services)
+    func start() async {
+        continuation?.yield(demoServices)
     }
 
     @MainActor
-    func pause(completion: @MainActor @escaping () -> Void) {
-        delegate?.serviceBrowser(didChangeServices: [])
-        completion()
+    func pause() async {
+        continuation?.yield([])
     }
 
     @MainActor
-    func stop(completion: @MainActor @escaping () -> Void) {
-        delegate?.serviceBrowser(didChangeServices: services)
-        completion()
+    func stop() async {
+        continuation?.yield(demoServices)
     }
 }
