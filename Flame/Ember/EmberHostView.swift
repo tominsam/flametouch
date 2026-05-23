@@ -177,11 +177,24 @@ struct EmberHostView: View {
 }
 
 #Preview {
+    let serviceController = ServiceControllerImpl.demo()
+    let address = AddressCluster.from(
+        addresses: ["192.168.0.188"],
+        hostnames: []
+    )
     EmberHostView(
         viewModel: EmberHostViewModel(
-            serviceController: ServiceControllerImpl.demo(),
-            addressCluster: .from(addresses: ["192.168.0.188"], hostnames: []),
-        )
+            serviceController: serviceController,
+            addressCluster: address,
+        ),
+        selected: Set([
+            .init(
+                type: "_spotify-connect._tcp.",
+                port: 1400,
+                addressCluster: address
+            )
+        ]),
     )
+    .background(.background)
     .emberTheme()
 }

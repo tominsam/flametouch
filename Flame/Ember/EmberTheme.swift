@@ -4,22 +4,55 @@ import SwiftUI
 extension ShapeStyle where Self == Color {
 
     // MARK: Backgrounds
-    static var emberBase: Color { .ember(dark: 0x0c0806, light: 0xfaf7f3) }
-    static var emberCard: Color { .ember(dark: 0x1a0e08, light: 0xf5f0ea) }
-    static var emberInset: Color { .ember(dark: 0x240e06, light: 0xede8e0) }
-    static var emberElevated: Color { .ember(dark: 0x301a0c, light: 0xe3dcd2) }
+    static var emberBase: Color { .ember(
+        dark:  #colorLiteral(red: 0.09871784941, green: 0.07755302162, blue: 0.06697735238, alpha: 1),
+        light: #colorLiteral(red: 0.98039, green: 0.96863, blue: 0.95294, alpha: 1)) }
+    static var emberCard: Color { .ember(
+        dark:  #colorLiteral(red: 0.3801058071, green: 0.2046666223, blue: 0.1169470299, alpha: 0.5411085993),
+        light: #colorLiteral(red: 0.96078, green: 0.94118, blue: 0.91765, alpha: 1)) }
+    static var emberInset: Color { .ember(
+        dark:  #colorLiteral(red: 0.5315575787, green: 0.1803963203, blue: 0.004815691092, alpha: 0.1280803617),
+        light: #colorLiteral(red: 0.9788023829, green: 0.9550449252, blue: 0.9289879203, alpha: 1)) }
+    static var emberElevated: Color { .ember(
+        dark:  #colorLiteral(red: 0.6742587352, green: 0.2584658485, blue: 0, alpha: 0.168219466),
+        light: #colorLiteral(red: 0.89020, green: 0.86275, blue: 0.82353, alpha: 1)) }
 
     // MARK: Foregrounds
-    static var emberTextHi: Color { .ember(dark: 0xfff0d8, light: 0x1e1208) }
-    static var emberTextMid: Color { .ember(dark: 0xe8c084, light: 0x5c3d20) }
-    static var emberTextLow: Color { .ember(dark: 0xd09030, light: 0x9a7050) }
-    static var emberTextDim: Color { .ember(dark: 0xa06830, light: 0xc0a882) }
-    static var emberTextOnTint: Color { .ember(dark: 0x180600, light: 0xfff8f2) }
+    static var emberTextHi: Color { .ember(
+        dark:  #colorLiteral(red: 1.00000, green: 0.94118, blue: 0.84706, alpha: 1),
+        light: #colorLiteral(red: 0.11765, green: 0.07059, blue: 0.03137, alpha: 1)) }
+    static var emberTextMid: Color { .ember(
+        dark:  #colorLiteral(red: 0.90980, green: 0.75294, blue: 0.51765, alpha: 1),
+        light: #colorLiteral(red: 0.36078, green: 0.23922, blue: 0.12549, alpha: 1)) }
+    static var emberTextLow: Color { .ember(
+        dark:  #colorLiteral(red: 0.81569, green: 0.56471, blue: 0.18824, alpha: 1),
+        light: #colorLiteral(red: 0.60392, green: 0.43922, blue: 0.31373, alpha: 1)) }
+    static var emberTextDim: Color { .ember(
+        dark:  #colorLiteral(red: 0.62745, green: 0.40784, blue: 0.18824, alpha: 1),
+        light: #colorLiteral(red: 0.75294, green: 0.65882, blue: 0.50980, alpha: 1)) }
+    static var emberTextOnTint: Color { .ember(
+        dark:  #colorLiteral(red: 0.09412, green: 0.02353, blue: 0.00000, alpha: 1),
+        light: #colorLiteral(red: 1.00000, green: 0.97255, blue: 0.94902, alpha: 1)) }
 
     // MARK: Tint
-    static var emberTintHi: Color { .ember(dark: 0xffaa58, light: 0x8c4810) }
-    static var emberTint: Color { .ember(dark: 0xff8840, light: 0xa85a1c) }
-    static var emberTintDim: Color { .ember(dark: 0xe06028, light: 0xc87840) }
+    static var emberTintHi: Color { .ember(
+        dark:  #colorLiteral(red: 1.00000, green: 0.66667, blue: 0.34510, alpha: 1),
+        light: #colorLiteral(red: 0.54902, green: 0.28235, blue: 0.06275, alpha: 1)) }
+    static var emberTint: Color { .ember(
+        dark:  #colorLiteral(red: 1.00000, green: 0.53333, blue: 0.25098, alpha: 1),
+        light: #colorLiteral(red: 0.65882, green: 0.35294, blue: 0.10980, alpha: 1)) }
+    static var emberTintDim: Color { .ember(
+        dark:  #colorLiteral(red: 0.87843, green: 0.37647, blue: 0.15686, alpha: 1),
+        light: #colorLiteral(red: 0.78431, green: 0.47059, blue: 0.25098, alpha: 1)) }
+}
+
+
+// MARK: - Private helper
+
+private extension Color {
+    static func ember(dark: UIColor, light: UIColor) -> Color {
+        Color(UIColor { $0.userInterfaceStyle == .dark ? dark : light })
+    }
 }
 
 
@@ -71,24 +104,6 @@ extension Font {
     }
 }
 
-// MARK: - Private helper
-
-private extension Color {
-    static func ember(dark: UInt32, light: UInt32) -> Color {
-        Color(UIColor { $0.userInterfaceStyle == .dark ? .init(hex: dark) : .init(hex: light) })
-    }
-}
-
-private extension UIColor {
-    convenience init(hex: UInt32) {
-        self.init(
-            red: CGFloat((hex >> 16) & 0xff) / 255,
-            green: CGFloat((hex >> 8)  & 0xff) / 255,
-            blue: CGFloat( hex        & 0xff) / 255,
-            alpha: 1
-        )
-    }
-}
 
 struct EmberTheme: ViewModifier {
     func body(content: Content) -> some View {

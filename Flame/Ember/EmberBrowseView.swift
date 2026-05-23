@@ -85,7 +85,7 @@ struct EmberBrowseView: View {
                         in: RoundedRectangle(cornerRadius: 22)
                     )
                     .padding(.horizontal, 16)
-                    .padding(.bottom, safeAreaBottomInset > 0 ? 0 : 16)
+                    .padding(.bottom, safeAreaBottomInset > 0 ? 8 : 16)
                 }
             }
         }
