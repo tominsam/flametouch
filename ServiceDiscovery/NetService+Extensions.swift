@@ -32,7 +32,7 @@ extension NetService {
         return Dictionary(txtData, uniquingKeysWith: { first, _ in first }) // slow!
     }
 
-    /// network addresses of the service as strings, sorted by shortest first (which will prioritize IPv4)
+    /// network addresses of the service as strings
     var stringAddresses: Set<String> {
         // self.addresses is expensive
         assert(!Thread.isMainThread)

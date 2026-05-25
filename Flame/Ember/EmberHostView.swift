@@ -62,11 +62,15 @@ struct EmberHostView: View {
                 Text(address)
                     .lineLimit(1)
                     .font(.emberMeta)
-                    .foregroundStyle(.emberTint)
+                    .foregroundStyle(.emberTextMid)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
                     .background {
-                        FilledStrokedRoundRect(fill: .emberCard, stroke: .emberTint, radius: 20)
+                        FilledStrokedRoundRect(
+                            fill: .emberPillBackground,
+                            stroke: .emberPillBorder,
+                            radius: 20
+                        )
                             .padding(4)
                     }
                     .overlay {
@@ -76,7 +80,7 @@ struct EmberHostView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(.bottom, 8)
         .opacity(host.alive ? 1 : 0.3)
     }
 
@@ -142,8 +146,8 @@ struct EmberHostView: View {
                     if isSelected {
                         serviceData(for: service)
                             .padding(.leading, 40)
-                            .padding(.trailing, 16)
                             .padding(.bottom, 16)
+                            .padding(.top, -12)
                     }
                 }
 //                .background {
@@ -161,16 +165,25 @@ struct EmberHostView: View {
             let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
 
             EmberServiceRow(title: "Port", subtitle: "\(service.port)", url: nil)
-                .padding(.horizontal, 16)
+                .padding(.leading, 16)
+                .padding(.trailing, 20)
             ForEach(sortedData, id: \.key) { data in
-                Color(.emberElevated)
-                    .frame(height: 2)
+//                Color(.emberTint)
+//                    .frame(height: 2)
+//                    .opacity(0.1)
                 EmberServiceRow(title: data.key, subtitle: data.value, url: nil)
-                    .padding(.horizontal, 16)
+                    .padding(.leading, 16)
+                    .padding(.trailing, 20)
             }
         }
+        .overlay(alignment: .leading) {
+//            FilledStrokedRoundRect(fill: .emberInset, stroke: .emberElevated, radius: 12)
+            Color(.emberTint)
+                .frame(width: 2)
+                .opacity(0.8)
+        }
         .background {
-            FilledStrokedRoundRect(fill: .emberInset, stroke: .emberElevated, radius: 12)
+            Color(.emberTint).opacity(0.03)
         }
     }
 

@@ -92,8 +92,10 @@ public final class AddressCluster: @unchecked Sendable {
     }
 
     public var sorted: [String] {
-        // Sort service addresses by shortest first, so we prioritize IPv4
-        var sortedAddresses = addresses.sorted {
+        // Sort service addresses by shortest first (This prioritizes IPv4 over IPv6, and if there's a
+        // hostname that's short it'll also be at the top, this looks better on most screens when the pills
+        // wrap. I suppose in theory we could render in the UI with some sort of packing algo?)
+        return addresses.union(hostnames).sorted {
             // Sort by length then alpha
             if $0.count == $1.count {
                 return $0 < $1
@@ -101,14 +103,6 @@ public final class AddressCluster: @unchecked Sendable {
                 return $0.count < $1.count
             }
         }
-
-        // If the service claims a resolved hostname, include that at the end
-        // (because often the hostname is not interesting as an address)
-        for hostname in hostnames.sorted() {
-            sortedAddresses.append(hostname)
-        }
-
-        return sortedAddresses
     }
 
     public var displayAddress: String {

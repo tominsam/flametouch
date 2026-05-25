@@ -39,7 +39,7 @@ struct EmberBrowseView: View {
                                 isSelected: selection == host.addressCluster,
                                 selectionBackgroundNamespace: selectionBackgroundNamespace,
                                 action: {
-                                    withAnimation(.bouncy(duration: 0.2)) {
+                                    withAnimation(.bouncy(duration: 0.16)) {
                                         selection = host.addressCluster
                                     }
                                 },

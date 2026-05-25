@@ -26,7 +26,7 @@ struct EmberHostRow: View {
                 .fill(isAlive ? .emberTintHi : .emberTextDim)
                 .frame(width: 8, height: 8)
 
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.emberCellTitle)
                     .foregroundColor(isAlive && isSelected ? .emberTextHi : .emberTextMid)

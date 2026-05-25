@@ -15,13 +15,14 @@ struct EmberTitleView: View {
                 .foregroundStyle(.emberTextHi)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 8)
+                .padding(.bottom, 4)
 
             Text(subTitle)
                 .font(.emberSectionHeader)
                 .textCase(.uppercase)
                 .foregroundStyle(.emberTextLow)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 8)
+                .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity)
 

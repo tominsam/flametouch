@@ -26,11 +26,10 @@ struct EmberBrowseRow: View {
             .background {
                 if isSelected {
                     FilledStrokedRoundRect(
-                        fill: .emberTintDim,
-                        stroke: .emberTintHi,
+                        fill: .emberSelectionBackground,
+                        stroke: .emberSelectionBorder,
                         radius: 8
                     )
-                    .opacity(0.3)
                     .padding(-8)
                     .matchedGeometryEffect(id: "background", in: selectionBackgroundNamespace)
                     .transition(.scale(scale: 1))
@@ -54,7 +53,7 @@ struct EmberBrowseRow: View {
                 .foregroundColor(isSelected ? .emberTintHi : .emberTextLow)
                 .frame(width: 28)
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
                     .font(.emberCellTitle)
                     .foregroundColor(isSelected ? .emberTextHi : .emberTextMid)
