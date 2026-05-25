@@ -316,7 +316,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 105.1.0;
+				MARKETING_VERSION = 105.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -400,7 +400,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 105.1.0;
+				MARKETING_VERSION = 105.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.jerakeen.flametouch;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
