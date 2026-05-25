@@ -10,6 +10,7 @@ protocol BrowseViewModel: Observable {
     var noWifi: Bool { get }
     var hosts: [Host] { get }
     func refresh() async
+    var export: ExportServicesDocument? { get }
 }
 
 @MainActor @Observable
@@ -24,6 +25,10 @@ final class BrowseViewModelImpl: BrowseViewModel {
 
     var hosts: [Host] {
         serviceController.clusters
+    }
+
+    var export: ExportServicesDocument? {
+        ExportServicesDocument(serviceController: serviceController)
     }
 
     init(serviceController: ServiceController) {
@@ -104,6 +109,7 @@ private class EmptyViewModel: BrowseViewModel {
     var noWifi: Bool = true
     var hosts: [Host] = []
     func refresh() async {}
+    var export: ExportServicesDocument? { nil }
 }
 
 #Preview("Empty") {

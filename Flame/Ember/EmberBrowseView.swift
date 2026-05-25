@@ -109,16 +109,38 @@ struct EmberBrowseView: View {
                 subTitle: String(localized: "\(hosts.count) host(s)")
             )
 
-            Button(action: {
-                showAbout = true
-            }, label: {
-                Image(systemName: "info.circle")
-                    .foregroundStyle(.emberTextHi)
-                    .frame(width: 28, height: 28)
-            })
-            .buttonBorderShape(.circle)
-            .buttonStyle(.glass)
-            .accessibilityLabel("About")
+#if !targetEnvironment(macCatalyst)
+            GlassEffectContainer {
+                HStack(spacing: 0) {
+                    if let export = viewModel.export {
+                        ShareLink(
+                            item: export,
+                            subject: nil,
+                            message: nil,
+                            preview: SharePreview("Export"),
+                            label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .foregroundStyle(.emberTextMid)
+                                    .frame(width: 28, height: 28)
+                            }
+                        )
+                        .padding(8)
+                        .accessibilityLabel("Export")
+                    }
+                    
+                    Button(action: {
+                        showAbout = true
+                    }, label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.emberTextMid)
+                            .frame(width: 28, height: 28)
+                    })
+                    .padding(8)
+                    .accessibilityLabel("About")
+                }
+            }
+            .glassEffect()
+#endif
         }
         .padding(.leading, 16)
         .padding(.trailing, 8)
@@ -160,6 +182,7 @@ private class EmptyViewModel: BrowseViewModel {
     var noWifi: Bool = true
     var hosts: [Host] = []
     func refresh() async {}
+    var export: ExportServicesDocument? { nil }
 }
 
 #Preview("Empty") {

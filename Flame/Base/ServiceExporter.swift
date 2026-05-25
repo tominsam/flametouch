@@ -1,60 +1,121 @@
 // Copyright 2021 Thomas Insam. All rights reserved.
 
+import UIKit
 import Foundation
+import SwiftUI
+import UniformTypeIdentifiers
+import Synchronization
 
-class ServiceExporter {
-    static func export(hosts: [Host]) -> URL? {
-        var groupsJson: [Any] = []
-        var hostCount = 0
-        var serviceCount = 0
-        for host in hosts {
-            hostCount += 1
-            var groupJson: [String: Any] = [:]
-            groupJson["name"] = host.name
-            var addressesJson: [String] = []
-            for address in host.addressCluster.sorted {
-                addressesJson.append(address)
-            }
-            groupJson["addresses"] = addressesJson
-
-            var servicesJson: [Any] = []
-            for service in host.displayServices {
-                serviceCount += 1
-                var serviceJson: [String: Any] = [:]
-                serviceJson["name"] = service.name
-                serviceJson["port"] = service.port
-                serviceJson["type"] = service.type
-                serviceJson["domain"] = service.domain
-                var addressesJson: [String] = []
-                for address in service.addressCluster.sorted {
-                    addressesJson.append(address)
-                }
-                serviceJson["addresses"] = addressesJson
-                var txtData = [String: String]()
-                for (key, value) in service.data {
-                    txtData[key] = value
-                }
-                serviceJson["txtData"] = txtData
-                servicesJson.append(serviceJson)
-            }
-            groupJson["services"] = servicesJson
-            groupsJson.append(groupJson)
-        }
-
-        let file = "flame_export.json"
-
-        guard let dir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true).first,
-              let path = NSURL(fileURLWithPath: dir).appendingPathComponent(file)
-        else {
-            return nil
-        }
-
-        ELog("path is \(path.path)")
-        let output = OutputStream(toFileAtPath: path.path, append: false)!
-        output.open()
-        JSONSerialization.writeJSONObject(groupsJson, to: output, options: [.prettyPrinted, .sortedKeys], error: nil)
-        output.close()
-
-        return path
+// Converts the MainActor serviceController into a read-only nonisolated hosts lists for the exporter
+private final class ClusterTracker: Sendable {
+    let serviceController: ServiceController
+    let hostsMutex: Mutex<[Host]> = .init([])
+    
+    init(serviceController: ServiceController) {
+        self.serviceController = serviceController
+        watch()
     }
+    
+    func watch() {
+        withObservationTracking {
+            MainActor.assumeIsolated { // serviceController is mainactor
+                self.hostsMutex.withLock { $0 = serviceController.clusters }
+            }
+        } onChange: { [weak self] in
+            self?.watch()
+        }
+    }
+    
+    var hosts: [Host] {
+        hostsMutex.withLock(\.self)
+    }
+}
+
+struct ExportServicesDocument: FileDocument {
+    static let readableContentTypes: [UTType] = [.json]
+    
+    private let tracker: ClusterTracker
+
+    init(serviceController: ServiceController) {
+        self.tracker = ClusterTracker(serviceController: serviceController)
+    }
+    
+    init(configuration: ReadConfiguration) throws {
+        fatalError()
+    }
+    
+    func getData() throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        return try encoder.encode(self)
+    }
+    
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        return FileWrapper(regularFileWithContents: try getData())
+    }
+    
+    
+}
+
+extension ExportServicesDocument: Transferable {
+
+    static var encoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        return encoder
+    }
+
+    static var decoder: JSONDecoder {
+        JSONDecoder()
+    }
+
+    static var transferRepresentation: some TransferRepresentation {
+        CodableRepresentation(contentType: .json, encoder: encoder, decoder: decoder)
+            .suggestedFileName("flame-export.json")
+    }
+}
+
+extension ExportServicesDocument: Codable {
+    enum CodingKeys: String, CodingKey {
+        case hosts
+    }
+
+    init(from decoder: any Decoder) throws {
+        fatalError()
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        nonisolated(unsafe)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(tracker.hosts, forKey: .hosts)
+    }
+}
+
+extension Host: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case addresses, services, name
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(services, forKey: .services)
+        try container.encode(addressCluster.sorted, forKey: .addresses)
+    }
+}
+
+extension Service: Encodable {
+    enum CodingKeys: String, CodingKey {
+        case name, type, domain, port, data
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
+        try container.encode(type, forKey: .type)
+        try container.encode(domain, forKey: .domain)
+        try container.encode(port, forKey: .port)
+        try container.encode(data, forKey: .data)
+    }
+
 }

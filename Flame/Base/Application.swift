@@ -4,6 +4,7 @@ import SafariServices
 import UIKit
 import SwiftUI
 import Network
+import UniformTypeIdentifiers
 
 @main
 struct FlameApp: App {
@@ -17,6 +18,7 @@ struct FlameApp: App {
     // Heartbeat task - the network browsers aren't super reliable so stop/start
     // them every 10 seconds
     @State var showAbout = false
+    @State var exportingFile = false
     @State var serviceRefreshTask: Task<Void, Never>?
     @State var flameService: NWListener?
 
@@ -38,13 +40,23 @@ struct FlameApp: App {
                     SlateAboutView(useEmberUI: $useEmberUI)
                 }
             }
-        }
+            .fileExporter(
+                isPresented: $exportingFile,
+                document: ExportServicesDocument(serviceController: serviceController),
+                contentType: .json,
+                defaultFilename: "flame-export.json",
+                onCompletion: { _ in
+                    print(1)
+                }
+            )
+       }
         .commands {
             CommandGroup(after: .newItem) {
                 Button("Export", systemImage: "square.and.arrow.up") {
-                    // TODO
+                    exportingFile = true
                 }
                 .keyboardShortcut(KeyEquivalent("e"), modifiers: [.command, .shift])
+
                 Button("Refresh", systemImage: "arrow.clockwise") {
                     Task {
                         await serviceController.restart()

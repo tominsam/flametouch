@@ -3,7 +3,7 @@
 import Foundation
 
 @MainActor
-public protocol ServiceController: Observable {
+public protocol ServiceController: AnyObject, Observable, Sendable {
     var clusters: [Host] { get }
     func start() async
     func restart() async
