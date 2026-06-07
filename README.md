@@ -9,8 +9,7 @@ https://movieos.org/code/flame/
 
 ## Development
 
-I use xcodegen to manage my project file. The `start` shell script will generate the project file and restart
-xcode with it.
+I use xcodegen to manage my project file. Run `make open` to generate the project file and open it in Xcode, or `make project` to just regenerate the project file.
 
 To build and run on a physical device you need the `com.apple.developer.networking.multicast` entitlement,
 which needs to be explicitly requested from Apple - it's not self service, and the app will not be able to

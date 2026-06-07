@@ -1,5 +1,0 @@
-#!/bin/bash -ex
-osascript -e 'quit application "Xcode"'
-sleep 2
-xcodegen
-open Flame.xcodeproj
