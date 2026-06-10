@@ -15,4 +15,4 @@ bump:
 	sed -i '' "s/MARKETING_VERSION: $$OLD/MARKETING_VERSION: $$NEW/" project.yml; \
 	xcodegen; \
 	git add project.yml Flame.xcodeproj; \
-	git commit -m "bumped to v$$DISPLAY"
+	git commit -m "bumped to v$$DISPLAY post release"
