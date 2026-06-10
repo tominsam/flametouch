@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 @main
 struct FlameApp: App {
     // Switch between UI layers: true = Ember (new), false = Slate (preserved)
-    @AppStorage("useEmberUI") var useEmberUI = false
+    @AppStorage("useEmberUI_launched") var useEmberUI = true
 
     let serviceController: ServiceController = ServiceControllerImpl()
 

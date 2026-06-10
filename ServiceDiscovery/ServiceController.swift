@@ -32,6 +32,7 @@ public class ServiceControllerImpl: NSObject, ServiceController {
     private var stoppedDate: Date? = Date()
 
     override convenience public init() {
+//        self.init(browser: DemoServiceBrowser())
         self.init(browser: DeprecatedServiceBrowser())
     }
 

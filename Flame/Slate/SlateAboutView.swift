@@ -17,7 +17,7 @@ struct SlateAboutView: View {
                     .frame(height: 120)
                     .cornerRadius(24)
                     .contextMenu {
-                        Toggle(isOn: useEmberUI, label: { Text("Ember (experimental)") })
+                        Toggle(isOn: useEmberUI, label: { Text("Ember") })
                     }
 
                 Spacer().frame(height: 8)
