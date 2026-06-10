@@ -47,7 +47,6 @@ struct EmberBrowseView: View {
                         }
                     }
                 }
-                .scrollEdgeEffectStyle(.soft, for: .top)
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .ifiOS {
