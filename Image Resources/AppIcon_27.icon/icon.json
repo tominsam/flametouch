@@ -1,0 +1,50 @@
+{
+  "color-space-for-untagged-svg-colors" : "display-p3",
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.88623,0.86279,0.82715,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "SVG Image 10.svg",
+          "name" : "SVG Image 10",
+          "opacity" : 0.93,
+          "position" : {
+            "scale" : 0.98,
+            "translation-in-points" : [
+              -37.15364019955541,
+              127.21800000000007
+            ]
+          }
+        },
+        {
+          "image-name" : "SVG Image 9.svg",
+          "name" : "SVG Image 9",
+          "opacity" : 0.93,
+          "position" : {
+            "scale" : 0.98,
+            "translation-in-points" : [
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

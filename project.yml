@@ -53,7 +53,7 @@ targets:
         SWIFT_STRICT_CONCURRENCY: complete
         DEAD_CODE_STRIPPING: YES
 
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_26
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon_Klingon
       debug:
       release:
 
@@ -66,7 +66,7 @@ targets:
         type: syncedFolder
       - path: "Translation"
         type: syncedFolder
-      - path: "Image Resources/AppIcon_26.icon"
+      - path: "Image Resources/AppIcon_Klingon.icon"
 
     dependencies:
       - package: Flow
