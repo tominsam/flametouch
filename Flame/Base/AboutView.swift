@@ -3,9 +3,7 @@
 import SwiftUI
 import UIKit
 
-struct SlateAboutView: View {
-    var useEmberUI: Binding<Bool>
-
+struct AboutView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 16) {
@@ -16,9 +14,6 @@ struct SlateAboutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 120)
                     .cornerRadius(24)
-                    .contextMenu {
-                        Toggle(isOn: useEmberUI, label: { Text("Ember") })
-                    }
 
                 Spacer().frame(height: 8)
 
@@ -66,11 +61,6 @@ struct SlateAboutView: View {
 }
 
 #Preview {
-    @Previewable @State var ember: Bool = false
-    if ember {
-        SlateAboutView(useEmberUI: $ember)
-            .emberTheme()
-    } else {
-        SlateAboutView(useEmberUI: $ember)
-    }
+    AboutView()
+        .emberTheme()
 }

@@ -8,9 +8,6 @@ import UniformTypeIdentifiers
 
 @main
 struct FlameApp: App {
-    // Switch between UI layers: true = Ember (new), false = Slate (preserved)
-    @AppStorage("useEmberUI_launched") var useEmberUI = true
-
     let serviceController: ServiceController = ServiceControllerImpl()
 
     @Environment(\.scenePhase) private var scenePhase
@@ -24,32 +21,22 @@ struct FlameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            Group {
-                if useEmberUI {
-                    EmberMainWindow(serviceController: serviceController, showAbout: $showAbout)
-                } else {
-                    SlateMainWindow(serviceController: serviceController, showAbout: $showAbout)
-                }
-            }
-            .modifier(SafariViewControllerViewModifier())
-            .sheet(isPresented: $showAbout) {
-                if useEmberUI {
-                    SlateAboutView(useEmberUI: $useEmberUI)
+            EmberMainWindow(serviceController: serviceController, showAbout: $showAbout)
+                .modifier(SafariViewControllerViewModifier())
+                .sheet(isPresented: $showAbout) {
+                    AboutView()
                         .emberTheme()
-                } else {
-                    SlateAboutView(useEmberUI: $useEmberUI)
                 }
-            }
-            .fileExporter(
-                isPresented: $exportingFile,
-                document: ExportServicesDocument(serviceController: serviceController),
-                contentType: .json,
-                defaultFilename: "flame-export.json",
-                onCompletion: { _ in
-                    print(1)
-                }
-            )
-       }
+                .fileExporter(
+                    isPresented: $exportingFile,
+                    document: ExportServicesDocument(serviceController: serviceController),
+                    contentType: .json,
+                    defaultFilename: "flame-export.json",
+                    onCompletion: { _ in
+                        print(1)
+                    }
+                )
+        }
         .commands {
             CommandGroup(after: .newItem) {
                 Button("Export", systemImage: "square.and.arrow.up") {
@@ -63,9 +50,6 @@ struct FlameApp: App {
                     }
                 }
                 .keyboardShortcut(KeyEquivalent("r"), modifiers: [.command])
-                Toggle(isOn: $useEmberUI) {
-                    Text("Use Ember")
-                }
             }
         }
         .onChange(of: scenePhase) {
@@ -82,12 +66,8 @@ struct FlameApp: App {
         }
 
         WindowGroup(id: "about") {
-            if useEmberUI {
-                SlateAboutView(useEmberUI: $useEmberUI)
-                    .emberTheme()
-            } else {
-                SlateAboutView(useEmberUI: $useEmberUI)
-            }
+            AboutView()
+                .emberTheme()
         }
         .defaultSize(width: 480, height: 640)
     }
