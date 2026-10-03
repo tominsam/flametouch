@@ -6,7 +6,7 @@ extension ShapeStyle where Self == Color {
     // MARK: Backgrounds
     static var emberBase: Color { .ember(
         dark:  #colorLiteral(red: 0.07857144193, green: 0.06172594694, blue: 0.05330856765, alpha: 1),
-        light: #colorLiteral(red: 0.98039, green: 0.96863, blue: 0.95294, alpha: 1)) }
+        light: #colorLiteral(red: 0.98039, green: 0.968495, blue: 0.95294, alpha: 1)) }
     static var emberInset: Color { .ember(
         dark:  #colorLiteral(red: 0.5315575787, green: 0.1803963203, blue: 0.004815691092, alpha: 0.1280803617),
         light: #colorLiteral(red: 0.9788023829, green: 0.9550449252, blue: 0.9289879203, alpha: 1)) }

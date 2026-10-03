@@ -10,11 +10,11 @@ import Flow
 class EmberHostViewModel {
     let serviceController: ServiceController
     let addressCluster: AddressCluster
-
+    
     var host: Host? {
         serviceController.clusters.first { $0.addressCluster == addressCluster }
     }
-
+    
     init(serviceController: ServiceController, addressCluster: AddressCluster) {
         self.serviceController = serviceController
         self.addressCluster = addressCluster
@@ -23,12 +23,12 @@ class EmberHostViewModel {
 
 struct EmberHostView: View {
     @Environment(\.openURL) private var openURL
-
+    
     var viewModel: EmberHostViewModel
-
+    
     @State
     var selected: Set<ServiceRef> = Set()
-
+    
     var body: some View {
         if let host = viewModel.host {
             ScrollView {
@@ -39,22 +39,32 @@ struct EmberHostView: View {
                     Color(.clear).frame(height: 1)
                 }
             }
-            .scrollIndicators(.never)
-            //.toolbar(.hidden, for: .navigationBar)
-            .safeAreaBar(edge: .top) {
-                titleView(for: host)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    EmberTitleView(
+                        title: host.name,
+                        subTitle: String(localized: "\(host.displayServices.count) service(s)")
+                    )
+                }
+                if let service = viewModel.host?.openableService {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            openURL(service.url)
+                        }, label: {
+                            Image(systemName: "globe")
+                                .foregroundStyle(.foreground)
+                                .frame(width: 28, height: 28)
+                        })
+                    }
+
+                }
             }
+            .toolbarRole(.browser)
+            .scrollIndicators(.never)
         }
     }
-
-    func titleView(for host: Host) -> some View {
-        EmberTitleView(
-            title: host.name,
-            subTitle: String(localized: "\(host.displayServices.count) service(s)")
-        )
-        .padding(.horizontal, 16)
-    }
-
+    
     @ViewBuilder
     func addresses(for host: Host) -> some View {
         HFlow(spacing: 4, distributeItemsEvenly: true) {
@@ -71,7 +81,7 @@ struct EmberHostView: View {
                             stroke: .emberPillBorder,
                             radius: 20
                         )
-                            .padding(4)
+                        .padding(4)
                     }
                     .overlay {
                         menu(for: address)
@@ -83,7 +93,7 @@ struct EmberHostView: View {
         .padding(.bottom, 8)
         .opacity(host.alive ? 1 : 0.3)
     }
-
+    
     func menu(for address: String) -> some View {
         Menu(
             content: {
@@ -100,7 +110,7 @@ struct EmberHostView: View {
             }
         )
     }
-
+    
     @ViewBuilder
     func actions(for host: Host) -> some View {
         if let openable = host.openableService {
@@ -115,14 +125,14 @@ struct EmberHostView: View {
             .listSectionSpacing(16)
         }
     }
-
+    
     @ViewBuilder
     func services(for host: Host) -> some View {
-
+        
         LazyVStack(spacing: 8) {
             ForEach(host.displayServices, id: \.ref) { service in
                 let isSelected = selected.contains(service.ref)
-
+                
                 VStack {
                     EmberHostRow(
                         title: service.name,
@@ -150,34 +160,25 @@ struct EmberHostView: View {
                             .padding(.top, -12)
                     }
                 }
-//                .background {
-//                    if isSelected {
-//                        Color(.emberCard)
-//                    }
-//                }
             }
         }
     }
-
+    
     @ViewBuilder
     func serviceData(for service: Service) -> some View {
         VStack(spacing: 0) {
             let sortedData = service.data.sorted { $0.key.lowercased() < $1.key.lowercased() }
-
+            
             EmberServiceRow(title: "Port", subtitle: "\(service.port)", url: nil)
                 .padding(.leading, 16)
                 .padding(.trailing, 20)
             ForEach(sortedData, id: \.key) { data in
-//                Color(.emberTint)
-//                    .frame(height: 2)
-//                    .opacity(0.1)
                 EmberServiceRow(title: data.key, subtitle: data.value, url: nil)
                     .padding(.leading, 16)
                     .padding(.trailing, 20)
             }
         }
         .overlay(alignment: .leading) {
-//            FilledStrokedRoundRect(fill: .emberInset, stroke: .emberElevated, radius: 12)
             Color(.emberTint)
                 .frame(width: 2)
                 .opacity(0.8)
@@ -186,7 +187,7 @@ struct EmberHostView: View {
             Color(.emberTint).opacity(0.03)
         }
     }
-
+    
 }
 
 #Preview {

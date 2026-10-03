@@ -7,46 +7,71 @@ import UIKit
 
 struct EmberBrowseView: View {
     var viewModel: BrowseViewModel
-
+    
     @Binding
     var selection: AddressCluster?
-
+    
     @Namespace var selectionBackgroundNamespace
-
+    
     @Binding var showAbout: Bool
-
+    
     @FocusState var focusState: Bool
-
+    
     // Searchable is in the main view
     @State var searchTerm: String = ""
-
+    
     var body: some View {
         VStack(spacing: 0) {
             if viewModel.noWifi {
                 emptyView
             } else {
-
+                
                 ScrollView {
                     LazyVStack {
-
                         ForEach(hosts, id: \.addressCluster) { host in
-                            EmberBrowseRow(
-                                title: host.name,
-                                subtitle: "\(host.displayAddress) • \(host.servicesCount)",
-                                copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
-                                hostIcon: host.hostIcon,
-                                openable: host.openableService,
-                                isSelected: selection == host.addressCluster,
-                                selectionBackgroundNamespace: selectionBackgroundNamespace,
-                                action: {
-                                    withAnimation(.bouncy(duration: 0.16)) {
-                                        selection = host.addressCluster
-                                    }
-                                },
-                            )
+                            browseRow(for: host)
                         }
                     }
                 }
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar(content: {
+                    // title
+                    ToolbarItem(placement: .principal) {
+                        EmberTitleView(
+                            title: "Network",
+                            subTitle: String(localized: "\(hosts.count) host(s)")
+                        )
+                    }
+                    // about
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            showAbout = true
+                        }, label: {
+                            Image(systemName: "info.circle")
+                                .foregroundStyle(.foreground)
+                                .frame(width: 28, height: 28)
+                        })
+                    }
+                    // export
+                    if let export = viewModel.export {
+                        ToolbarItem(placement: .primaryAction) {
+                            ShareLink(
+                                item: export,
+                                subject: nil,
+                                message: nil,
+                                preview: SharePreview("Export"),
+                                label: {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .foregroundStyle(.foreground)
+                                        .frame(width: 28, height: 28)
+                                }
+                            )
+                            .padding(8)
+                            .accessibilityLabel("Export")
+                        }
+                    }
+                })
+                .toolbarRole(.browser)
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .ifiOS {
@@ -60,92 +85,64 @@ struct EmberBrowseView: View {
                     }
                 }
                 .safeAreaBar(edge: .bottom) {
-                    TextField("", text: $searchTerm, prompt:
-                                Text("Search").foregroundStyle(.emberTextDim)
-                    )
-                    .autocorrectionDisabled(true)
-                    .focused($focusState, equals: true)
-                    .padding(.leading, 16)
-                    .padding(.trailing, 40)
-                    .frame(height: 44)
-                    .overlay(alignment: .trailing) {
-                        if !searchTerm.isEmpty {
-                            Button(action: {
-                                searchTerm = ""
-                                focusState = false  
-                            }, label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .frame(width: 44, height: 44)
-                            })
-                        }
-                    }
-                    .glassEffect(
-                        .regular,
-                        in: RoundedRectangle(cornerRadius: 22)
-                    )
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, safeAreaBottomInset > 0 ? 8 : 16)
+                    searchView
                 }
             }
         }
-        .safeAreaBar(edge: .top) {
-            titleView
-        }
     }
-
+    
+    func browseRow(for host: Host) -> some View {
+        EmberBrowseRow(
+            title: host.name,
+            subtitle: "\(host.displayAddress) • \(host.servicesCount)",
+            copyLabel: String(localized: "Copy address", comment: "Action to copy the address of the host to the clipboard"),
+            hostIcon: host.hostIcon,
+            openable: host.openableService,
+            isSelected: selection == host.addressCluster,
+            selectionBackgroundNamespace: selectionBackgroundNamespace,
+            action: {
+                withAnimation(.bouncy(duration: 0.16)) {
+                    selection = host.addressCluster
+                }
+            },
+        )
+    }
+    
+    var searchView: some View {
+        TextField("", text: $searchTerm, prompt:
+                    Text("Search").foregroundStyle(.emberTextDim)
+        )
+        .autocorrectionDisabled(true)
+        .focused($focusState, equals: true)
+        .padding(.leading, 16)
+        .padding(.trailing, 40)
+        .frame(height: 44)
+        .overlay(alignment: .trailing) {
+            if !searchTerm.isEmpty {
+                Button(action: {
+                    searchTerm = ""
+                    focusState = false
+                }, label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .frame(width: 44, height: 44)
+                })
+            }
+        }
+        .glassEffect(
+            .regular,
+            in: RoundedRectangle(cornerRadius: 22)
+        )
+        .padding(.horizontal, 16)
+        .padding(.bottom, safeAreaBottomInset > 0 ? 8 : 16)
+    }
+    
     var safeAreaBottomInset: CGFloat {
         UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first?.windows.first(where: \.isKeyWindow)?
             .safeAreaInsets.bottom ?? 0
     }
-
-    @ViewBuilder
-    var titleView: some View {
-        HStack {
-            EmberTitleView(
-                title: "Network",
-                subTitle: String(localized: "\(hosts.count) host(s)")
-            )
-
-#if !targetEnvironment(macCatalyst)
-            GlassEffectContainer {
-                HStack(spacing: 0) {
-                    if let export = viewModel.export {
-                        ShareLink(
-                            item: export,
-                            subject: nil,
-                            message: nil,
-                            preview: SharePreview("Export"),
-                            label: {
-                                Image(systemName: "square.and.arrow.up")
-                                    .foregroundStyle(.emberTextMid)
-                                    .frame(width: 28, height: 28)
-                            }
-                        )
-                        .padding(8)
-                        .accessibilityLabel("Export")
-                    }
-                    
-                    Button(action: {
-                        showAbout = true
-                    }, label: {
-                        Image(systemName: "info.circle")
-                            .foregroundStyle(.emberTextMid)
-                            .frame(width: 28, height: 28)
-                    })
-                    .padding(8)
-                    .accessibilityLabel("About")
-                }
-            }
-            .glassEffect()
-#endif
-        }
-        .padding(.leading, 16)
-        .padding(.trailing, 8)
-        .containerCornerOffset(.leading, sizeToFit: true)
-    }
-
+    
     @ViewBuilder
     var emptyView: some View {
         ContentUnavailableView {
@@ -158,7 +155,7 @@ struct EmberBrowseView: View {
                 .foregroundStyle(.emberTextLow)
         }
     }
-
+    
     var hosts: [Host] {
         viewModel.hosts.filter { $0.matches(search: searchTerm) }
     }
@@ -166,14 +163,16 @@ struct EmberBrowseView: View {
 
 #Preview {
     @Previewable @State var selection: AddressCluster?
-
-    EmberBrowseView(
-        viewModel: BrowseViewModelImpl(
-            serviceController: ServiceControllerImpl.demo(),
-        ),
-        selection: $selection,
-        showAbout: .constant(false),
-    )
+    
+    NavigationView {
+        EmberBrowseView(
+            viewModel: BrowseViewModelImpl(
+                serviceController: ServiceControllerImpl.demo(),
+            ),
+            selection: $selection,
+            showAbout: .constant(false),
+        )
+    }
     .emberTheme()
 }
 
@@ -186,11 +185,13 @@ private class EmptyViewModel: BrowseViewModel {
 
 #Preview("Empty") {
     @Previewable @State var selection: AddressCluster?
-
-    EmberBrowseView(
-        viewModel: EmptyViewModel(),
-        selection: $selection,
-        showAbout: .constant(false),
-    )
+    
+    NavigationView {
+        EmberBrowseView(
+            viewModel: EmptyViewModel(),
+            selection: $selection,
+            showAbout: .constant(false),
+        )
+    }
     .emberTheme()
 }

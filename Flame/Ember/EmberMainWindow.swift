@@ -31,49 +31,57 @@ struct EmberMainWindow: View {
         )
     }
 
+    @ViewBuilder
+    var secondaryView: some View {
+        if let addressCluster {
+            detailView(for: addressCluster)
+        } else if !serviceController.clusters.isEmpty {
+            ContentUnavailableView {
+                Label("Choose a host", systemImage: "point.3.connected.trianglepath.dotted")
+                    .font(.emberHeading)
+                    .foregroundStyle(.emberTextMid)
+            } description: {
+            }
+        } else {
+            Color(.emberBase)
+        }
+    }
+
     var body: some View {
         Group {
             if horizontalSizeClass == .compact {
+                // Phone layout
                 NavigationStack(path: $path) {
                     mainView
-                        .background {
-                            Color(.emberBase)
-                                .ignoresSafeArea(.all)
-                        }
-                        .navigationDestination(item: $addressCluster, destination: { addressCluster in
-                            detailView(for: addressCluster)
+                        .navigationDestination(item: $addressCluster, destination: {
+                            detailView(for: $0)
                                 .background {
                                     Color(.emberBase)
                                         .ignoresSafeArea(.all)
                                 }
                         })
+                        .background {
+                            Color(.emberBase)
+                                .ignoresSafeArea(.all)
+                        }
                 }
             } else {
-                HStack {
+                // Pad layout
+                NavigationSplitView {
                     mainView
-                        .background(.background, ignoresSafeAreaEdges: .all)
-                        .containerRelativeFrame(.horizontal) { width, _ in
-                            min(width / 2.5, 340)
+                        .toolbar(removing: .sidebarToggle)
+                        .background {
+                            Color(.emberBase)
+                                .ignoresSafeArea(.all)
                         }
-
-                    if let addressCluster {
-                        detailView(for: addressCluster)
-                    } else if !serviceController.clusters.isEmpty {
-                        ContentUnavailableView {
-                            Label("Choose a host", systemImage: "point.3.connected.trianglepath.dotted")
-                                .font(.emberHeading)
-                                .foregroundStyle(.emberTextMid)
-                        } description: {
+                } detail: {
+                    secondaryView
+                        .background {
+                            Color(.emberBase)
+                                .ignoresSafeArea(.all)
                         }
-                    } else {
-                        Color(.emberBase)
-                    }
-
                 }
-                .background {
-                    Color(.emberBase)
-                        .ignoresSafeArea(.all)
-                }
+                .navigationSplitViewStyle(.balanced)
             }
         }
         .emberTheme()
