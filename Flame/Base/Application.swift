@@ -14,17 +14,17 @@ struct FlameApp: App {
 
     // Heartbeat task - the network browsers aren't super reliable so stop/start
     // them every 10 seconds
-    @State var showAbout = false
+    @State var showSettings = false
     @State var exportingFile = false
     @State var serviceRefreshTask: Task<Void, Never>?
     @State var flameService: NWListener?
 
     var body: some Scene {
         WindowGroup {
-            EmberMainWindow(serviceController: serviceController, showAbout: $showAbout)
+            EmberMainWindow(serviceController: serviceController, showSettings: $showSettings)
                 .modifier(SafariViewControllerViewModifier())
-                .sheet(isPresented: $showAbout) {
-                    AboutView()
+                .sheet(isPresented: $showSettings) {
+                    SettingsView()
                         .emberTheme()
                 }
                 .fileExporter(
@@ -65,8 +65,8 @@ struct FlameApp: App {
             }
         }
 
-        WindowGroup(id: "about") {
-            AboutView()
+        WindowGroup(id: "settings") {
+            SettingsView()
                 .emberTheme()
         }
         .defaultSize(width: 480, height: 640)

@@ -13,12 +13,14 @@ struct EmberBrowseView: View {
     
     @Namespace var selectionBackgroundNamespace
     
-    @Binding var showAbout: Bool
+    @Binding var showSettings: Bool
     
     @FocusState var focusState: Bool
     
     // Searchable is in the main view
     @State var searchTerm: String = ""
+
+    @AppStorage(SettingsView.hideMatterDevicesKey) var hideMatterDevices = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -42,15 +44,16 @@ struct EmberBrowseView: View {
                             subTitle: String(localized: "\(hosts.count) host(s)")
                         )
                     }
-                    // about
+                    // settings
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
-                            showAbout = true
+                            showSettings = true
                         }, label: {
-                            Image(systemName: "info.circle")
+                            Image(systemName: "gearshape")
                                 .foregroundStyle(.foreground)
                                 .frame(width: 28, height: 28)
                         })
+                        .accessibilityLabel("Settings")
                     }
                     // export
                     if let export = viewModel.export {
@@ -157,7 +160,9 @@ struct EmberBrowseView: View {
     }
     
     var hosts: [Host] {
-        viewModel.hosts.filter { $0.matches(search: searchTerm) }
+        viewModel.hosts.filter {
+            $0.matches(search: searchTerm) && !(hideMatterDevices && $0.isMatterDevice)
+        }
     }
 }
 
@@ -170,7 +175,7 @@ struct EmberBrowseView: View {
                 serviceController: ServiceControllerImpl.demo(),
             ),
             selection: $selection,
-            showAbout: .constant(false),
+            showSettings: .constant(false),
         )
     }
     .emberTheme()
@@ -190,7 +195,7 @@ private class EmptyViewModel: BrowseViewModel {
         EmberBrowseView(
             viewModel: EmptyViewModel(),
             selection: $selection,
-            showAbout: .constant(false),
+            showSettings: .constant(false),
         )
     }
     .emberTheme()

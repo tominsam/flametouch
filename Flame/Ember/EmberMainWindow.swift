@@ -10,7 +10,7 @@ struct EmberMainWindow: View {
     let serviceController: ServiceController
     @State var addressCluster: AddressCluster?
     @State var serviceRef: ServiceRef?
-    @Binding var showAbout: Bool
+    @Binding var showSettings: Bool
     @State var searchText: String = ""
 
     @State
@@ -20,7 +20,7 @@ struct EmberMainWindow: View {
         EmberBrowseView(
             viewModel: BrowseViewModelImpl(serviceController: serviceController),
             selection: $addressCluster,
-            showAbout: $showAbout,
+            showSettings: $showSettings,
         )
     }
 

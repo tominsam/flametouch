@@ -57,6 +57,18 @@ public struct Host: Equatable, Hashable, Sendable {
         return false
     }
 
+    /// True for hosts whose most important service is Matter - plain Matter accessories,
+    /// as opposed to hubs and speakers that happen to also advertise Matter. Uncommissioned
+    /// devices only advertise `_matterc._udp.` so count those too.
+    public var isMatterDevice: Bool {
+        let types = Set(services.map(\.type))
+        let primary = ServiceNamer.ImportantServices.allCases.first { types.contains($0.rawValue) }
+        if let primary {
+            return primary == .matter
+        }
+        return types.contains("_matterc._udp.")
+    }
+
     public func isSameHost(as host: Host) -> Bool {
         addressCluster == host.addressCluster
     }
