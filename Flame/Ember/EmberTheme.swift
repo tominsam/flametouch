@@ -19,13 +19,13 @@ extension ShapeStyle where Self == Color {
         dark:  #colorLiteral(red: 1.00000, green: 0.94118, blue: 0.84706, alpha: 1),
         light: #colorLiteral(red: 0.11765, green: 0.07059, blue: 0.03137, alpha: 1)) }
     static var emberTextMid: Color { .ember(
-        dark:  #colorLiteral(red: 0.90980, green: 0.75294, blue: 0.51765, alpha: 1),
+        dark:  #colorLiteral(red: 0.9098, green: 0.7742099059, blue: 0.5708247646, alpha: 1),
         light: #colorLiteral(red: 0.36078, green: 0.23922, blue: 0.12549, alpha: 1)) }
     static var emberTextLow: Color { .ember(
-        dark:  #colorLiteral(red: 0.81569, green: 0.56471, blue: 0.18824, alpha: 1),
+        dark:  #colorLiteral(red: 0.81569, green: 0.6104965739, blue: 0.3027064347, alpha: 1),
         light: #colorLiteral(red: 0.60392, green: 0.43922, blue: 0.31373, alpha: 1)) }
     static var emberTextDim: Color { .ember(
-        dark:  #colorLiteral(red: 0.62745, green: 0.40784, blue: 0.18824, alpha: 1),
+        dark:  #colorLiteral(red: 0.6916497908, green: 0.4583816062, blue: 0.2251240436, alpha: 1),
         light: #colorLiteral(red: 0.75294, green: 0.65882, blue: 0.50980, alpha: 1)) }
     static var emberTextOnTint: Color { .ember(
         dark:  #colorLiteral(red: 0.09412, green: 0.02353, blue: 0.00000, alpha: 1),
@@ -47,10 +47,10 @@ extension ShapeStyle where Self == Color {
         light: #colorLiteral(red: 0.54902, green: 0.28235, blue: 0.06275, alpha: 0.3955018939)) }
 
     static var emberButton: Color { .ember(
-        dark:  #colorLiteral(red: 1, green: 0.6254868368, blue: 0.3988946161, alpha: 1),
+        dark:  #colorLiteral(red: 0.7680929655, green: 0.5219644282, blue: 0.3730489365, alpha: 1),
         light: #colorLiteral(red: 0.65882, green: 0.35294, blue: 0.10980, alpha: 1)) }
     static var emberButtonPressed: Color { .ember(
-        dark:  #colorLiteral(red: 0.6837629183, green: 0.4276847049, blue: 0.2727493468, alpha: 1),
+        dark:  #colorLiteral(red: 0.6370186715, green: 0.4094678735, blue: 0.2717924973, alpha: 1),
         light: #colorLiteral(red: 0.78431, green: 0.47059, blue: 0.25098, alpha: 1)) }
     static var emberButtonText: Color { .ember(
         dark:  #colorLiteral(red: 0.09412, green: 0.02353, blue: 0.00000, alpha: 1),

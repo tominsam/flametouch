@@ -21,6 +21,15 @@ public extension View {
             transform(self)
         #endif
     }
+
+    @ViewBuilder
+    func ifCatalyst<Content: View>(transform: (Self) -> Content) -> some View {
+        #if targetEnvironment(macCatalyst)
+            transform(self)
+        #else
+            self
+        #endif
+    }
 }
 
 struct FilledStrokedRoundRect<FillStyle: ShapeStyle, StrokeStyle: ShapeStyle>: View {

@@ -60,8 +60,12 @@ struct EmberHostView: View {
 
                 }
             }
-            .toolbarRole(.browser)
+            .toolbarRole(.browser) // left-aligns title
             .scrollIndicators(.never)
+            .ifCatalyst {
+                $0.scrollEdgeEffectStyle(.soft, for: .bottom)
+                    .scrollEdgeEffectStyle(.hard, for: .top)
+            }
         }
     }
     
@@ -75,6 +79,7 @@ struct EmberHostView: View {
                     .foregroundStyle(.emberTextMid)
                     .padding(.vertical, 12)
                     .padding(.horizontal, 16)
+                    .containerShape(.rect)
                     .background {
                         FilledStrokedRoundRect(
                             fill: .emberPillBackground,

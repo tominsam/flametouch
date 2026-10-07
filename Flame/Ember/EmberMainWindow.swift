@@ -8,10 +8,10 @@ struct EmberMainWindow: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     let serviceController: ServiceController
-    @State var addressCluster: AddressCluster?
-    @State var serviceRef: ServiceRef?
+    @State private var addressCluster: AddressCluster?
+    @State private var serviceRef: ServiceRef?
     @Binding var showSettings: Bool
-    @State var searchText: String = ""
+    @State private var searchText: String = ""
 
     @State
     var path = NavigationPath()

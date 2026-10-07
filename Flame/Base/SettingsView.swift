@@ -10,42 +10,40 @@ struct SettingsView: View {
     @AppStorage(hideMatterDevicesKey) var hideMatterDevices = false
 
     var body: some View {
-        NavigationStack {
-            Form {
-                Section {
-                    aboutHeader
-                        .listRowBackground(Color.clear)
-                } footer: {
-                    quote
-                        .padding(.top, 24)
-                }
-
-                Section {
-                    LabeledContent("Version", value: version)
-                    Link(destination: URL(string: "https://movieos.org/code/flame/")!) {
-                        Label("movieos.org/code/flame", systemImage: "safari")
-                    }
-                }
-                .listRowBackground(Color.emberInset)
-
-                Section {
-                    Toggle("Hide Matter devices", isOn: $hideMatterDevices)
-                } footer: {
-                    Text("Hides accessories that only advertise Matter. Hubs and speakers that also support Matter are still shown.")
-                        .foregroundStyle(.emberTextLow)
-                }
-                .listRowBackground(Color.emberInset)
-                .padding(.bottom, 16)
-
+        Form {
+            Section {
+                aboutHeader
+                    .listRowBackground(Color.clear)
+            } footer: {
+                quote
+                    .padding(.top, 24)
             }
-            .background(.emberBase)
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(role: .close) {
-                        dismiss()
-                    }
+
+            Section {
+                LabeledContent("Version", value: version)
+                Link(destination: URL(string: "https://movieos.org/code/flame/")!) {
+                    Label("movieos.org/code/flame", systemImage: "safari")
+                }
+            }
+            .listRowBackground(Color.emberInset)
+
+            Section {
+                Toggle("Hide Matter devices", isOn: $hideMatterDevices)
+            } footer: {
+                Text("Hides accessories that only advertise Matter. Hubs and speakers that also support Matter are still shown.")
+                    .foregroundStyle(.emberTextLow)
+            }
+            .listRowBackground(Color.emberInset)
+            .padding(.bottom, 16)
+
+        }
+        .background(.emberBase)
+        .navigationTitle("Settings")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button(role: .close) {
+                    dismiss()
                 }
             }
         }

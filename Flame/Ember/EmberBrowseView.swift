@@ -6,6 +6,8 @@ import UIKit
 /// Root view of the app, renders a list of hosts on the local network
 
 struct EmberBrowseView: View {
+    @Environment(\.openWindow) var openWindow
+
     var viewModel: BrowseViewModel
     
     @Binding
@@ -18,7 +20,7 @@ struct EmberBrowseView: View {
     @FocusState var focusState: Bool
     
     // Searchable is in the main view
-    @State var searchTerm: String = ""
+    @State private var searchTerm: String = ""
 
     @AppStorage(SettingsView.hideMatterDevicesKey) var hideMatterDevices = false
     
@@ -27,16 +29,15 @@ struct EmberBrowseView: View {
             if viewModel.noWifi {
                 emptyView
             } else {
-                
                 ScrollView {
                     LazyVStack {
-                        ForEach(hosts, id: \.addressCluster) { host in
+                        ForEach(hosts, id: \.addressCluster.identifier) { host in
                             browseRow(for: host)
                         }
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar(content: {
+                .toolbar {
                     // title
                     ToolbarItem(placement: .principal) {
                         EmberTitleView(
@@ -47,7 +48,11 @@ struct EmberBrowseView: View {
                     // settings
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
+#if targetEnvironment(macCatalyst)
+                            openWindow(id: "settings")
+                            #else
                             showSettings = true
+                            #endif
                         }, label: {
                             Image(systemName: "gearshape")
                                 .foregroundStyle(.foreground)
@@ -73,8 +78,8 @@ struct EmberBrowseView: View {
                             .accessibilityLabel("Export")
                         }
                     }
-                })
-                .toolbarRole(.browser)
+                }
+                .toolbarRole(.browser) // left-aligns title
                 .scrollDismissesKeyboard(.interactively)
                 .scrollIndicators(.never)
                 .ifiOS {
@@ -86,6 +91,10 @@ struct EmberBrowseView: View {
                         // leave the spinner visible while it populates
                         try? await Task.sleep(for: .seconds(2))
                     }
+                }
+                .ifCatalyst {
+                    $0.scrollEdgeEffectStyle(.soft, for: .bottom)
+                        .scrollEdgeEffectStyle(.hard, for: .top)
                 }
                 .safeAreaBar(edge: .bottom) {
                     searchView
