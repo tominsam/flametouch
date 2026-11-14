@@ -4,7 +4,6 @@ import SwiftUI
 import UIKit
 
 /// Root view of the app, renders a list of hosts on the local network
-
 struct EmberBrowseView: View {
     @Environment(\.openWindow) var openWindow
 
@@ -55,7 +54,7 @@ struct EmberBrowseView: View {
                             #endif
                         }, label: {
                             Image(systemName: "gearshape")
-                                .foregroundStyle(.foreground)
+                                .foregroundStyle(.emberTextMid)
                                 .frame(width: 28, height: 28)
                         })
                         .accessibilityLabel("Settings")
@@ -70,7 +69,7 @@ struct EmberBrowseView: View {
                                 preview: SharePreview("Export"),
                                 label: {
                                     Image(systemName: "square.and.arrow.up")
-                                        .foregroundStyle(.foreground)
+                                        .foregroundStyle(.emberTextMid)
                                         .frame(width: 28, height: 28)
                                 }
                             )

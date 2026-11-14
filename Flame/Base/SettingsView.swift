@@ -45,6 +45,7 @@ struct SettingsView: View {
                 Button(role: .close) {
                     dismiss()
                 }
+                .tint(.emberTextHi)
             }
         }
     }

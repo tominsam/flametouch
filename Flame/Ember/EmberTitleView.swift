@@ -9,23 +9,20 @@ struct EmberTitleView: View {
     let subTitle: String
 
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.emberHeading)
                 .foregroundStyle(.emberTextHi)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 8)
                 .padding(.bottom, 4)
+                .fixedSize(horizontal: true, vertical: true)
 
             Text(subTitle)
                 .font(.emberSectionHeader)
                 .textCase(.uppercase)
                 .foregroundStyle(.emberTextLow)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 12)
+                .fixedSize(horizontal: true, vertical: true)
         }
-        .frame(maxWidth: .infinity)
-
+        .frame(alignment: .leading)
     }
-
 }
